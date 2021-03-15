@@ -458,11 +458,33 @@
             <?php } ?>
 
             <td style="width: 2%; font-size: 9pt;" class="text-align-right"></td>
-            <?php if ($totalNeracaV > 0) { ?>
-                <td style="width: 17%; font-size: 9pt;" class="text-align-right border-top-no-padding"><?= '(' . saldo_money($totalNeracaV) . ')'; ?></td>
+            <?php if ($totalNeracaC > 0 && $totalNeracaL > 0) { ?>
+                <?php if (($totalNeracaC - $totalNeracaL) > 0) { ?>
+                    <td style="width: 17%; font-size: 9pt;" class="text-align-right border-top-no-padding"><?= '(' . saldo_money(($totalNeracaC - $totalNeracaL)) . ')'; ?></td>
+                <?php } else { ?>
+                    <td style="width: 17%; font-size: 9pt;" class="text-align-right border-top-no-padding"><?= saldo_money(($totalNeracaC - $totalNeracaL)); ?></td>
+                <?php } ?>
+            <?php } else if ($totalNeracaC > 0 && $totalNeracaL < 0) { ?>
+                <?php if (($totalNeracaC + $totalNeracaL) > 0) { ?>
+                    <td style="width: 17%; font-size: 9pt;" class="text-align-right border-top-no-padding"><?= '(' . saldo_money(($totalNeracaC + $totalNeracaL)) . ')'; ?></td>
+                <?php } else { ?>
+                    <td style="width: 17%; font-size: 9pt;" class="text-align-right border-top-no-padding"><?= saldo_money(($totalNeracaC + $totalNeracaL)); ?></td>
+                <?php } ?>
+            <?php } else if ($totalNeracaC < 0 && $totalNeracaL > 0) { ?>
+                <?php if (($totalNeracaC + $totalNeracaL) > 0) { ?>
+                    <td style="width: 17%; font-size: 9pt;" class="text-align-right border-top-no-padding"><?= '(' . saldo_money(($totalNeracaC + $totalNeracaL)) . ')'; ?></td>
+                <?php } else { ?>
+                    <td style="width: 17%; font-size: 9pt;" class="text-align-right border-top-no-padding"><?= saldo_money(($totalNeracaC + $totalNeracaL)); ?></td>
+                <?php } ?>
+            <?php } else if ($totalNeracaC < 0 && $totalNeracaL < 0) { ?>
+                <?php if (($totalNeracaC - $totalNeracaL) > 0) { ?>
+                    <td style="width: 17%; font-size: 9pt;" class="text-align-right border-top-no-padding"><?= '(' . saldo_money(($totalNeracaC - $totalNeracaL)) . ')'; ?></td>
+                <?php } else { ?>
+                    <td style="width: 17%; font-size: 9pt;" class="text-align-right border-top-no-padding"><?= saldo_money(($totalNeracaC - $totalNeracaL)); ?></td>
+                <?php } ?>
             <?php } else { ?>
-                <td style="width: 17%; font-size: 9pt;" class="text-align-right border-top-no-padding"><?= saldo_money($totalNeracaV); ?></td>
             <?php } ?>
+
         </tr>
     </table>
 </body>
