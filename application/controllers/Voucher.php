@@ -53,14 +53,14 @@ class Voucher extends AUTH_Controller
 	public function indexBayar()
 	{
 		$data['userdata'] = $this->userdata;
-		$data['dataVoucher'] = $this->M_voucher->select_all();
-		$data['dataCustomer'] = $this->M_customer->select_all();
+		// $data['dataVoucher'] = $this->M_voucher->select_all();
+		// $data['dataCustomer'] = $this->M_customer->select_all();
 		$data['dataOwner'] = $this->M_owner->select_all();
 		$data['dataGiroType'] = $this->M_giro_type->select_all();
-		$data['dataBayar'] = $this->M_bayar->select_all();
+		// $data['dataBayar'] = $this->M_bayar->select_all();
 		$data['dataAR'] = $this->M_ar->select_all();
 		$data['dataCoA'] = $this->M_coa->select_all();
-		$data['dataBank'] = $this->M_coa->select_bank();
+		// $data['dataBank'] = $this->M_coa->select_bank();
 		$data['dataPemType'] = $this->M_type_pembayaran->select_all();
 
 		$data['page'] = "Pembayaran Piutang";
@@ -74,15 +74,15 @@ class Voucher extends AUTH_Controller
 	public function indexBayarDeposit()
 	{
 		$data['userdata'] = $this->userdata;
-		$data['dataVoucher'] = $this->M_voucher->select_all();
+		// $data['dataVoucher'] = $this->M_voucher->select_all();
 		$data['dataTitipan'] = $this->M_voucher->select_all_titipan();
-		$data['dataCustomer'] = $this->M_customer->select_all();
-		$data['dataOwner'] = $this->M_owner->select_all();
+		// $data['dataCustomer'] = $this->M_customer->select_all();
+		// $data['dataOwner'] = $this->M_owner->select_all();
 		$data['dataGiroType'] = $this->M_giro_type->select_all();
-		$data['dataBayar'] = $this->M_bayar->select_all();
+		// $data['dataBayar'] = $this->M_bayar->select_all();
 		$data['dataAR'] = $this->M_ar->select_all();
 		$data['dataCoA'] = $this->M_coa->select_all();
-		$data['dataBank'] = $this->M_coa->select_bank();
+		// $data['dataBank'] = $this->M_coa->select_bank();
 		$data['dataPemType'] = $this->M_type_pembayaran->select_all();
 
 		$data['page'] = "Pembayaran Piutang";

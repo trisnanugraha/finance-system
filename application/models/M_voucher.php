@@ -142,7 +142,7 @@ class M_voucher extends CI_Model
 					JOIN giro_type gt 
 					ON gt.giro_type_id = v.tipe_giro
 				WHERE v.tanggal_voucher <= CURDATE() AND (MONTH(v.tanggal_voucher) = MONTH(CURDATE()) OR MONTH(v.tanggal_voucher) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) AND YEAR(v.tanggal_voucher) = YEAR(CURDATE())
-				LIMIT 5";
+				LIMIT 10";
 
 			$data = $this->db->query($query);
 
