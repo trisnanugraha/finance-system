@@ -141,10 +141,8 @@ class M_voucher extends CI_Model
 					ON co.id_akun = v.bank
 					JOIN giro_type gt 
 					ON gt.giro_type_id = v.tipe_giro
-					ORDER BY v.tanggal_voucher DESC
-					LIMIT 10";
-			// -- WHERE v.tanggal_voucher <= CURDATE() AND (MONTH(v.tanggal_voucher) = MONTH(CURDATE()) OR MONTH(v.tanggal_voucher) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) AND YEAR(v.tanggal_voucher) = YEAR(CURDATE()) 
-			// -- LIMIT 10";
+				WHERE v.tanggal_voucher <= CURDATE() AND (MONTH(v.tanggal_voucher) = MONTH(CURDATE()) OR MONTH(v.tanggal_voucher) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) AND YEAR(v.tanggal_voucher) = YEAR(CURDATE())
+				LIMIT 5";
 
 			$data = $this->db->query($query);
 
