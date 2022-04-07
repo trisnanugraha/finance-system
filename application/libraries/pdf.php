@@ -10,6 +10,6 @@ class Pdf
         $mpdf = new \Mpdf\Mpdf(['mode' => 'utf-8', 'format' => [215, 280]]);
         $mpdf->shrink_tables_to_fit = 0;
         $mpdf->WriteHTML($html);
-        $mpdf->Output($filename . ".pdf", I);
+        $mpdf->Output($filename . ".pdf", \Mpdf\Output\Destination::INLINE);
     }
 }

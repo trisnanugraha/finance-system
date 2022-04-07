@@ -22,10 +22,36 @@ class Customer extends AUTH_Controller {
 		$this->template->views('customer/home', $data, $js);
 	}
 
-	public function tampil() {
-		$data['dataCustomer'] = $this->M_customer->select_all();
-		$this->load->view('customer/list_data', $data);
-	}
+	function getAjax() {
+        $dataCustomer = $this->M_customer->get_datatables();
+        $record = array();
+        $no = $_POST['start'];
+        foreach ($dataCustomer as $data) {
+            $no++;
+			$row = [
+					  'no' => $no,
+					  'kodeCus' => $data['kodeCus'],
+					  'kodeVir' => $data['kodeVir'],
+				      'nama' => $data['nama'],
+					  'unit' => $data['unit'],
+					  'owner' => $data['owner'],
+					];
+			$record[] = $row;
+        }
+        $output = array(
+			"draw" => $_POST['draw'],
+			"recordsTotal" => $this->M_customer->count_all(),
+			"recordsFiltered" => $this->M_customer->count_filtered(),
+			"data" => $record,
+		);
+        // output to json format
+        echo json_encode($output);
+    }
+
+	// public function tampil() {
+	// 	$data['dataCustomer'] = $this->M_customer->select_all();
+	// 	$this->load->view('customer/list_data', $data);
+	// }
 
 	public function prosesTambah() {
 		$this->form_validation->set_rules('kodeCus', 'Customer ID', 'trim|required');

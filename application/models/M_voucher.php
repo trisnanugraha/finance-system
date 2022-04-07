@@ -141,7 +141,10 @@ class M_voucher extends CI_Model
 					ON co.id_akun = v.bank
 					JOIN giro_type gt 
 					ON gt.giro_type_id = v.tipe_giro
-				WHERE v.tanggal_voucher <= CURDATE() AND (MONTH(v.tanggal_voucher) = MONTH(CURDATE()) OR MONTH(v.tanggal_voucher) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)))";
+					ORDER BY v.tanggal_voucher DESC
+					LIMIT 10";
+			// -- WHERE v.tanggal_voucher <= CURDATE() AND (MONTH(v.tanggal_voucher) = MONTH(CURDATE()) OR MONTH(v.tanggal_voucher) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) AND YEAR(v.tanggal_voucher) = YEAR(CURDATE()) 
+			// -- LIMIT 10";
 
 			$data = $this->db->query($query);
 
@@ -642,6 +645,19 @@ class M_voucher extends CI_Model
 		return $this->db->affected_rows();
 	}
 
+	public function update_titipan($params)
+	{
+		$data = array(
+			'total' => $params['vouTotal'],
+			'nilai' => $params['vouTotal']
+		);
+
+		$where = array(
+			'id_voucher' => $params['id']
+		);
+		$this->db->update('titipan', $data, $where);
+	}
+
 	public function update_vendor($id)
 	{
 		$where = ['id_voucher' => $id];
@@ -670,41 +686,78 @@ class M_voucher extends CI_Model
 			for ($i = 0; $i < count($id); $i++) {
 				$CoA = $this->M_coa->select_by_coa($akun[$i]);
 				$ar = $this->M_ar->select_by_id($id[$i]);
+				$owner = $this->M_owner->select_by_id($kodeOwner[$i]);
 
 				if ($akun[$i] != NULL) {
 					if ($post['relasi'] == 1) {
-						if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0) {
-							$data = array(
-								'id_voucher' => $code[$i],
-								'bukti_transaksi' => $code[$i],
-								'id_customer' => $ar->id_customer,
-								'id_owner' => $kodeOwner[$i],
-								'tipe_giro' => $post['giro'],
-								'bank' =>  $CoA->id_akun,
-								'tanggal_voucher' => $post['date'],
-								'keterangan' => $keterangan[$i],
-								'total' => $debit[$i],
-								'so' => 1,
-								'relasi' => $ar->id_customer,
-								'titipan' => 1
-							);
-							$this->db->insert($this->tableName, $data);
-						} else if ($CoA->id_akun == 190 && $debit[$i] > 0) {
-							$data = array(
-								'id_voucher' => $code[$i],
-								'bukti_transaksi' => $code[$i],
-								'id_customer' => $ar->id_customer,
-								'id_owner' => $kodeOwner[$i],
-								'tipe_giro' => $post['giro'],
-								'bank' =>  $CoA->id_akun,
-								'tanggal_voucher' => $post['date'],
-								'keterangan' => $keterangan[$i],
-								'total' => $debit[$i],
-								'so' => 1,
-								'relasi' => $ar->id_customer,
-								'titipan' => 1
-							);
-							$this->db->insert($this->tableName, $data);
+						if ($ar->id_ar == 1) {
+							if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0) {
+								$data = array(
+									'id_voucher' => $code[$i],
+									'bukti_transaksi' => $code[$i],
+									'id_customer' => $owner->customer,
+									'id_owner' => $kodeOwner[$i],
+									'tipe_giro' => $post['giro'],
+									'bank' =>  $CoA->id_akun,
+									'tanggal_voucher' => $post['date'],
+									'keterangan' => $keterangan[$i],
+									'total' => $debit[$i],
+									'so' => 1,
+									'relasi' => $owner->customer,
+									'titipan' => 1
+								);
+								$this->db->insert($this->tableName, $data);
+							} else if ($CoA->parent == 187 && $debit[$i] > 0) {
+								$data = array(
+									'id_voucher' => $code[$i],
+									'bukti_transaksi' => $code[$i],
+									'id_customer' => $owner->customer,
+									'id_owner' => $kodeOwner[$i],
+									'tipe_giro' => $post['giro'],
+									'bank' =>  $CoA->id_akun,
+									'tanggal_voucher' => $post['date'],
+									'keterangan' => $keterangan[$i],
+									'total' => $debit[$i],
+									'so' => 1,
+									'relasi' => $owner->customer,
+									'titipan' => 1
+								);
+								$this->db->insert($this->tableName, $data);
+							}
+						} else {
+							if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0) {
+								$data = array(
+									'id_voucher' => $code[$i],
+									'bukti_transaksi' => $code[$i],
+									'id_customer' => $ar->id_customer,
+									'id_owner' => $kodeOwner[$i],
+									'tipe_giro' => $post['giro'],
+									'bank' =>  $CoA->id_akun,
+									'tanggal_voucher' => $post['date'],
+									'keterangan' => $keterangan[$i],
+									'total' => $debit[$i],
+									'so' => 1,
+									'relasi' => $ar->id_customer,
+									'titipan' => 1
+								);
+								$this->db->insert($this->tableName, $data);
+							} else if ($CoA->parent == 187 && $debit[$i] > 0) {
+								$data = array(
+									'id_voucher' => $code[$i],
+									'bukti_transaksi' => $code[$i],
+									'id_customer' => $ar->id_customer,
+									'id_owner' => $kodeOwner[$i],
+									'tipe_giro' => $post['giro'],
+									'bank' =>  $CoA->id_akun,
+									'tanggal_voucher' => $post['date'],
+									'keterangan' => $keterangan[$i],
+									'total' => $debit[$i],
+									'so' => 1,
+									'relasi' => $ar->id_customer,
+									'titipan' => 1
+								);
+								$this->db->insert($this->tableName, $data);
+							}
 						}
 					} else if ($post['relasi'] == 2) {
 						if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0) {
@@ -723,7 +776,7 @@ class M_voucher extends CI_Model
 								'titipan' => 1
 							);
 							$this->db->insert($this->tableName, $data);
-						} else if ($CoA->id_akun == 190 && $debit[$i] > 0) {
+						} else if ($CoA->parent == 187 && $debit[$i] > 0) {
 							$data = array(
 								'id_voucher' => $code[$i],
 								'bukti_transaksi' => $code[$i],
@@ -757,7 +810,7 @@ class M_voucher extends CI_Model
 								'titipan' => 1
 							);
 							$this->db->insert($this->tableName, $data);
-						} else if ($CoA->id_akun == 190 && $debit[$i] > 0) {
+						} else if ($CoA->parent == 187 && $debit[$i] > 0) {
 							$data = array(
 								'id_voucher' => $code[$i],
 								'bukti_transaksi' => $code[$i],
@@ -816,7 +869,7 @@ class M_voucher extends CI_Model
 							'titipan' => 1
 						);
 						$this->db->insert($this->tableName, $data);
-					} else if ($CoA->id_akun == 190 && $debit[$i] > 0) {
+					} else if ($CoA->parent == 187 && $debit[$i] > 0) {
 						$data = array(
 							'id_voucher' => $code[$i],
 							'bukti_transaksi' => $code[$i],
@@ -854,7 +907,7 @@ class M_voucher extends CI_Model
 			$CoA = $this->M_coa->select_by_coa($akun[$i]);
 			$ar = $this->M_ar->select_by_id($id[$i]);
 
-			if ($akun[$i] != NULL && $CoA->id_akun == 190 && $credit[$i] > 0) {
+			if ($akun[$i] != NULL && $CoA->parent == 187 && $credit[$i] > 0) {
 				if ($post['relasi'] == 1) {
 					$data = array(
 						'id_customer' =>  'T-' . $kodeOwner[$i],
@@ -901,20 +954,6 @@ class M_voucher extends CI_Model
 		return $this->db->affected_rows();
 	}
 
-	public function update_titipan($id)
-	{
-		$voucher = $this->M_voucher->select_titipan_voucher($id);
-
-		$data = array(
-			'total' => $voucher->total + $voucher->total_voucher,
-		);
-
-		$where = array(
-			'id_voucher' => $id
-		);
-		$this->db->update('titipan', $data, $where);
-	}
-
 	public function titipan_out($post)
 	{
 		$id = json_decode($_POST["id"]);
@@ -929,7 +968,7 @@ class M_voucher extends CI_Model
 			if ($akun[$i] != NULL) {
 				$CoA = $this->M_coa->select_by_coa($akun[$i]);
 
-				if ($CoA->id_akun == 190 && $debit[$i] > 0) {
+				if ($CoA->parent == 187 && $debit[$i] > 0) {
 					$sisa = ($post['total'] - $debit[$i]);
 					$data = array(
 						'total' => $sisa
@@ -943,6 +982,18 @@ class M_voucher extends CI_Model
 	}
 
 	public function delete($id)
+	{
+		$where = ['id_voucher' => $id];
+		$this->db->delete('titipan', $where);
+
+		if ($this->db->error()['code'] == 1451) {
+			return false;
+		} else {
+			return true;
+		}
+	}
+
+	public function delete_titipan($id)
 	{
 		$where = ['id_voucher' => $id];
 		$this->db->delete($this->tableName, $where);

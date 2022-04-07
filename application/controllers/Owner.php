@@ -28,11 +28,30 @@ class Owner extends AUTH_Controller
 		$this->template->views('owner/home', $data, $js);
 	}
 
-	public function tampil()
-	{
-		$data['dataOwner'] = $this->M_owner->select_all();
-		$this->load->view('owner/list_data', $data);
-	}
+	function getAjax() {
+        $dataOwner = $this->M_owner->get_datatables();
+        $record = array();
+        $no = $_POST['start'];
+        foreach ($dataOwner as $data) {
+            $no++;
+			$row = [
+					'no' => $no,
+					'id' => $data['id'],
+					'kodeVir' => $data['kodeVir'],
+				    'nama' => $data['nama'],
+					'unit' => $data['unit']
+					];
+			$record[] = $row;
+        }
+        $output = array(
+			"draw" => $_POST['draw'],
+			"recordsTotal" => $this->M_owner->count_all(),
+			"recordsFiltered" => $this->M_owner->count_filtered(),
+			"data" => $record,
+		);
+        // output to json format
+        echo json_encode($output);
+    }
 
 	public function prosesTambah()
 	{

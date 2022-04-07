@@ -75,6 +75,19 @@
       <br>
       <br>
 
+      <div class="form-group">
+        <label class="control-label col-xs-4">Report Saldo Awal</label>
+        <div class="col-xs-8">
+          <select name="report" id="report" class="form-control" style="width: 100%">
+            <option selected disabled>Choose Report Saldo Awal</option>
+            <option value="0">Dengan Saldo Awal</option>
+            <option value="1">Tanpa Saldo Awal</option>
+          </select>
+        </div>
+      </div>
+      <br>
+      <br>
+
     </div>
     <div class="form-group">
       <div class="col-md-12">
@@ -83,3 +96,9 @@
     </div>
   </form>
 </div>
+
+<script type="text/javascript">
+  $(function() {
+    $(".select2").select2();
+  });
+</script>

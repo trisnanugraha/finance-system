@@ -341,7 +341,7 @@
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
                                 <?php if ($gl->saldoAgustus != NULL && $gl->saldoAgustus < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoAgustus) . ')'; ?></td>
-                                    <?php$totalAug += $gl->saldoAgustus;?>
+                                    <?php $totalAug += $gl->saldoAgustus; ?>
                                 <?php } else if ($gl->saldoAgustus >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoAgustus != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoAgustus); ?></td>
                                     <?php $totalAug += $gl->saldoAgustus; ?>
@@ -745,9 +745,9 @@
 
             <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
             <?php if ($totalMeiLR > 0) { ?>
-                <?= '(' . saldo_money($totalMeiLR) . ')' ?></td>
+                <td class="text-align-right border-top-no-padding border-bottom"><?= '(' . saldo_money($totalMeiLR) . ')' ?></td>
             <?php } else { ?>
-                <?= saldo_money($totalMeiLR) ?></td>
+                <td class="text-align-right border-top-no-padding border-bottom"><?= saldo_money($totalMeiLR) ?></td>
             <?php } ?>
 
             <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>

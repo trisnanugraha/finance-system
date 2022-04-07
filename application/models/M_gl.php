@@ -225,9 +225,10 @@ class M_gl extends CI_Model
 					ON gl.id_owner = o.kode_owner
 					JOIN coa co
 					ON gl.kode_soa = co.id_akun
-					WHERE gl.tanggal_transaksi <= CURDATE() AND (MONTH(gl.tanggal_transaksi) = MONTH(CURDATE()) OR MONTH(gl.tanggal_transaksi) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)))
+					WHERE gl.tanggal_transaksi <= CURDATE() AND (MONTH(gl.tanggal_transaksi) = MONTH(CURDATE()) OR MONTH(gl.tanggal_transaksi) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) AND YEAR(gl.tanggal_transaksi) = YEAR(CURDATE())
 				-- GROUP BY gl.bukti_transaksi
-				ORDER BY gl.tanggal_transaksi DESC, gl.bukti_transaksi";
+				ORDER BY gl.tanggal_transaksi DESC, gl.bukti_transaksi
+				LIMIT 100";
 
 			$query = $this->db->query($sql);
 			return $query->result();
@@ -592,7 +593,7 @@ class M_gl extends CI_Model
 				if ($CoA->id_akun == 21) {
 					$data = array(
 						'bukti_transaksi' => $code[$i],
-						'id_customer' => 'T-' . $kodeOwner[$i],
+						'id_customer' => $ownerCus->customer,
 						'id_owner' => $kodeOwner[$i],
 						'tanggal_transaksi' => $post['date'],
 						'keterangan' => $keterangan[$i],
@@ -606,7 +607,7 @@ class M_gl extends CI_Model
 				} else if ($CoA->id_akun == 22) {
 					$data = array(
 						'bukti_transaksi' => $code[$i],
-						'id_customer' => 'T-' . $kodeOwner[$i],
+						'id_customer' => $ownerCus->customer,
 						'id_owner' => $kodeOwner[$i],
 						'tanggal_transaksi' => $post['date'],
 						'keterangan' => $keterangan[$i],
@@ -620,7 +621,7 @@ class M_gl extends CI_Model
 				} else {
 					$data = array(
 						'bukti_transaksi' => $code[$i],
-						'id_customer' => 'T-' . $kodeOwner[$i],
+						'id_customer' => $ownerCus->customer,
 						'id_owner' => $kodeOwner[$i],
 						'tanggal_transaksi' => $post['date'],
 						'keterangan' => $keterangan[$i],
@@ -658,7 +659,7 @@ class M_gl extends CI_Model
 				if ($CoA->id_akun == 21) {
 					$data = array(
 						'bukti_transaksi' => $code[$i],
-						'id_customer' => 'T-' . $kodeOwner[$i],
+						'id_customer' => $ownerCus->customer,
 						'id_owner' => $kodeOwner[$i],
 						'tanggal_transaksi' => $post['date'],
 						'keterangan' => $keterangan[$i],
@@ -672,7 +673,7 @@ class M_gl extends CI_Model
 				} else if ($CoA->id_akun == 22) {
 					$data = array(
 						'bukti_transaksi' => $code[$i],
-						'id_customer' => 'T-' . $kodeOwner[$i],
+						'id_customer' => $ownerCus->customer,
 						'id_owner' => $kodeOwner[$i],
 						'tanggal_transaksi' => $post['date'],
 						'keterangan' => $keterangan[$i],
@@ -686,7 +687,7 @@ class M_gl extends CI_Model
 				} else if ($CoA->parent == 1 || $CoA->parent == 3 || $CoA->parent == 4 || $CoA->parent == 5  || $CoA->parent == 7) {
 					$data = array(
 						'bukti_transaksi' => $code[$i],
-						'id_customer' => 'T-' . $kodeOwner[$i],
+						'id_customer' => $ownerCus->customer,
 						'id_owner' => $kodeOwner[$i],
 						'tanggal_transaksi' => $post['date'],
 						'keterangan' => $keterangan[$i],
@@ -700,7 +701,7 @@ class M_gl extends CI_Model
 				} else {
 					$data = array(
 						'bukti_transaksi' => $code[$i],
-						'id_customer' => 'T-' . $kodeOwner[$i],
+						'id_customer' => $ownerCus->customer,
 						'id_owner' => $kodeOwner[$i],
 						'tanggal_transaksi' => $post['date'],
 						'keterangan' => $keterangan[$i],
@@ -750,6 +751,15 @@ class M_gl extends CI_Model
 			'id_customer' => $id_customer,
 			'tanggal_transaksi' => $periode,
 			'kode_soa' => $coa
+		])
+			->count_all_results('gl');
+		return $data;
+	}
+
+	public function check_bill_id($id_gl)
+	{
+		$data = $this->db->where([
+			'bukti_transaksi' => $id_gl
 		])
 			->count_all_results('gl');
 		return $data;
@@ -1085,7 +1095,7 @@ class M_gl extends CI_Model
 					ON co.id_akun = gl.kode_soa,
 					(SELECT @baris1 := 0) tx
 				WHERE
-					(gl.kode_soa BETWEEN '{$coaA}' AND '{$coaB}') AND MONTH(gl.tanggal_transaksi) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}') AND (gl.so = 1)
+					(gl.kode_soa BETWEEN '{$coaA}' AND '{$coaB}') AND (gl.tanggal_transaksi) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE) AND (gl.so = 1)
 				ORDER BY 
 					co.coa_id, gl.tanggal_transaksi, gl.bukti_transaksi) t1
 				LEFT JOIN
@@ -1340,7 +1350,7 @@ class M_gl extends CI_Model
 				coa.coa_name,
 				coa.jurnal_tipe, 
 				MONTH('{$date}') as month,
-				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE (g.tanggal_transaksi) <= (DATE_SUB(('{$date}'), INTERVAL 1 MONTH)) AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoLast
+				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE (g.tanggal_transaksi) <= LAST_DAY(DATE_SUB(('{$date}'), INTERVAL 1 MONTH)) AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoLast
 			FROM gl 
 				JOIN coa 
 				on gl.kode_soa = coa.id_akun 
@@ -1374,7 +1384,7 @@ class M_gl extends CI_Model
 				coa.coa_name,
 				coa.jurnal_tipe,
 				MONTH('{$date}') as month,
-				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa co on g.kode_soa = co.id_akun WHERE (g.tanggal_transaksi) <= (DATE_SUB(('{$date}'), INTERVAL 1 MONTH)) AND coa.parent_detail = co.parent_detail AND g.so = 1) saldoLast
+				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa co on g.kode_soa = co.id_akun WHERE (g.tanggal_transaksi) <= LAST_DAY(DATE_SUB(('{$date}'), INTERVAL 1 MONTH)) AND coa.parent_detail = co.parent_detail AND g.so = 1) saldoLast
 			FROM gl 
 				JOIN coa 
 				on gl.kode_soa = coa.id_akun 
@@ -1408,9 +1418,9 @@ class M_gl extends CI_Model
 				jt.type_name,
 				MONTH('{$date}') as month,
 				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa ON coa.id_akun = g.kode_soa WHERE coa.jurnal_tipe = 2 AND g.so =  1 AND (g.tanggal_transaksi) <= ('{$date}')) AS retainedBeban,
-				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa ON coa.id_akun = g.kode_soa WHERE coa.jurnal_tipe = 2 AND g.so =  1 AND (g.tanggal_transaksi) <= (DATE_SUB(('{$date}'), INTERVAL 1 MONTH))) AS retainedBebanLast,
+				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa ON coa.id_akun = g.kode_soa WHERE coa.jurnal_tipe = 2 AND g.so =  1 AND (g.tanggal_transaksi) <= LAST_DAY(DATE_SUB(('{$date}'), INTERVAL 1 MONTH))) AS retainedBebanLast,
 				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa ON coa.id_akun = g.kode_soa WHERE coa.jurnal_tipe = 3 AND g.so =  1 AND (g.tanggal_transaksi) <= ('{$date}')) AS retainedPendapatan,
-				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa ON coa.id_akun = g.kode_soa WHERE coa.jurnal_tipe = 3 AND g.so =  1 AND (g.tanggal_transaksi) <= (DATE_SUB(('{$date}'), INTERVAL 1 MONTH))) AS retainedPendapatanLast,
+				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa ON coa.id_akun = g.kode_soa WHERE coa.jurnal_tipe = 3 AND g.so =  1 AND (g.tanggal_transaksi) <= LAST_DAY(DATE_SUB(('{$date}'), INTERVAL 1 MONTH))) AS retainedPendapatanLast,
 				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa ON coa.id_akun = g.kode_soa WHERE coa.jurnal_tipe = 2 AND g.so =  1 AND YEAR(g.tanggal_transaksi) <= YEAR(DATE_SUB(('{$date}'), INTERVAL 1 YEAR))) AS retainedBebanLastYear,
 				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa ON coa.id_akun = g.kode_soa WHERE coa.jurnal_tipe = 3 AND g.so =  1 AND YEAR(g.tanggal_transaksi) <= YEAR(DATE_SUB(('{$date}'), INTERVAL 1 YEAR))) AS retainedPendapatanLastYear,
 				(SELECT SUM(g.debit) - SUM(g.credit) FROM gl g JOIN coa ON coa.id_akun = g.kode_soa WHERE g.kode_soa = 272 AND g.so =  1 AND YEAR(g.tanggal_transaksi) <= YEAR(DATE_SUB(('{$date}'), INTERVAL 1 YEAR))) AS surplusLastYear,
@@ -1966,18 +1976,18 @@ class M_gl extends CI_Model
 	public function saldoAwal($date)
 	{
 		$query =
-			"SELECT 
+			"SELECT
 				g.kode_soa,
 				co.coa_id,
 				co.coa_name,
 				sum(g.debit) as debit,
 				sum(g.credit) as credit,
-				(sum(g.debit) - sum(g.credit)) AS saldoAwal 
+				(sum(g.debit) - sum(g.credit)) AS saldoAwal
 			FROM gl g
 				JOIN coa co
 				ON g.kode_soa = co.id_akun
 			WHERE MONTH(g.tanggal_transaksi) < MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') OR YEAR(g.tanggal_transaksi) < YEAR('{$date}') 
-				AND g.so = 1 
+				AND g.so = 1
 			GROUP BY g.kode_soa";
 
 		$query = $this->db->query($query);
@@ -1996,11 +2006,11 @@ class M_gl extends CI_Model
 				year(g.tanggal_transaksi) as year,
 				sum(g.debit) as debit,
 				sum(g.credit) as credit,
-				(sum(g.debit) - sum(g.credit)) AS saldoAwal 
+				(sum(g.debit) - sum(g.credit)) AS saldoAwal
 			FROM gl g
 				JOIN coa co
 				ON g.kode_soa = co.id_akun
-			WHERE YEAR(g.tanggal_transaksi) <= YEAR('{$date}') 
+			WHERE YEAR(g.tanggal_transaksi) <= YEAR('{$date}')
 				AND g.so = 1
 				AND g.kode_soa = 272
 			GROUP BY month(g.tanggal_transaksi)";
@@ -2014,15 +2024,15 @@ class M_gl extends CI_Model
 	{
 
 		$query =
-			"SELECT SUM(gl.debit) - SUM(gl.credit) as surplus, 
+			"SELECT SUM(gl.debit) - SUM(gl.credit) as surplus,
 					MONTH(gl.tanggal_transaksi) as month,
 					YEAR(gl.tanggal_transaksi) as year,
 					MONTH('{$dateA}') as monthStart,
 					MONTH('{$dateB}') as monthEnd,
 					LAST_DAY(gl.tanggal_transaksi) as last_day
-				FROM gl 
-						JOIN coa 
-						on gl.kode_soa = coa.id_akun 
+				FROM gl
+						JOIN coa
+						on gl.kode_soa = coa.id_akun
 					WHERE YEAR(gl.tanggal_transaksi) = YEAR('{$dateA}')
 						AND (coa.jurnal_tipe = 3)
 						AND gl.so = 1
@@ -2038,14 +2048,14 @@ class M_gl extends CI_Model
 	{
 
 		$query =
-			"SELECT SUM(gl.debit) - SUM(gl.credit) as defisit, 
+			"SELECT SUM(gl.debit) - SUM(gl.credit) as defisit,
 					MONTH(gl.tanggal_transaksi) as month,
 					YEAR(gl.tanggal_transaksi) as year,
 					MONTH('{$dateA}') as monthStart,
 					MONTH('{$dateB}') as monthEnd
-				FROM gl 
-						JOIN coa 
-						on gl.kode_soa = coa.id_akun 
+				FROM gl
+						JOIN coa
+						on gl.kode_soa = coa.id_akun
 					WHERE YEAR(gl.tanggal_transaksi) = YEAR('{$dateA}')
 						AND (coa.jurnal_tipe = 2)
 						AND gl.so = 1

@@ -5,12 +5,12 @@
         <center>Add New YTD BUDGET</center></h3>
     </div>
     
-    <form id="form-tambah-ytd" method="POST">   
+    <form id="form-tambah-ytd" method="POST" autocomplete="off">   
         <div class="modal-body">
         <div class="form-group">
           <label class="control-label col-xs-4">YTD COA</label>
           <div class="col-xs-8">
-            <select name="ytd_coa" id="ytd_coa" class="form-control select2">
+            <select name="ytd_coa" id="ytd_coa" class="form-control select2" style="width: 100%;">
               <option selected disabled>Choose CoA</option>
                   <?php
                   foreach ($dataCoA as $coa) {
@@ -53,3 +53,9 @@
     </form>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(function() {
+    $(".select2").select2();
+  });
+</script>

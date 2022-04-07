@@ -6,7 +6,7 @@
       </h3>
     </div>
 
-    <form method="POST" id="form-update-owner">
+    <form method="POST" id="form-update-owner" autocomplete="off">
       <div class="modal-body">
         <input type="hidden" name="id" value="<?php echo $dataOwner->id; ?>">
         <div class="form-group">

@@ -109,15 +109,28 @@ class Voucher extends AUTH_Controller
 
 		if ($result > 0) {
 			$this->M_gl->insert_vou($post);
-			helper_log("add", "Menambah Data (Voucher)");
+			helper_log("add", "Menambah Data (Voucher)", $post['code']);
 			$out['status'] = '';
 			$out['msg'] = show_succ_msg('Voucher Data Successfully Added', '20px');
 		} else {
 			$out['status'] = '';
-			$out['msg'] = show_err_msg('ID Voucher Alredy Inserted', '20px');
+			$out['msg'] = show_err_msg('ID Voucher Already Inserted', '20px');
 		}
 
 		echo json_encode($out);
+	}
+
+	public function cekId()
+	{
+		if (isset($_POST['cek_submit_btn'])) {
+			$voucherId = $_POST['voucher_id'];
+
+			if ($this->M_voucher->check_bill($voucherId) > 0) {
+				echo "Voucher ID Already Inserted";
+			} else {
+				echo "Voucher ID Available";
+			}
+		}
 	}
 
 	public function AR()
@@ -134,12 +147,12 @@ class Voucher extends AUTH_Controller
 
 			$this->M_billing->pembayaran($post);
 			$this->M_service->pembayaran($post);
-			helper_log("add", "Pembayaran (Piutang)");
+			helper_log("add", "Pembayaran (Piutang)", $post['bukti_transaksi']);
 			$out['status'] = '';
 			$out['msg'] = show_succ_msg('Pembayaran Piutang Successfully', '20px');
 		} else {
 			$out['status'] = '';
-			$out['msg'] = show_err_msg('ID Voucher Alredy Inserted', '20px');
+			$out['msg'] = show_err_msg('ID Voucher Already Inserted', '20px');
 		}
 
 		echo json_encode($out);
@@ -159,12 +172,12 @@ class Voucher extends AUTH_Controller
 
 			$this->M_billing->pembayaran($post);
 			$this->M_service->pembayaran($post);
-			helper_log("add", "Pembayaran Titipan (Piutang)");
+			helper_log("add", "Pembayaran Titipan (Piutang)", $_POST['vouId']);
 			$out['status'] = '';
 			$out['msg'] = show_succ_msg('Pembayaran Piutang Successfully', '20px');
 		} else {
 			$out['status'] = '';
-			$out['msg'] = show_err_msg('ID Voucher Alredy Inserted', '20px');
+			$out['msg'] = show_err_msg('ID Voucher Already Inserted', '20px');
 		}
 
 		echo json_encode($out);
@@ -181,12 +194,12 @@ class Voucher extends AUTH_Controller
 		$this->M_billing->update_bayar($id);
 		$this->M_service->update_bayar($id);
 		$this->M_voucher->update_vendor($id);
-		// $this->M_voucher->update_titipan($id);
+		$this->M_voucher->delete_titipan($id);
 		$this->M_bayar->delete($id);
 		$result = $this->M_voucher->delete($id);
 
 		if ($result) {
-			helper_log("delete", "Manghapus Data (Voucher)", $id);
+			helper_log("delete", "Menghapus Data (Voucher)", $id);
 			echo show_succ_msg('Voucher Data Successfully Deleted', '20px');
 		} else {
 			echo show_err_msg('Voucher Data Failed To Delete', '20px');
@@ -260,7 +273,7 @@ class Voucher extends AUTH_Controller
 			$mpdf->WriteHTML($html);
 			$filename = 'report_' . time();
 
-			$mpdf->Output($filename . ".pdf", I);
+			$mpdf->Output($filename . ".pdf", \Mpdf\Output\Destination::INLINE);
 		} else {
 			redirect('/Voucher', 'refresh');
 		}
@@ -310,6 +323,7 @@ class Voucher extends AUTH_Controller
 
 		if ($this->form_validation->run() == TRUE) {
 			$voucher = $this->M_voucher->select_by_id($post['id']);
+			$coa = $this->M_coa->select_by_coa($voucher->coa_id);
 
 			if ($voucher->so == 3) {
 				$this->M_gl->vendor_update($post);
@@ -318,7 +332,7 @@ class Voucher extends AUTH_Controller
 				$result = $this->M_voucher->update($post);
 
 				if ($result > 0) {
-					helper_log("edit", "Mengubah Data (Voucher)");
+					helper_log("edit", "Mengubah Data (Voucher)", $post['id']);
 					$out['status'] = '';
 					$out['msg'] = show_succ_msg('Voucher Data Successfully Changed', '20px');
 				} else {
@@ -332,7 +346,7 @@ class Voucher extends AUTH_Controller
 				$result = $this->M_voucher->update($post);
 
 				if ($result > 0) {
-					helper_log("edit", "Mengubah Data (Voucher)");
+					helper_log("edit", "Mengubah Data (Voucher)", $post['id']);
 					$out['status'] = '';
 					$out['msg'] = show_succ_msg('Voucher Data Successfully Changed', '20px');
 				} else {

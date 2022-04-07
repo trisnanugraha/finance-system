@@ -55,7 +55,7 @@ class FontMetrics
      *
      * @var array
      */
-    protected $fontLookup = array();
+    protected $fontLookup = [];
 
     /**
      * @var Options
@@ -139,7 +139,7 @@ class FontMetrics
 
         $cacheData = require $this->getCacheFile();
 
-        $this->fontLookup = array();
+        $this->fontLookup = [];
         if (is_array($this->fontLookup)) {
             foreach ($cacheData as $key => $value) {
                 $this->fontLookup[stripslashes($key)] = $value;
@@ -173,7 +173,7 @@ class FontMetrics
         $fontname = mb_strtolower($style["family"]);
         $families = $this->getFontFamilies();
 
-        $entry = array();
+        $entry = [];
         if (isset($families[$fontname])) {
             $entry = $families[$fontname];
         }
@@ -203,6 +203,30 @@ class FontMetrics
         $entry[$styleString] = $cacheEntry;
 
         // Download the remote file
+        [$protocol, $baseHost, $basePath] = Helpers::explode_url($remoteFile);
+        if (!$this->options->isRemoteEnabled() && ($protocol != "" && $protocol !== "file://")) {
+            Helpers::record_warnings(E_USER_WARNING, "Remote font resource $remoteFile referenced, but remote file download is disabled.", __FILE__, __LINE__);
+            return false;
+        }
+        if ($protocol == "" || $protocol === "file://") {
+            $realfile = realpath($remoteFile);
+
+            $rootDir = realpath($this->options->getRootDir());
+            if (strpos($realfile, $rootDir) !== 0) {
+                $chroot = realpath($this->options->getChroot());
+                if (!$chroot || strpos($realfile, $chroot) !== 0) {
+                    Helpers::record_warnings(E_USER_WARNING, "Permission denied on $remoteFile. The file could not be found under the directory specified by Options::chroot.", __FILE__, __LINE__);
+                    return false;
+                }
+            }
+
+            if (!$realfile) {
+                Helpers::record_warnings(E_USER_WARNING, "File '$realfile' not found.", __FILE__, __LINE__);
+                return false;
+            }
+
+            $remoteFile = $realfile;
+        }
         list($remoteFileContent, $http_response_header) = @Helpers::getFileContent($remoteFile, $context);
         if (empty($remoteFileContent)) {
             return false;
@@ -272,7 +296,7 @@ class FontMetrics
     public function getTextWidth($text, $font, $size, $wordSpacing = 0.0, $charSpacing = 0.0)
     {
         // @todo Make sure this cache is efficient before enabling it
-        static $cache = array();
+        static $cache = [];
 
         if ($text === "") {
             return 0;
@@ -345,7 +369,7 @@ class FontMetrics
      */
     public function getFont($familyRaw, $subtypeRaw = "normal")
     {
-        static $cache = array();
+        static $cache = [];
 
         if (isset($cache[$familyRaw][$subtypeRaw])) {
             return $cache[$familyRaw][$subtypeRaw];
@@ -362,7 +386,7 @@ class FontMetrics
         $subtype = strtolower($subtypeRaw);
 
         if ($familyRaw) {
-            $family = str_replace(array("'", '"'), "", strtolower($familyRaw));
+            $family = str_replace(["'", '"'], "", strtolower($familyRaw));
 
             if (isset($this->fontLookup[$family][$subtype])) {
                 return $cache[$familyRaw][$subtypeRaw] = $this->fontLookup[$family][$subtype];
@@ -422,7 +446,7 @@ class FontMetrics
      */
     public function getFamily($family)
     {
-        $family = str_replace(array("'", '"'), "", mb_strtolower($family));
+        $family = str_replace(["'", '"'], "", mb_strtolower($family));
 
         if (isset($this->fontLookup[$family])) {
             return $this->fontLookup[$family];

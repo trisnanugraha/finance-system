@@ -252,7 +252,7 @@
                         </tr>
                         <tr>
                             <td class="border padding-left padding-right" colspan="2" style="padding-top: 5px; padding-bottom:5px;">
-                                Please pay to yout BCA Virtual Account with Beneficiary Name : <span id="virtual-account-name"><?= strtoupper($billing->nama_customer); ?></span>
+                                Please pay to your BCA Virtual Account with Beneficiary Name : <span id="virtual-account-name"><?= strtoupper($billing->nama_customer); ?></span>
                                 <ol type="1">
                                     <li>Through Automatic Teller Machine (ATM) of Bank Central Asia (BCA) by Choosing transfer menu to your BCA Virtual Account for <span id="virtual-account-number"><?= $billing->kode_virtual; ?></span></li>
                                     <li>Through transfer by cashform Bank Central Asia (BCA) to your BCA Virtual Account for <span id="virtual-account-number"><?= $billing->kode_virtual; ?></span></li>

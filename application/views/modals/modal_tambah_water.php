@@ -6,7 +6,7 @@
       </h3>
     </div>
 
-    <form id="form-tambah-water" method="POST">
+    <form id="form-tambah-water" method="POST" autocomplete="off">
       <div class="modal-body">
         <div class="form-group">
           <label class="control-label col-xs-3">Water Bill Code</label>
@@ -152,35 +152,99 @@
   function calculate() {
     var start = parseFloat($("#startMeter").val());
     var end = parseFloat($("#endMeter").val());
-    var cons = end - start;
-    var amount = $("#hiddenAmount").val();
-    var akhir = $("#hiddenAkhir").val();
-    var mulai = $("#hiddenMulai").val();
 
-    $("#cons").val(cons);
+    if (end != 0 && start != 0) {
+      var cons = end - start;
+      var amount = $("#hiddenAmount").val();
+      var akhir = $("#hiddenAkhir").val();
+      var mulai = $("#hiddenMulai").val();
 
-    var rates = <?= $dataRates == null ? 0 : $dataRates->water; ?>;
+      $("#cons").val(cons);
 
-    var consumption = rates * cons;
-    $("#consumption").val(consumption);
+      var rates = <?= $dataRates == null ? 0 : $dataRates->water; ?>;
 
-    var charge = <?= $dataRates == null ? 0 : $dataRates->charge; ?>;
+      var consumption = rates * cons;
+      $("#consumption").val(consumption);
 
-    var temp = consumption + charge;
-    var taxArea = (temp * 10) / 100;
-    $("#taxArea").val(taxArea);
+      var charge = <?= $dataRates == null ? 0 : $dataRates->charge; ?>;
 
-    var jml = temp + taxArea;
+      var temp = consumption + charge;
+      var taxArea = (temp * 10) / 100;
+      $("#taxArea").val(taxArea);
 
-    var tax = (jml * 10) / 100;
-    $("#tax").val(tax);
+      var jml = temp + taxArea;
 
-    var total = jml + tax;
-    if (akhir != mulai) {
-      $("#total").val(total)
+      var tax = (jml * 10) / 100;
+      $("#tax").val(tax);
+
+      var total = jml + tax;
+      if (akhir != mulai) {
+        $("#total").val(total)
+      } else {
+        $("#total").val(total)
+      }
+    } else if (end == 0 && start == 0) {
+      var cons = 0;
+      var amount = $("#hiddenAmount").val();
+      var akhir = $("#hiddenAkhir").val();
+      var mulai = $("#hiddenMulai").val();
+
+      $("#cons").val(cons);
+
+      var rates = <?= $dataRates == null ? 0 : $dataRates->water; ?>;
+
+      var consumption = 0;
+      $("#consumption").val(consumption);
+
+      var charge = <?= $dataRates == null ? 0 : $dataRates->charge; ?>;
+
+      var temp = 0;
+      var taxArea = 0;
+      $("#taxArea").val(taxArea);
+
+      var jml = 0;
+
+      var tax = 0;
+      $("#tax").val(tax);
+
+      var total = 0;
+      if (akhir != mulai) {
+        $("#total").val(total)
+      } else {
+        $("#total").val(total)
+      }
     } else {
-      $("#total").val(total)
+      var cons = end - start;
+      var amount = $("#hiddenAmount").val();
+      var akhir = $("#hiddenAkhir").val();
+      var mulai = $("#hiddenMulai").val();
+
+      $("#cons").val(cons);
+
+      var rates = <?= $dataRates == null ? 0 : $dataRates->water; ?>;
+
+      var consumption = rates * cons;
+      $("#consumption").val(consumption);
+
+      var charge = <?= $dataRates == null ? 0 : $dataRates->charge; ?>;
+
+      var temp = consumption + charge;
+      var taxArea = (temp * 10) / 100;
+      $("#taxArea").val(taxArea);
+
+      var jml = temp + taxArea;
+
+      var tax = (jml * 10) / 100;
+      $("#tax").val(tax);
+
+      var total = jml + tax;
+      if (akhir != mulai) {
+        $("#total").val(total)
+      } else {
+        $("#total").val(total)
+      }
     }
+
 
   }
 

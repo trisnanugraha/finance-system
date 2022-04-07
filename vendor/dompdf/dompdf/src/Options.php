@@ -203,7 +203,7 @@ class Options
      *
      * @var bool
      */
-    private $isFontSubsettingEnabled = false;
+    private $isFontSubsettingEnabled = true;
 
     /**
      * @var bool
@@ -311,7 +311,7 @@ class Options
     public function set($attributes, $value = null)
     {
         if (!is_array($attributes)) {
-            $attributes = array($attributes => $value);
+            $attributes = [$attributes => $value];
         }
         foreach ($attributes as $key => $value) {
             if ($key === 'tempDir' || $key === 'temp_dir') {

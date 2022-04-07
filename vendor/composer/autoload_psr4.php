@@ -8,7 +8,7 @@ $baseDir = dirname($vendorDir);
 return array(
     'setasign\\Fpdi\\' => array($vendorDir . '/setasign/fpdi/src'),
     'Svg\\' => array($vendorDir . '/phenx/php-svg-lib/src/Svg'),
-    'Spipu\\Html2Pdf\\' => array($vendorDir . '/spipu/html2pdf/src'),
+    'Sabberworm\\CSS\\' => array($vendorDir . '/sabberworm/php-css-parser/src'),
     'Psr\\Log\\' => array($vendorDir . '/psr/log/Psr/Log'),
     'Mpdf\\' => array($vendorDir . '/mpdf/mpdf/src'),
     'FontLib\\' => array($vendorDir . '/phenx/php-font-lib/src/FontLib'),

@@ -6,13 +6,14 @@
       </h3>
     </div>
 
-    <form id="form-pengurangan-bank" method="POST">
+    <form id="form-pengurangan-bank" method="POST" autocomplete="off">
       <div class="modal-body">
 
         <div class="form-group">
           <label class="control-label col-xs-4">Voucher ID</label>
           <div class="col-xs-8">
-            <input name="code" id="code" class="form-control" type="text" placeholder="Transaction Code">
+            <input name="code" id="code" class="form-control cekId" type="text" placeholder="Transaction Code">
+            <small class="error_id" style="color: red"></small>
           </div>
         </div>
         <br>
@@ -44,7 +45,7 @@
         <div class="form-group">
           <label class="control-label col-xs-4">Transaction Type</label>
           <div class="col-xs-8">
-            <select name="giro" id="giro" class="form-control select2">
+            <select name="giro" id="giro" class="form-control">
               <option selected disabled>Choose Transaction Type</option>
               <?php
               foreach ($dataGiroType as $giroType) {
@@ -101,7 +102,7 @@
           <div class="col-md-12">
             <div class="col-md-6">
               Transaction Akun :
-              <select name="coa" id="coa" class="form-control select2">
+              <select name="coa" id="coa" class="form-control select2" style="width: 100%;">
                 <option selected disabled>Choose CoA</option>
                 <?php
                 foreach ($dataCoA as $coa) {
@@ -194,6 +195,28 @@
     $tableBody.on('click', '.deleteRowButton', function(event) {
       deleteRow($(event.target).data('row'));
       updateTotals();
+    });
+
+    $('.cekId').keyup(function(e) {
+
+      var IdVoucher = $('.cekId').val();
+
+      $.ajax({
+        type: "POST",
+        url: '<?php echo base_url('Voucher/cekId'); ?>',
+        data: {
+          "cek_submit_btn": 1,
+          "voucher_id": IdVoucher,
+        },
+        success: function(response) {
+          $('.error_id').text(response);
+        }
+
+      });
+    });
+
+    $(function() {
+      $(".select2").select2();
     });
 
   });

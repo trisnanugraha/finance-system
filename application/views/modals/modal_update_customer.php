@@ -4,7 +4,7 @@
       <h3 class="modal-title"><center>Update Customer Data</center></h3>
     </div>
     
-    <form method="POST" id="form-update-customer">
+    <form method="POST" id="form-update-customer" autocomplete="off">
       <div class="modal-body">
       <input type="hidden" name="kodeCus" value="<?php echo $dataCustomer->kodeCus; ?>">
       <div class="form-group">
@@ -55,7 +55,7 @@
         <div class="form-group">
           <label class="control-label col-xs-3" >Description</label>
             <div class="col-xs-8">
-                <select name="jenis" class="form-control select2">
+                <select name="jenis" class="form-control">
                 <?php
                 foreach ($dataDescription as $desc) {
                 ?>
@@ -72,7 +72,7 @@
         <div class="form-group">
           <label class="control-label col-xs-3" >Owner</label>
             <div class="col-xs-8">
-                <select name="owner" class="form-control select2">
+                <select name="owner" class="form-control select2" style="width: 100%;">
                 <?php
                 foreach ($dataOwner as $owner) {
                 ?>
@@ -93,3 +93,9 @@
     </form>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(function() {
+    $(".select2").select2();
+  });
+</script>

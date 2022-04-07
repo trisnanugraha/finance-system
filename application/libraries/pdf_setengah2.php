@@ -2,6 +2,7 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 require_once("./vendor/dompdf/dompdf/src/Autoloader.php");
 use Dompdf\Dompdf;
+use Dompdf\FrameDecorator\Inline;
 
 class Pdf_setengah2
 {
@@ -25,6 +26,6 @@ class Pdf_setengah2
                             </table>'
         );
         $mpdf->WriteHTML($html);
-        $mpdf->Output($filename . ".pdf", I);
+        $mpdf->Output($filename . ".pdf", \Mpdf\Output\Destination::INLINE);
     }
 }

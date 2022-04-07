@@ -10,7 +10,7 @@
       <div class="form-group">
         <label class="control-label col-xs-3">Report</label>
         <div class="col-xs-8">
-          <select name="report" id="report" class="form-control select2" style="width: 100%">
+          <select name="report" id="report" class="form-control" style="width: 100%">
             <option selected disabled>Choose Report</option>
             <option value="0">Neraca (Jan-Des)</option>
             <!-- <option value="12">Balance Sheet</option> -->

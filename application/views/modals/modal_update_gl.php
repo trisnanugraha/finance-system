@@ -1,5 +1,3 @@
-<div class="modal-dialog">
-  <div class="modal-content">
     <div class="modal-header bg-primary ">
       <h3 class="modal-title">
         <center>Update General Ledger</center></h3>
@@ -8,6 +6,7 @@
     <form id="form-update-gl" method="POST">
       <div class="modal-body">
         <input type="hidden" name="id" value="<?php echo $dataGL->id_gl; ?>">
+        <input type="hidden" name="id-bukti-tr" value="<?php echo $dataGL->bukti_transaksi; ?>">
         <div class="form-group">
           <label class="control-label col-xs-4">Transaction Code</label>
           <div class="col-xs-8">
@@ -96,8 +95,6 @@
         <button type="submit" class="btn btn-primary">Update</button>
       </div>
     </form>
-  </div>
-</div>
 
 <script type="text/javascript">
   $(function() {

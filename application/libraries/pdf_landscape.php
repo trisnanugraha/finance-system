@@ -17,6 +17,6 @@ class Pdf_landscape
             </table>'
         );
         $mpdf->WriteHTML($html);
-        $mpdf->Output($filename . ".pdf", I);
+        $mpdf->Output($filename . ".pdf", \Mpdf\Output\Destination::INLINE);
     }
 }

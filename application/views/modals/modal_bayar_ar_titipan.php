@@ -12,11 +12,12 @@
   <div class="box-body">
     <div class="row">
       <div class="col-xs-10 col-xs-offset-1">
-        <form id="form-bayar-ar-titipan" method="POST">
+        <form id="form-bayar-ar-titipan" method="POST" autocomplete="off">
           <div class="form-group">
             <label class="control-label col-xs-3">Voucher ID</label>
             <div class="col-xs-3">
-              <input name="vouId" id="vouId" class="form-control" type="text" placeholder="Transaction Code">
+              <input name="vouId" id="vouId" class="form-control cekId" type="text" placeholder="Transaction Code">
+              <small class="error_id" style="color: red"></small>
             </div>
 
             <label class="control-label col-xs-2">Voucher Date</label>
@@ -86,7 +87,7 @@
           <div class="form-group">
             <label class="control-label col-xs-3">Transaction Type</label>
             <div class="col-xs-3">
-              <select name="giroVoucher" id="giroVoucher" class="form-control select2">
+              <select name="giroVoucher" id="giroVoucher" class="form-control">
                 <option selected disabled>Choose Transaction Type</option>
                 <?php
                 foreach ($dataGiroType as $giroType) {
@@ -102,7 +103,7 @@
 
             <label class="control-label col-xs-2">Tipe Pembayaran</label>
             <div class="col-xs-3">
-              <select name="pemType" id="pemType" class="form-control select2" style="width: 100%">
+              <select name="pemType" id="pemType" class="form-control" style="width: 100%">
                 <option selected disabled>Choose Tipe Pembayaran</option>
                 <?php
                 foreach ($dataPemType as $pem) {
@@ -395,9 +396,9 @@
       var total = parseFloat($("#totalDT").val());
       var totalDebit = getColumnTotal('.debit');
 
-      if ((debit + totalDebit) > total) {
-        window.alert('Insufficient Funds');
-      } else {
+      // if ((debit + totalDebit) > total) {
+      //   window.alert('Insufficient Funds');
+      // } else {
         $tableBody.append('<tr valign="top" id ="' + newid + '">\n\
             <td width="100px" class="vouId' + newid + '">' + $("#vouId").val() + '</td>\n\
             <td width="100px" class="arId' + newid + '">' + $("#idAR").val() + '</td>\n\
@@ -411,7 +412,7 @@
         $('#debit').val('');
         $('#kredit').val('');
         updateTotals();
-      }
+      // }
 
     });
 
@@ -491,82 +492,26 @@
       $('#modal-titipan').modal('hide');
     });
 
-    // $('#bayar').click(function() {
-    //   var lastRowId = $('#tableBody tr:last').attr("id");
-    //   var arId = new Array();
-    //   var vouId = new Array();
-    //   var arOwner = new Array();
-    //   var keterangan = new Array();
-    //   var akun = new Array();
-    //   var debit = new Array();
-    //   var kredit = new Array();
-    //   var date = $('#dateVoucher').val();
-    //   var pemType = $('#pemType').val();
-    //   var sendGiro = $('#giroVoucher').val();
-    //   var relasi = $('#receivedVou').val();
+    $('.cekId').keyup(function(e) {
 
-    //   for (var i = 1; i <= lastRowId; i++) {
-    //     arId.push($("#" + i + " .arId" + i));
-    //     vouId.push($("#" + i + " .vouId" + i).html());
-    //     arOwner.push($('#' + i + " .unit" + i).html());
-    //     keterangan.push($('#' + i + " .keterangan" + i).html());
-    //     akun.push($('#' + i + " .akun" + i).html());
-    //     debit.push($('#' + i + " .debit").html());
-    //     kredit.push($('#' + i + " .kredit").html());
-    //   }
+      var IdVoucher = $('.cekId').val();
 
-    //   var sendAR = JSON.stringify(arId);
-    //   var sendVou = JSON.stringify(vouId);
-    //   var sendKodeOwner = JSON.stringify(arOwner);
-    //   var sendKet = JSON.stringify(keterangan);
-    //   var sendAkun = JSON.stringify(akun);
-    //   var sendDebit = JSON.stringify(debit);
-    //   var sendKredit = JSON.stringify(kredit);
+      $.ajax({
+        type: "POST",
+        url: '<?php echo base_url('Voucher/cekId'); ?>',
+        data: {
+          "cek_submit_btn": 1,
+          "voucher_id": IdVoucher,
+        },
+        success: function(response) {
+          $('.error_id').text(response);
+        }
 
-    //   console.log(lastRowId);
-    //   console.log(sendAR);
-    //   console.log(sendVou);
-    //   console.log(sendKodeOwner);
-    //   console.log(sendKet);
-    //   console.log(sendAkun);
-    //   console.log(sendDebit);
-    //   console.log(sendKredit);
-    //   console.log(date);
-    //   console.log(pemType);
-    //   console.log(sendGiro);
-    //   console.log(relasi);
+      });
+    });
 
-    //   $.ajax({
-    //       type: 'POST',
-    //       // url  : '<?php echo base_url('Voucher/AR'); ?>',
-    //       data: {
-    //         id: sendAR,
-    //         bukti_transaksi: sendVou,
-    //         kodeOwner: sendKodeOwner,
-    //         keterangan: sendKet,
-    //         akun: sendAkun,
-    //         debit: sendDebit,
-    //         credit: sendKredit,
-    //         date: date,
-    //         pemType: pemType,
-    //         giro: sendGiro,
-    //         relasi: relasi
-    //       }
-    //     })
-    //     .done(function(data) {
-    //       var out = jQuery.parseJSON(data);
-
-    //       if (out.status == 'form') {
-    //         $('.form-msg').html(out.msg);
-    //         effect_msg_form();
-    //         setInterval('location.reload()', 2000);
-    //       } else {
-    //         document.getElementById("form-bayar-ar").reset();
-    //         $('.msg').html(out.msg);
-    //         effect_msg();
-    //         setInterval('location.reload()', 2000);
-    //       }
-    //     });
-    // });
+    $(function() {
+      $(".select2").select2();
+    });
   });
 </script>

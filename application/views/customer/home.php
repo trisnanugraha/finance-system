@@ -16,7 +16,7 @@
   </div>
   <!-- /.box-header -->
   <div class="box-body">
-    <table id="list-data" class="table table-bordered table-striped">
+    <table id="table-customer" class="table table-bordered table-striped" style="width: 100%;">
       <thead>
         <tr>
           <th style="text-align: center;">No.</th>
@@ -28,9 +28,6 @@
           <th style="text-align: center;">Action</th>
         </tr>
       </thead>
-      <tbody id="data-customer">
-        
-      </tbody>
     </table>
   </div>
 </div>

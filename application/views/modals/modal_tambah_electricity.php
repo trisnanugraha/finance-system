@@ -6,7 +6,7 @@
       </h3>
     </div>
 
-    <form id="form-tambah-electricity" method="POST">
+    <form id="form-tambah-electricity" method="POST" autocomplete="off">
       <div class="modal-body">
         <div class="form-group">
           <label class="control-label col-xs-3">Electricity Bill Code</label>

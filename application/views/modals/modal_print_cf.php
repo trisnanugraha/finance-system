@@ -24,7 +24,7 @@
     </div>
     <div class="form-group">
       <div class="col-md-12">
-        <button type="submit" id="print" class="form-control btn btn-primary"> <i class="glyphicon glyphicon-ok"></i> Print General Ledger</button>
+        <button type="submit" id="print" class="form-control btn btn-primary"> <i class="glyphicon glyphicon-print"></i> Print Cash Flow</button>
       </div>
     </div>
   </form>

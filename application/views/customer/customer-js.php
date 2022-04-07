@@ -2,13 +2,53 @@
     window.onload = function() {
         tampilCustomer();
     }
-    //Customer Data
+
+    var table = $('#table-customer').DataTable();
+
     function tampilCustomer() {
-        $.get('<?php echo base_url('Customer/tampil'); ?>', function(data) {
-            MyTable.fnDestroy();
-            $('#data-customer').html(data);
-            refresh();
-        });
+        table.destroy();
+        $(document).ready(function() {
+            
+            var i = 1;
+			table = $('#table-customer').DataTable({
+				"processing": true,
+                "serverSide": true,
+                "ordering": true,
+                "order": [[ 0, 'asc' ]],
+                "ajax":
+                    {
+                        "url": "<?php echo base_url('Customer/getAjax') ?>",
+                        "type": "POST"
+                    },
+                "deferRender": true,
+                "aLengthMenu": [[10, 25, 50, 100],[10, 25, 50, 100]],
+                "columns": [
+                    {"data" : "no"},
+                    {"data" : "kodeCus"},
+                    {"data" : "kodeVir"},
+                    {"data" : "nama"},
+                    {"data" : "unit"},
+                    {"data" : "owner"},
+                    {"render" : function(data, type, row){
+                        var html = "<button class='btn btn-warning btn-sm update-dataCustomer' data-id="+ row.kodeCus +"><i class='glyphicon glyphicon-edit'></i></button> "
+                        html += "<button class='btn btn-info btn-sm detail-dataCustomer' data-id="+ row.kodeCus +"><i class='glyphicon glyphicon-info-sign'></i></button> "
+                        html += "<button class='btn btn-danger btn-sm konfirmasiHapus-customer' data-toggle='modal' data-target='#konfirmasiHapus' data-id="+ row.kodeCus +"><i class='glyphicon glyphicon-trash'></i></button>"
+
+                        return html
+                    }}
+                ],
+                "columnDefs": [
+                    { 
+                        "targets": [0, 1, 4, 5],
+                        "className": 'text-center'
+                    },
+                    { 
+                        "targets": [6], 
+                        "orderable": false
+                    }
+                    ],
+			});
+		});
     }
 
     var id_cus;

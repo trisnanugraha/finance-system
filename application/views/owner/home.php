@@ -16,21 +16,18 @@
   </div>
   <!-- /.box-header -->
   <div class="box-body">
-    <table id="list-data" class="table table-bordered table-striped">
+    <table id="table-owner" class="table table-bordered table-striped" style="width: 100%;">
       <thead>
         <tr>
-          <th style="text-align: center;">No.</th>
+          <th style="text-align: center; min-width:80px;">No.</th>
           <th style="text-align: center; width: 100px;">Owner ID</th>
           <th style="text-align: center; width: 120px;">Virtual Code</th>
-          <th style="text-align: center;">Name</th>
+          <th style="text-align: center; min-width: 200px;">Name</th>
           <th style="text-align: center; width: 100px;">Unit</th>
           <!-- <th>Customer ID</th> -->
-          <th style="text-align: center;">Action</th>
+          <th style="text-align: center; width: 150px;">Action</th>
         </tr>
       </thead>
-      <tbody id="data-owner">
-        
-      </tbody>
     </table>
   </div>
 </div>

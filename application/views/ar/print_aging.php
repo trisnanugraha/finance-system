@@ -140,40 +140,51 @@
                 $totalO = 0;
                 $totalT = 0;
                 $totalL = 0;
-                $tambah = 0;
                 foreach ($dataARCus as $arCus) {
+                    $tambah = 0;
                     foreach ($dataBayar as $bayar) {
                         if ($bayar->tanggal_bayar < $bayar->datekeluar) {
                             if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += ($bayar->total - $bayar->credit);
                                 } else {
-                                    $tambah += $bayar->credit;
                                 }
                             } else if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += ($bayar->total - $bayar->credit);
                                 } else {
-                                    $tambah += $bayar->credit;
                                 }
                             }
                         } else if ($bayar->tanggal_bayar >= $bayar->datekeluar) {
-                            if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar >= 0 && $bayar->id_ar == $arCus->id_ar) {
+                            if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
-                                } else {
+                                } else if ($bayar->total >= $bayar->credit) {
                                     $tambah += $bayar->credit;
+                                } else {
                                 }
-                            } else if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar >= 0 && $bayar->id_ar == $arCus->id_ar) {
+                            } else if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
-                                } else {
+                                } else if ($bayar->total >= $bayar->credit) {
                                     $tambah += $bayar->credit;
+                                } else {
+                                }
+                            } else if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
+                                if ($bayar->total < $bayar->credit) {
+                                    $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += $bayar->credit;
+                                } else {
                                 }
                             }
                         }
                     }
-                    if ($arCus->id_customer == $ar->id_customer) {
+                    if ($arCus->id_owner == $ar->id_owner) {
                         if ($arCus->selisih == 0 && $arCus->status == 0) {
                             $totalC += $arCus->sisa;
                         } else if ($arCus->selisih == 0 && $arCus->status == 1) {
@@ -224,35 +235,46 @@
                 $totalO = 0;
                 $totalT = 0;
                 $totalL = 0;
-                $tambah = 0;
                 foreach ($dataARCus as $arCus) {
+                    $tambah = 0;
                     foreach ($dataBayar as $bayar) {
                         if ($bayar->tanggal_bayar < $bayar->datekeluar) {
                             if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += ($bayar->total - $bayar->credit);
                                 } else {
-                                    $tambah += $bayar->credit;
                                 }
                             } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += ($bayar->total - $bayar->credit);
                                 } else {
-                                    $tambah += $bayar->credit;
                                 }
                             }
                         } else if ($bayar->tanggal_bayar >= $bayar->datekeluar) {
-                            if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar >= 0 && $bayar->id_ar == $arCus->id_ar) {
+                            if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
-                                } else {
+                                } else if ($bayar->total >= $bayar->credit) {
                                     $tambah += $bayar->credit;
+                                } else {
                                 }
-                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar >= 0 && $bayar->id_ar == $arCus->id_ar) {
+                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
-                                } else {
+                                } else if ($bayar->total >= $bayar->credit) {
                                     $tambah += $bayar->credit;
+                                } else {
+                                }
+                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
+                                if ($bayar->total < $bayar->credit) {
+                                    $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += $bayar->credit;
+                                } else {
                                 }
                             }
                         }

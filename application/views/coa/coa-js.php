@@ -3,12 +3,46 @@
         tampilCoa();
     }
     
+    var table = $('#table-coa').DataTable();
+    
     function tampilCoa() {
-        $.get('<?php echo base_url('Coa/tampil'); ?>', function(data) {
-            MyTable.fnDestroy();
-            $('#data-coa').html(data);
-            refresh();
-        });
+        table.destroy();
+        $(document).ready(function() {
+            
+			table = $('#table-coa').DataTable({
+				"processing": true,
+                "serverSide": true,
+                "ordering": true,
+                "order": [[ 0, 'asc' ]],
+                "ajax":
+                    {
+                        "url": "<?php echo base_url('Coa/getAjax') ?>",
+                        "type": "POST"
+                    },
+                "deferRender": true,
+                "aLengthMenu": [[10, 25, 50, 100],[10, 25, 50, 100]],
+                "columns": [
+                    {"data" : "coaID"},
+                    {"data" : "coaName"},
+                    {"data" : "coaType"},
+                    {"data" : "accType"},
+                    {"render" : function(data, type, row){
+                        var html = "<button class='btn btn-danger btn-sm konfirmasiHapus-coa' data-id="+row.coa_id+" data-toggle='modal' data-target='#konfirmasiHapus'><i class='glyphicon glyphicon-trash'></i></button>"
+                        return html
+                    }}
+                ],
+                "columnDefs": [
+                    { 
+                        "targets": [0, 2, 3, 4],
+                        "className": 'text-center'
+                    },
+                    { 
+                        "targets": [4], 
+                        "orderable": false
+                    }
+                    ],
+			});
+		});
     }
 
     var id_akun;

@@ -4,7 +4,7 @@
       <h3 class="modal-title"><center>Add New Customer Data</center></h3>
     </div>
     
-    <form id="form-tambah-customer" method="POST">
+    <form id="form-tambah-customer" method="POST" autocomplete="off">
       <div class="modal-body">
         <div class="form-group">
           <label class="control-label col-xs-3" >Customer ID</label>
@@ -55,7 +55,7 @@
         <div class="form-group">
           <label class="control-label col-xs-3" >Description</label>
             <div class="col-xs-8">
-                <select name="jenis" class="form-control select2">
+                <select name="jenis" class="form-control">
                 <option selected disabled>Choose Description</option>
                     <?php
                     foreach ($dataDescription as $desc) {
@@ -99,3 +99,9 @@
     </form>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(function() {
+    $(".select2").select2();
+  });
+</script>

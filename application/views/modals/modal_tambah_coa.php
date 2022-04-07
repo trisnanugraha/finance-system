@@ -4,12 +4,12 @@
       <h3 class="modal-title"><center>Add New Charts Of Accounts</center></h3>
     </div>
     
-    <form id="form-tambah-coa" method="POST">
+    <form id="form-tambah-coa" method="POST" autocomplete="off">
       <div class="modal-body">
       <div class="form-group">
           <label class="control-label col-xs-3" >CoA Parent</label>
             <div class="col-xs-8">
-                <select name="parent" class="form-control select2">
+                <select name="parent" class="form-control select2" style="width: 100%;">
                 <option selected disabled>Choose CoA Parent</option>
                     <?php
                     foreach ($dataCoa as $coa) {
@@ -47,7 +47,11 @@
         <div class="form-group">
           <label class="control-label col-xs-3" >Coa Account Type</label>
             <div class="col-xs-8">
-              <input name="acc_type" class="form-control" type="text" placeholder="Bermutasi/Tidak Bermutasi">
+              <select name="acc_type" class="form-control">
+                  <option selected disabled>Choose CoA Account Type</option>
+                  <option value="Bermutasi">Bermutasi</option>  
+                  <option value="Tidak Bermutasi">Tidak Bermutasi</option>
+                </select>
             </div>
         </div>
         <br>
@@ -56,7 +60,7 @@
         <div class="form-group">
           <label class="control-label col-xs-3" >CoA Jurnal Type</label>
             <div class="col-xs-8">
-                <select name="jurnal" class="form-control select2">
+                <select name="jurnal" class="form-control">
                 <option selected disabled>Choose CoA Jurnal Type</option>
                     <?php
                     foreach ($dataType as $type) {
@@ -81,3 +85,9 @@
     </form>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(function() {
+    $(".select2").select2();
+  });
+</script>

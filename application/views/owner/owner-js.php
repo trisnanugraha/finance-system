@@ -2,13 +2,51 @@
     window.onload = function() {
         tampilOwner();
     }
-    //Owner Data
+    
+    var table = $('#table-owner').DataTable();
+    
     function tampilOwner() {
-        $.get('<?php echo base_url('Owner/tampil'); ?>', function(data) {
-            MyTable.fnDestroy();
-            $('#data-owner').html(data);
-            refresh();
-        });
+        table.destroy();
+        $(document).ready(function() {
+            
+			table = $('#table-owner').DataTable({
+				"processing": true,
+                "serverSide": true,
+                "ordering": true,
+                "order": [[ 0, 'asc' ]],
+                "ajax":
+                    {
+                        "url": "<?php echo base_url('Owner/getAjax') ?>",
+                        "type": "POST"
+                    },
+                "deferRender": true,
+                "aLengthMenu": [[10, 25, 50, 100],[10, 25, 50, 100]],
+                "columns": [
+                    {"data" : "no"},
+                    {"data" : "id"},
+                    {"data" : "kodeVir"},
+                    {"data" : "nama"},
+                    {"data" : "unit"},
+                    {"render" : function(data, type, row){
+                        var html = "<button class='btn btn-warning btn-sm update-dataOwner' data-id="+ row.id +"><i class='glyphicon glyphicon-edit'></i></button> "
+                        html += "<button class='btn btn-info btn-sm detail-dataOwner' data-id="+ row.id +"><i class='glyphicon glyphicon-info-sign'></i></button> "
+                        html += "<button class='btn btn-danger btn-sm konfirmasiHapus-owner' data-toggle='modal' data-target='#konfirmasiHapus' data-id="+ row.id +"><i class='glyphicon glyphicon-trash'></i></button>"
+
+                        return html
+                    }}
+                ],
+                "columnDefs": [
+                    { 
+                        "targets": [0, 1, 2, 4, 5],
+                        "className": 'text-center'
+                    },
+                    { 
+                        "targets": [5], 
+                        "orderable": false
+                    }
+                    ],
+			});
+		});
     }
 
     var id_own;

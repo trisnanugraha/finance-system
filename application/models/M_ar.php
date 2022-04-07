@@ -294,7 +294,8 @@ class M_ar extends CI_Model
 					JOIN coa co
 					ON co.id_akun = pa.kode_soa
 				-- WHERE AND p.start_periode <= CURDATE() AND MONTH(p.start_periode) = MONTH(CURDATE())
-				ORDER BY p.start_periode DESC, pa.bukti_transaksi";
+				ORDER BY p.start_periode DESC, pa.bukti_transaksi
+				LIMIT 150";
 
 			$query = $this->db->query($sql);
 			return $query->result();
@@ -496,33 +497,33 @@ class M_ar extends CI_Model
 	{
 
 		$sql =
-			"SELECT 
-				ar.id_ar, 
+			"SELECT
+				ar.id_ar,
 				ar.id_customer,
                 customer.nama_customer,
 				ar.id_periode,
 				ar.id_owner,
 				owner.nama_owner,
                 ar.kode_soa,
-				periode.start_periode AS arTgl, 
-				ar.keterangan AS arKet, 
-				ar.bukti_transaksi AS arBT, 
-				ar.total AS arTotal, 
-				(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS id_bayar,
-				(SELECT bayar.id_voucher FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS id_voucher,
-				(SELECT bayar.tanggal_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemTgl,
-				(SELECT bayar.keterangan FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemKet, 
-				(SELECT voucher.bukti_transaksi FROM voucher JOIN bayar ON bayar.id_voucher = voucher.id_voucher WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(voucher.tanggal_voucher) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemBT,
-				(SELECT SUM(bayar.credit) FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemTotal
-			FROM ar 
-				JOIN periode 
+				periode.start_periode AS arTgl,
+				ar.keterangan AS arKet,
+				ar.bukti_transaksi AS arBT,
+				ar.total AS arTotal,
+				(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS id_bayar,
+				(SELECT bayar.id_voucher FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS id_voucher,
+				(SELECT bayar.tanggal_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemTgl,
+				(SELECT bayar.keterangan FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemKet,
+				(SELECT voucher.bukti_transaksi FROM voucher JOIN bayar ON bayar.id_voucher = voucher.id_voucher WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((voucher.tanggal_voucher) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemBT,
+				(SELECT SUM(bayar.credit) FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemTotal
+			FROM ar
+				JOIN periode
 				ON periode.id_periode = ar.id_periode
 				JOIN owner
 				ON owner.kode_owner = ar.id_owner
 				JOIN customer
                 ON customer.kode_customer = ar.id_customer
-			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}') 
-				AND (MONTH(periode.start_periode) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}') OR MONTH(periode.due_date) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}'))
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND (((DATE_ADD(DATE_ADD(LAST_DAY(periode.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) OR ((DATE_ADD(DATE_ADD(LAST_DAY(periode.due_date), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)))
 				AND (ar.kode_soa = '{$CoA}')
 			GROUP BY ar.id_customer, ar.kode_soa
 			ORDER BY ar.id_customer ASC";
@@ -536,8 +537,8 @@ class M_ar extends CI_Model
 	{
 
 		$sql =
-			"SELECT 
-				ar.id_ar, 
+			"SELECT
+				ar.id_ar,
 				ar.id_customer,
                 customer.nama_customer,
 				ar.id_periode,
@@ -545,27 +546,63 @@ class M_ar extends CI_Model
 				owner.nama_owner,
                 ar.kode_soa,
 				DATE_ADD(DATE_ADD(LAST_DAY(periode.due_date), INTERVAL 1 DAY), INTERVAL - 1 MONTH) AS arTgl,
-				periode.start_periode, 
-				ar.keterangan AS arKet, 
-				ar.bukti_transaksi AS arBT, 
-				ar.total AS arTotal, 
-				(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS id_bayar,
-				(SELECT bayar.id_voucher FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS id_voucher,
-				(SELECT bayar.tanggal_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemTgl,
-				(SELECT bayar.keterangan FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemKet, 
-				(SELECT voucher.bukti_transaksi FROM voucher JOIN bayar ON bayar.id_voucher = voucher.id_voucher WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(voucher.tanggal_voucher) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemBT,
-				(SELECT SUM(bayar.credit) FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemTotal
-			FROM ar 
-				JOIN periode 
+				periode.start_periode,
+				ar.keterangan AS arKet,
+				ar.bukti_transaksi AS arBT,
+				ar.total AS arTotal,
+				(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS id_bayar,
+				(SELECT bayar.id_voucher FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS id_voucher,
+				(SELECT bayar.tanggal_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemTgl,
+				(SELECT bayar.keterangan FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemKet,
+				(SELECT voucher.bukti_transaksi FROM voucher JOIN bayar ON bayar.id_voucher = voucher.id_voucher WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((voucher.tanggal_voucher) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemBT,
+				(SELECT SUM(bayar.credit) FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemTotal
+			FROM ar
+				JOIN periode
 				ON periode.id_periode = ar.id_periode
 				JOIN owner
 				ON owner.kode_owner = ar.id_owner
 				JOIN customer
                 ON customer.kode_customer = ar.id_customer
-			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}') 
-				AND MONTH(periode.due_date) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND ((DATE_ADD(DATE_ADD(LAST_DAY(periode.due_date), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE))
 				AND ar.kode_soa = 21
 			ORDER BY ar.id_customer ASC, periode.start_periode";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_bayar_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB)
+	{
+
+		$sql =
+			"SELECT
+				bayar.id_bayar,
+				bayar.id_ar,
+				bayar.id_voucher,
+				bayar.tanggal_bayar AS pemTgl,
+				bayar.keterangan  AS pemKet,
+				bayar.credit AS pemTotal,
+				bayar.kode_soa,
+				ar.id_ar,
+				ar.kode_soa,
+				ar.id_periode,
+				ar.id_customer,
+				periode.start_periode
+			FROM ar
+				JOIN bayar
+				ON ar.id_ar = bayar.id_ar
+				JOIN periode
+				ON periode.id_periode = ar.id_periode
+				JOIN owner
+				ON owner.kode_owner = ar.id_owner
+				JOIN customer
+				ON customer.kode_customer = ar.id_customer
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE))
+				AND bayar.kode_soa = 21
+				ORDER BY ar.id_customer ASC, bayar.tanggal_bayar";
 
 		$data = $this->db->query($sql);
 
@@ -576,7 +613,7 @@ class M_ar extends CI_Model
 	{
 
 		$sql =
-			"SELECT 
+			"SELECT
 				ar.id_ar,
 				ar.id_customer,
 				customer.nama_customer,
@@ -586,14 +623,14 @@ class M_ar extends CI_Model
 				ar.bukti_transaksi,
 				ar.total,
 				SUM(ar.sisa) as saldo
-			FROM ar 
-				JOIN periode 
+			FROM ar
+				JOIN periode
 				ON periode.id_periode = ar.id_periode
 				JOIN owner
 				ON owner.kode_owner = ar.id_owner
 				JOIN customer
                 ON customer.kode_customer = ar.id_customer
-			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}') 
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
 				AND (periode.due_date < '{$dateA}')
 				AND ar.kode_soa = 21
 			GROUP BY ar.id_customer
@@ -608,8 +645,8 @@ class M_ar extends CI_Model
 	{
 
 		$sql =
-			"SELECT 
-				ar.id_ar, 
+			"SELECT
+				ar.id_ar,
 				ar.id_customer,
                 customer.nama_customer,
 				ar.id_periode,
@@ -617,27 +654,63 @@ class M_ar extends CI_Model
 				owner.nama_owner,
                 ar.kode_soa,
 				DATE_ADD(DATE_ADD(LAST_DAY(periode.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH) AS arTgl,
-				periode.start_periode, 
-				ar.keterangan AS arKet, 
-				ar.bukti_transaksi AS arBT, 
-				ar.total AS arTotal, 
-				(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS id_bayar,
-				(SELECT bayar.id_voucher FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS id_voucher,
-				(SELECT bayar.tanggal_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemTgl,
-				(SELECT bayar.keterangan FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemKet, 
+				periode.start_periode,
+				ar.keterangan AS arKet,
+				ar.bukti_transaksi AS arBT,
+				ar.total AS arTotal,
+				(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS id_bayar,
+				(SELECT bayar.id_voucher FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS id_voucher,
+				(SELECT bayar.tanggal_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemTgl,
+				(SELECT bayar.keterangan FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemKet,
 				(SELECT voucher.bukti_transaksi FROM voucher JOIN bayar ON bayar.id_voucher = voucher.id_voucher WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa GROUP BY ar.kode_soa) AS pemBT,
-				(SELECT SUM(bayar.credit) FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND (MONTH(bayar.tanggal_bayar) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')) GROUP BY ar.kode_soa) AS pemTotal
-			FROM ar 
-				JOIN periode 
+				(SELECT SUM(bayar.credit) FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemTotal
+			FROM ar
+				JOIN periode
 				ON periode.id_periode = ar.id_periode
 				JOIN owner
 				ON owner.kode_owner = ar.id_owner
 				JOIN customer
                 ON customer.kode_customer = ar.id_customer
-			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}') 
-				AND MONTH(periode.start_periode) BETWEEN MONTH('{$dateA}') AND MONTH('{$dateB}')
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND ((DATE_ADD(DATE_ADD(LAST_DAY(periode.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE))
 				AND ar.kode_soa = 22
 			ORDER BY ar.id_customer ASC, periode.start_periode";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_bayar_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB)
+	{
+
+		$sql =
+			"SELECT
+				bayar.id_bayar,
+				bayar.id_ar,
+				bayar.id_voucher,
+				bayar.tanggal_bayar AS pemTgl,
+				bayar.keterangan  AS pemKet,
+				bayar.credit AS pemTotal,
+				bayar.kode_soa,
+				ar.id_ar,
+				ar.kode_soa,
+				ar.id_periode,
+				ar.id_customer,
+				periode.start_periode
+			FROM ar
+				JOIN bayar
+				ON ar.id_ar = bayar.id_ar
+				JOIN periode
+				ON periode.id_periode = ar.id_periode
+				JOIN owner
+				ON owner.kode_owner = ar.id_owner
+				JOIN customer
+				ON customer.kode_customer = ar.id_customer
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE))
+				AND bayar.kode_soa = 22
+				ORDER BY ar.id_customer ASC, bayar.tanggal_bayar";
 
 		$data = $this->db->query($sql);
 
@@ -648,7 +721,7 @@ class M_ar extends CI_Model
 	{
 
 		$sql =
-			"SELECT 
+			"SELECT
 				ar.id_ar,
 				ar.id_customer,
 				customer.nama_customer,
@@ -660,14 +733,14 @@ class M_ar extends CI_Model
 				ar.bukti_transaksi,
 				ar.total,
 				SUM(ar.sisa) as saldo
-			FROM ar 
-				JOIN periode 
+			FROM ar
+				JOIN periode
 				ON periode.id_periode = ar.id_periode
 				JOIN owner
 				ON owner.kode_owner = ar.id_owner
 				JOIN customer
                 ON customer.kode_customer = ar.id_customer
-			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}') 
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
 				AND (periode.start_periode < '{$dateA}')
 				AND ar.kode_soa = 22
 			GROUP BY ar.id_customer

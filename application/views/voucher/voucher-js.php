@@ -141,13 +141,6 @@
             var sendDebit = JSON.stringify(debit);
             var sendKredit = JSON.stringify(kredit);
 
-            console.log(code);
-            console.log(relasiVendor);
-            console.log(keterangan);
-            console.log(akun);
-            console.log(debit);
-            console.log(kredit);
-
             $.ajax({
                 type: 'POST',
                 url: '<?php echo base_url('Voucher/prosesTambah'); ?>',

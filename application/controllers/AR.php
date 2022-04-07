@@ -260,7 +260,7 @@ class AR extends AUTH_Controller
                 }
             }
             if ($row > 0) {
-                helper_log("add", "Menambah Data Service By Period (Kartu Piutang)");
+                helper_log("add", "Menambah Data Service By Period (Kartu Piutang)", $data['bukti_transaksi']);
                 $out['status'] = '';
                 $out['msg'] = show_succ_msg('Kartu Piutang Data Successfully Added', '20px');
             } else {
@@ -328,22 +328,25 @@ class AR extends AUTH_Controller
         if ($CoA == 21) {
             $ar = $this->M_ar->print($kodeCusA, $kodeCusB, $dateA, $dateB, $CoA);
             $arCus = $this->M_ar->print_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
+            $bayarCus = $this->M_ar->print_bayar_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
             $saldo = $this->M_ar->saldo_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
         } else if ($CoA == 22) {
             $ar = $this->M_ar->print($kodeCusA, $kodeCusB, $dateA, $dateB, $CoA);
             $arCus = $this->M_ar->print_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
+            $bayarCus = $this->M_ar->print_bayar_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
             $saldo = $this->M_ar->saldo_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
         }
-
 
         if ($ar != null) {
             $signature = $this->M_parameter->select_by_id('authorized_signature_billing_key');
             $CusA = $this->M_customer->select_by_id($kodeCusA);
             $CusB = $this->M_customer->select_by_id($kodeCusB);
 
+
             $data['dataCoA'] = $CoA;
             $data['dataAR'] = $ar;
             $data['dataARCus'] = $arCus;
+            $data['dataBayarCus'] = $bayarCus;
             $data['dataSaldo'] = $saldo;
             $data['dataCusA'] = $CusA;
             $data['dataCusB'] = $CusB;

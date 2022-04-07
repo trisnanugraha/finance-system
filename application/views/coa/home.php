@@ -10,18 +10,16 @@
   </div>
   <!-- /.box-header -->
   <div class="box-body">
-    <table id="list-data" class="table table-bordered table-striped">
+    <table id="table-coa" class="table table-bordered table-striped" style="width: 100%;">
       <thead>
         <tr>
-          <th>CoA ID</th>
-          <th style="max-width:100px;">Name</th>
-          <th>Type Jurnal</th>
-          <th>Account Type</th>
-          <th style="text-align: center;">Action</th>
+          <th style="max-width:50px;">CoA ID</th>
+          <th style="max-width:150px;">Name</th>
+          <th style="max-width:100px;">Type Jurnal</th>
+          <th style="max-width:100px;">Account Type</th>
+          <th style="text-align: center; max-width: 50px;">Action</th>
         </tr>
       </thead>
-      <tbody id="data-coa">
-      </tbody>
     </table>
   </div>
 </div>

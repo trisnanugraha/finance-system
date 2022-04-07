@@ -17,7 +17,7 @@
                             </div>
                             <input type="hidden" name="hiddenPeriodStart" id="tambahPeriodStart" value="<?= date('Y/m/d'); ?>"/>
                             <input type="hidden" name="hiddenPeriodEnd" id="tambahPeriodEnd" value="<?php $due = new DateTime('+1day'); echo $due->format('Y/m/d'); ?>"/>
-                            <input type="text" name="tambahPeriodRange" class="form-control pull-right" id="tambahPeriodRange">
+                            <input type="text" name="tambahPeriodRange" class="form-control pull-right" id="tambahPeriodRange" autocomplete="off">
                         </div>
                     </div>
                 </div>

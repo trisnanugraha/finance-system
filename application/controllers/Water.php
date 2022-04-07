@@ -67,57 +67,165 @@ class Water extends AUTH_Controller
 			} else {
 				$period = $this->M_period->select_periode_by_id($post['period']);
 
-				$cons = $post['endMeter'] - $post['startMeter'];
-				$consumption = $cons * $rate->water;
-				$temp = $consumption + $rate->charge;
-				$taxArea = ceil($temp * 0.1);
-				$sum = $temp + $taxArea;
-				$tax = ceil($sum * 0.1);
-				$total = $sum + $tax;
+				if ($post['endMeter'] != 0 && $post['startMeter'] != 0) {
+					$cons = $post['endMeter'] - $post['startMeter'];
+					$consumption = $cons * $rate->water;
+					$temp = $consumption + $rate->charge;
+					$taxArea = ceil($temp * 0.1);
+					$sum = $temp + $taxArea;
+					$tax = ceil($sum * 0.1);
+					$total = $sum + $tax;
 
-				if ($period->mulai != $period->akhir) {
-					$data = [
-						'idWater' => $post['idWater'],
-						'kodeCus' => $post['kodeCus'],
-						'id_tarif' => $rate->id,
-						'id_periode' => $post['period'],
-						'startMeter' => $post['startMeter'],
-						'endMeter' => $post['endMeter'],
-						'cons' => $cons,
-						'consumption' => $consumption,
-						'tax_area' => $taxArea,
-						'tax' => $tax,
-						'total' => $total,
-						'prorate' => $total
-					];
+					if ($period->mulai != $period->akhir) {
+						$data = [
+							'idWater' => $post['idWater'],
+							'kodeCus' => $post['kodeCus'],
+							'id_tarif' => $rate->id,
+							'id_periode' => $post['period'],
+							'startMeter' => $post['startMeter'],
+							'endMeter' => $post['endMeter'],
+							'cons' => $cons,
+							'consumption' => $consumption,
+							'tax_area' => $taxArea,
+							'tax' => $tax,
+							'total' => $total,
+							'prorate' => $total
+						];
 
-					$result = $this->M_water->insert($data);
+						$result = $this->M_water->insert($data);
+					} else {
+						$data = [
+							'idWater' => $post['idWater'],
+							'kodeCus' => $post['kodeCus'],
+							'id_tarif' => $rate->id,
+							'id_periode' => $post['period'],
+							'startMeter' => $post['startMeter'],
+							'endMeter' => $post['endMeter'],
+							'cons' => $cons,
+							'consumption' => $consumption,
+							'tax_area' => $taxArea,
+							'tax' => $tax,
+							'total' => $total,
+							'prorate' => $total
+						];
+
+						$result = $this->M_water->insert($data);
+					}
+
+					if ($result > 0) {
+						helper_log("add", "Menambah Data (Water)", $post['idWater']);
+						$out['status'] = '';
+						$out['msg'] = show_succ_msg('Water Bill Successfully Added', '20px');
+					} else {
+						$out['status'] = '';
+						$out['msg'] = show_err_msg('Water Bill Failed To Add', '20px');
+					}
+				} else if ($post['endMeter'] == 0 && $post['startMeter'] == 0) {
+					$cons = $post['endMeter'] - $post['startMeter'];
+					$consumption = $cons * $rate->water;
+					$temp = $consumption + $rate->charge;
+					$taxArea = ceil($temp * 0.1);
+					$sum = $temp + $taxArea;
+					$tax = ceil($sum * 0.1);
+					$total = $sum + $tax;
+
+					if ($period->mulai != $period->akhir) {
+						$data = [
+							'idWater' => $post['idWater'],
+							'kodeCus' => $post['kodeCus'],
+							'id_tarif' => $rate->id,
+							'id_periode' => $post['period'],
+							'startMeter' => 0,
+							'endMeter' => 0,
+							'cons' => 0,
+							'consumption' => 0,
+							'tax_area' => 0,
+							'tax' => 0,
+							'total' => 0,
+							'prorate' => 0
+						];
+
+						$result = $this->M_water->insert($data);
+					} else {
+						$data = [
+							'idWater' => $post['idWater'],
+							'kodeCus' => $post['kodeCus'],
+							'id_tarif' => $rate->id,
+							'id_periode' => $post['period'],
+							'startMeter' => 0,
+							'endMeter' => 0,
+							'cons' => 0,
+							'consumption' => 0,
+							'tax_area' => 0,
+							'tax' => 0,
+							'total' => 0,
+							'prorate' => 0
+						];
+
+						$result = $this->M_water->insert($data);
+					}
+
+					if ($result > 0) {
+						helper_log("add", "Menambah Data (Water)", $post['idWater']);
+						$out['status'] = '';
+						$out['msg'] = show_succ_msg('Water Bill Successfully Added', '20px');
+					} else {
+						$out['status'] = '';
+						$out['msg'] = show_err_msg('Water Bill Failed To Add', '20px');
+					}
 				} else {
-					$data = [
-						'idWater' => $post['idWater'],
-						'kodeCus' => $post['kodeCus'],
-						'id_tarif' => $rate->id,
-						'id_periode' => $post['period'],
-						'startMeter' => $post['startMeter'],
-						'endMeter' => $post['endMeter'],
-						'cons' => $cons,
-						'consumption' => $consumption,
-						'tax_area' => $taxArea,
-						'tax' => $tax,
-						'total' => $total,
-						'prorate' => $total
-					];
+					$cons = $post['endMeter'] - $post['startMeter'];
+					$consumption = $cons * $rate->water;
+					$temp = $consumption + $rate->charge;
+					$taxArea = ceil($temp * 0.1);
+					$sum = $temp + $taxArea;
+					$tax = ceil($sum * 0.1);
+					$total = $sum + $tax;
 
-					$result = $this->M_water->insert($data);
-				}
+					if ($period->mulai != $period->akhir) {
+						$data = [
+							'idWater' => $post['idWater'],
+							'kodeCus' => $post['kodeCus'],
+							'id_tarif' => $rate->id,
+							'id_periode' => $post['period'],
+							'startMeter' => $post['startMeter'],
+							'endMeter' => $post['endMeter'],
+							'cons' => $cons,
+							'consumption' => $consumption,
+							'tax_area' => $taxArea,
+							'tax' => $tax,
+							'total' => $total,
+							'prorate' => $total
+						];
 
-				if ($result > 0) {
-					helper_log("add", "Menambah Data (Water)", $post['idWater']);
-					$out['status'] = '';
-					$out['msg'] = show_succ_msg('Water Bill Successfully Added', '20px');
-				} else {
-					$out['status'] = '';
-					$out['msg'] = show_err_msg('Water Bill Failed To Add', '20px');
+						$result = $this->M_water->insert($data);
+					} else {
+						$data = [
+							'idWater' => $post['idWater'],
+							'kodeCus' => $post['kodeCus'],
+							'id_tarif' => $rate->id,
+							'id_periode' => $post['period'],
+							'startMeter' => $post['startMeter'],
+							'endMeter' => $post['endMeter'],
+							'cons' => $cons,
+							'consumption' => $consumption,
+							'tax_area' => $taxArea,
+							'tax' => $tax,
+							'total' => $total,
+							'prorate' => $total
+						];
+
+						$result = $this->M_water->insert($data);
+					}
+
+					if ($result > 0) {
+						helper_log("add", "Menambah Data (Water)", $post['idWater']);
+						$out['status'] = '';
+						$out['msg'] = show_succ_msg('Water Bill Successfully Added', '20px');
+					} else {
+						$out['status'] = '';
+						$out['msg'] = show_err_msg('Water Bill Failed To Add', '20px');
+					}
 				}
 			}
 		} else {
@@ -159,7 +267,7 @@ class Water extends AUTH_Controller
 			$result = $this->M_water->update($data);
 
 			if ($result > 0) {
-				helper_log("edit", "Mengubah Data (Water)", $post['idWater']);
+				helper_log("edit", "Mengubah Data (Water)", $data['idWater']);
 				$out['status'] = '';
 				$out['msg'] = show_succ_msg('Water Bill Successfully Updated', '20px');
 			} else {

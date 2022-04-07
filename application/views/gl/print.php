@@ -113,74 +113,58 @@
             $saldoD = 0;
             $defisit = 0;
             $surplus = 0;
-            foreach ($dataSaldo as $saldo) {
-                if ($saldo->kode_soa == $gl->kode_soa && $saldo->kode_soa != 272) { ?>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td>SALDO AWAL </td>
-                        <td>0,00</td>
-                        <td>0,00</td>
-                        <?php if ($saldo->saldoAwal != null && $saldo->saldoAwal < 0) { ?>
-                            <td> <?= '(' . saldo_money($saldo->saldoAwal) . ')';
+            if ($report == 0) {
+                foreach ($dataSaldo as $saldo) {
+                    if ($saldo->kode_soa == $gl->kode_soa && $saldo->kode_soa != 272) { ?>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>SALDO AWAL </td>
+                            <td>0,00</td>
+                            <td>0,00</td>
+                            <?php if ($saldo->saldoAwal != null && $saldo->saldoAwal < 0) { ?>
+                                <td> <?= '(' . saldo_money($saldo->saldoAwal) . ')';
+                                        $saldoD += $saldo->saldoAwal; ?> </td>
+                            <?php } else if ($saldo->saldoAwal != null && $saldo->saldoAwal >= 0) { ?>
+                                <td><?= money($saldo->saldoAwal);
                                     $saldoD += $saldo->saldoAwal; ?> </td>
-                        <?php } else if ($saldo->saldoAwal != null && $saldo->saldoAwal >= 0) { ?>
-                            <td><?= money($saldo->saldoAwal);
-                                $saldoD += $saldo->saldoAwal; ?> </td>
-                        <?php } else { ?>
+                            <?php } else { ?>
+                                <td>0,00</td>
+                                <?php $saldoD = 0; ?>
+                            <?php } ?>
+                        </tr>
+                    <?php } else if ($saldo->kode_soa == $gl->kode_soa && $saldo->kode_soa == 272) { ?>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>SALDO AWAL </td>
                             <td>0,00</td>
-                            <?php $saldoD = 0; ?>
-                        <?php } ?>
-                    </tr>
-                <?php } else if ($saldo->kode_soa == $gl->kode_soa && $saldo->kode_soa == 272) { ?>
-                    <?php foreach ($dataSaldoSur as $saldosur) { ?>
-                        <?php foreach ($dataGLSur as $glSur) {
-                            if ($saldosur->monthsur < $glSur->month && $saldosur->saldoAwal < 0) {
-                                $surplus = $saldosur->saldoAwal;
-                                if ($glSur->monthStart > $glSur->month) {
-                                    $surplus += $glSur->surplus;
-                                } else {
-                                    $surplus = $saldosur->saldoAwal;
-                                }
-                            } else {
-                                $surplus = 0;
-                            } ?>
-                        <?php } ?>
-                        <?php foreach ($dataGLDef as $glDef) {
-                            if ($saldosur->monthsur < $glDef->month && $saldosur->saldoAwal > 0) {
-                                $defisit = $saldosur->saldoAwal;
-                                if ($glDef->monthStart > $glDef->month) {
-                                    $defisit += $glDef->defisit;
-                                } else {
-                                    $defisit = $saldosur->saldoAwal;
-                                }
-                            } else {
-                                $defisit = 0;
-                            } ?>
-
-                        <?php } ?>
-                    <?php } ?>
-
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td>SALDO AWAL </td>
-                        <td>0,00</td>
-                        <td>0,00</td>
-                        <?php if ($saldo->saldoAwal != null && ($defisit + $surplus) < 0) { ?>
-                            <td> <?= '(' . saldo_money(($defisit + $surplus)) . ')';
-                                    $saldoD += ($defisit + $surplus); ?> </td>
-                        <?php } else if ($saldo->saldoAwal != null && ($defisit + $surplus) >= 0) { ?>
-                            <td><?= money(($defisit + $surplus));
-                                $saldoD += ($defisit + $surplus); ?> </td>
-                        <?php } else { ?>
                             <td>0,00</td>
-                            <?php $saldoD = 0; ?>
-                        <?php } ?>
-                    </tr>
-                <?php } else {
-                } ?>
+                            <?php if ($saldo->saldoAwal != null && ($saldo->saldoAwal) < 0) { ?>
+                                <td> <?= '(' . saldo_money(($saldo->saldoAwal)) . ')';
+                                        $saldoD += ($saldo->saldoAwal); ?> </td>
+                            <?php } else if ($saldo->saldoAwal != null && ($saldo->saldoAwal) >= 0) { ?>
+                                <td><?= money(($saldo->saldoAwal));
+                                    $saldoD += ($saldo->saldoAwal); ?> </td>
+                            <?php } else { ?>
+                                <td>0,00</td>
+                                <?php $saldoD = 0; ?>
+                            <?php } ?>
+                        </tr>
+                    <?php } else {
+                    } ?>
+                <?php } ?>
+            <?php } else { ?>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>SALDO AWAL </td>
+                    <td>0,00</td>
+                    <td>0,00</td>
+                    <td>0,00</td>
+                </tr>
             <?php } ?>
+
             <?php $totalD = 0;
             $totalC = 0; ?>
 

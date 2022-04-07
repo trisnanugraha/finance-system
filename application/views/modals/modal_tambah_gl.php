@@ -6,13 +6,14 @@
       </h3>
     </div>
 
-    <form id="form-tambah-gl" method="POST">
+    <form id="form-tambah-gl" method="POST" autocomplete="off">
       <div class="modal-body">
 
         <div class="form-group">
           <label class="control-label col-xs-4">Transaction ID</label>
           <div class="col-xs-8">
-            <input name="code" id="code" class="form-control" type="text" placeholder="Transaction Code">
+            <input name="code" id="code" class="form-control cekId" type="text" placeholder="Transaction Code">
+            <small class="error_id" style="color: red"></small>
           </div>
         </div>
         <br>
@@ -38,6 +39,26 @@
             <textarea name="keterangan" id="keterangan" class="form-control" type="text" placeholder="Keterangan"></textarea>
           </div>
         </div>
+
+        <!-- <div class="form-group">
+          <label class="control-label col-xs-4">Status Closing</label>
+          <div class="col-xs-8">
+            <input type="checkbox" name="closing" id="closing">
+          </div>
+        </div> -->
+        <!-- <br>
+        <br>
+        <div class="form-group" style="margin-top: 10px;">
+          <label class="control-label col-xs-4">Status</label>
+          <div class="col-xs-8">
+            <div>
+              <label>
+                <input type="checkbox" name="closing" id="closing">
+                Closing
+              </label>
+            </div>
+          </div>
+        </div> -->
         <br>
         <br>
         <br>
@@ -71,7 +92,7 @@
           <div class="col-md-12">
             <div class="col-md-6">
               Transaction Akun :
-              <select name="coa" id="coa" class="form-control select2">
+              <select name="coa" id="coa" class="form-control select2" style="width: 100%;">
                 <option selected disabled>Choose CoA</option>
                 <?php
                 foreach ($dataCoA as $coa) {
@@ -163,6 +184,24 @@
     $tableBody.on('click', '.deleteRowButton', function(event) {
       deleteRow($(event.target).data('row'));
       updateTotals();
+    });
+
+    $('.cekId').keyup(function(e) {
+
+      var glID = $('.cekId').val();
+
+      $.ajax({
+        type: "POST",
+        url: '<?php echo base_url('GL/cekId'); ?>',
+        data: {
+          "cek_submit_btn": 1,
+          "gl_id": glID,
+        },
+        success: function(response) {
+          $('.error_id').text(response);
+        }
+
+      });
     });
 
   });

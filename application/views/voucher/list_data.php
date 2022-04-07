@@ -21,10 +21,19 @@ foreach ($dataVoucher as $vou) {
     <td><?php echo $vou->keterangan; ?></td>
     <td><?php echo rupiah($vou->total); ?></td>
     <td class="text-center">
-      <button class="btn btn-warning btn-xs print-dataVoucher" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-print"></i></button>
-      <button class="btn btn-success btn-xs print-dataBayar" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-print"></i></button>
-      <button class="btn btn-warning btn-xs update-dataVoucher" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-edit"></i></button>
-      <button class="btn btn-danger btn-xs konfirmasiHapus-voucher" data-id="<?php echo $vou->id_voucher; ?>" data-toggle="modal" data-target="#konfirmasiHapus"><i class="glyphicon glyphicon-trash"></i></button>
+<!--       <?php if ($vou->tanggal_voucher < date("Y-m")) { ?>
+        <button class="btn btn-warning btn-xs print-dataVoucher" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-print"></i></button>
+        <button class="btn btn-success btn-xs print-dataBayar" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-print"></i></button>
+      <?php } else { ?>
+        <button class="btn btn-warning btn-xs print-dataVoucher" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-print"></i></button>
+        <button class="btn btn-success btn-xs print-dataBayar" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-print"></i></button>
+        <button class="btn btn-warning btn-xs update-dataVoucher" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-edit"></i></button>
+        <button class="btn btn-danger btn-xs konfirmasiHapus-voucher" data-id="<?php echo $vou->id_voucher; ?>" data-toggle="modal" data-target="#konfirmasiHapus"><i class="glyphicon glyphicon-trash"></i></button>
+      <?php } ?> -->
+        <button class="btn btn-warning btn-xs print-dataVoucher" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-print"></i></button>
+        <button class="btn btn-success btn-xs print-dataBayar" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-print"></i></button>
+        <button class="btn btn-warning btn-xs update-dataVoucher" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-edit"></i></button>
+        <button class="btn btn-danger btn-xs konfirmasiHapus-voucher" data-id="<?php echo $vou->id_voucher; ?>" data-toggle="modal" data-target="#konfirmasiHapus"><i class="glyphicon glyphicon-trash"></i></button>
     </td>
   </tr>
   <?php
@@ -35,13 +44,13 @@ foreach ($dataVoucher as $vou) {
         <tr class="bg-info">
           <td><?php echo $bayar->id_voucher; ?></td>
           <td class="text-center"><?php if ($bayar->kode_soa == 22) {
-                echo $bayar->bukti_transaksi;
-              } else if ($bayar->kode_soa == 21) {
-                echo $bayar->bukti_transaksi;
-              } else {
-                echo '-';
-              }
-              ?></td>
+                                    echo $bayar->bukti_transaksi;
+                                  } else if ($bayar->kode_soa == 21) {
+                                    echo $bayar->bukti_transaksi;
+                                  } else {
+                                    echo '-';
+                                  }
+                                  ?></td>
           <td><?php if ($bayar->kode_soa == 22) {
                 echo 'AR SCSF Unit : ' . $vou->unit_customer;
               } else if ($bayar->kode_soa == 21) {
@@ -54,9 +63,7 @@ foreach ($dataVoucher as $vou) {
           <td><?php echo $bayar->tanggal_bayar; ?></td>
           <td><?php echo $bayar->keterangan; ?></td>
           <td><?php echo rupiah($bayar->debit + $bayar->credit); ?></td>
-          <td class="text-center">
-            <!-- <button class="btn btn-danger btn-sm konfirmasiHapus-bayar" data-id-bayar="<?php echo $bayar->id_bayar; ?>" data-toggle="modal" data-target="#konfirmasiHapusBayar"><i class="glyphicon glyphicon-trash"></i></button> -->
-          </td>
+          <td class="text-center"></td>
         </tr>
       <?php
       }
@@ -73,9 +80,7 @@ foreach ($dataVoucher as $vou) {
           <td><?php echo $vendor->tanggal_transaksi; ?></td>
           <td><?php echo $vendor->keterangan; ?></td>
           <td><?php echo saldo($vendor->total); ?></td>
-          <td class="text-center">
-            <!-- <button class="btn btn-danger btn-sm konfirmasiHapus-bayar" data-id-bayar="<?php echo $bayar->id_bayar; ?>" data-toggle="modal" data-target="#konfirmasiHapusBayar"><i class="glyphicon glyphicon-trash"></i></button> -->
-          </td>
+          <td class="text-center"></td>
         </tr>
   <?php
       }

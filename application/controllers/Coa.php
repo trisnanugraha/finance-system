@@ -20,10 +20,29 @@ class Coa extends AUTH_Controller {
 		$this->template->views('coa/home', $data, $js);
 	}
 
-	public function tampil() {
-		$data['dataCoa'] = $this->M_coa->select_all();
-		$this->load->view('coa/list_data', $data);
-	}
+	function getAjax() {
+        $dataCOA = $this->M_coa->get_datatables();
+        $record = array();
+        $no = $_POST['start'];
+        foreach ($dataCOA as $data) {
+            $no++;
+			$row = [
+					  'coaID' => $data['coa_id'],
+					  'coaName' => $data['coa_name'],
+				      'coaType' => $data['type_name'],
+					  'accType' => $data['acc_type']
+					];
+			$record[] = $row;
+        }
+        $output = array(
+			"draw" => $_POST['draw'],
+			"recordsTotal" => $this->M_coa->count_all(),
+			"recordsFiltered" => $this->M_coa->count_filtered(),
+			"data" => $record,
+		);
+        // output to json format
+        echo json_encode($output);
+    }
 	
 	public function prosesTambah(){
 		$this->form_validation->set_rules('parent', 'CoA Parent', 'trim|required');

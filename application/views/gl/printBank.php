@@ -90,83 +90,131 @@
 
 <body>
     <?php
-        $total = 0;
-        foreach ($dataGL as $gl) : ?>
-            <p style="font-size: 13pt;">Bulding Management SCBD-Suites</p>
-            <p style="font-size: 13pt;">Jln Jendral Sudirman Kav. 52-53 Jakarta 12190</p>
-            <p class="text-align-right"><?= 'Tgl : ' . date("d-m-Y");?></p>
-            <p class="border-bottom-no-padding" style="font-size: 12pt;"><strong>Laporan Bank Harian</strong></p>
-            <p><?= 'HARI TGL : ' . date('01-m-Y', strtotime($date)) . ' s.d ' . date('t-m-Y', strtotime($date)); ?></p>
-            <table>
-                <tr>
-                    <td><?= 'KODE BANK &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .  $coa->coa_id  . '&nbsp;&nbsp;&nbsp;&nbsp;' . $coa->coa_name ?></td>
-                </tr>
-                <tr>
-                    <td><?php if($gl->saldoAwal != null && $gl->saldoAwal < 0){?><?= 'SALDO AWAL &nbsp;&nbsp;&nbsp;&nbsp; IDR &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . '('. saldo_money($gl->saldoAwal) . ')'; $saldoD = $gl->saldoAwal;?></td><?php }else if ($gl->saldoAwal != null && $gl->saldoAwal >= 0){ ?><?= 'SALDO AWAL &nbsp;&nbsp;&nbsp;&nbsp; IDR &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . saldo_money($gl->saldoAwal); $saldoD = $gl->saldoAwal; ?></td><?php }else{echo 'SALDO AWAL &nbsp;&nbsp;&nbsp;&nbsp; IDR &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00,00'; $saldoD = 0; } ?></td>
-                </tr>
-            </table>
-            <table>
-                <tr>
-                    <td class="border-bottom padding"><strong>TANGGAL</strong></td>
-                    <td>&nbsp;</td>
-                    <td class="border-bottom padding"><strong>NO.BUKTI</strong></td>
-                    <td class="border-bottom padding"><strong>NO.ARSIP</strong></td>
-                    <td class="border-bottom padding"><strong>KETERANGAN</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                    <td>&nbsp;</td>
-                    <td class="border-bottom padding text-align-right"><strong>DEBET</strong></td>
-                    <td>&nbsp;</td>
-                    <td class="border-bottom padding text-align-right"><strong>KREDIT</strong></td>
-                    <td>&nbsp;</td>
-                    <td class="border-bottom padding text-align-right"><strong>SALDO</strong></td>
-                </tr>
-                <?php 
-                    $totalD = 0;
-                    $totalC = 0;
-                    foreach($dataGLTgl AS $glT) {
-                        if($gl->tanggal_transaksi == $glT->tanggal_transaksi){
-                            foreach($dataGLCus AS $glCus){
-                                if($glCus->kode_soa == $glT->kode_soa){ ?>
-                                <tr>
-                                    <td><?=$glCus->tanggal_transaksi?></td>
-                                    <td>&nbsp;</td>
-                                    <td><?=$glCus->bukti_transaksi?></td>
-                                    <td></td>
-                                    <td><?=$glCus->keterangan?></td>
-                                    <td>&nbsp;</td>
-                                    <td class="text-align-right"><?=money($glCus->debit)?></td>
-                                    <td>&nbsp;</td>
-                                    <td class="text-align-right"><?=money($glCus->credit)?></td>
-                                    <td>&nbsp;</td>
-                                    <td class="text-align-right"><?php $saldoD = $saldoD + ($glCus->debit - $glCus->credit);if ($glCus->saldoAwal == null &&  $saldoD < 0) { ?> <?= '(' . saldo_money($saldoD) . ')';?> </td><?php $total += ($glCus->debit - $glCus->credit); ?> <?php $totalD += $glCus->debit;?><?php $totalC += $glCus->credit; ?> <?php } else if ($glCus->saldoAwal == null && $saldoD >= 0){ ?> <?= money($saldoD); ?> </td> <?php $total += ($glCus->debit - $glCus->credit); ?> <?php $totalD += $glCus->debit; ?> <?php $totalC += $glCus->credit; ?> <?php } else if($glCus->saldoAwal != null && $saldoD < 0) { ?> <?= '(' . saldo_money($saldoD) . ')' ?> </td> <?php $totalD += $glCus->debit; ?> <?php $totalC += $glCus->credit; ?> <?php } else if ($glCus->saldoAwal != null && $saldoD >= 0) { ?> <?= money($saldoD); ?> </td> <?php $total += ($glCus->debit - $glCus->credit); ?> <?php $totalD += $glCus->debit; ?> <?php $totalC += $glCus->credit; ?> <?php } ?>
-                                </tr>
-                                <?php $total = $glCus->saldo;?>
-                                <?php
-                            }
-                        }
-                    }
-                }
-                ?>
-                <tr>
-                    <td colspan="9">&nbsp;</td>
-                </tr>
-    <?php endforeach; ?>
+    $total = 0;
+    foreach ($dataGL as $gl) : ?>
+        <p style="font-size: 13pt;">Bulding Management SCBD-Suites</p>
+        <p style="font-size: 13pt;">Jln Jendral Sudirman Kav. 52-53 Jakarta 12190</p>
+        <p class="text-align-right"><?= 'Tgl : ' . date("d-m-Y"); ?></p>
+        <p class="border-bottom-no-padding" style="font-size: 12pt;"><strong>Laporan Bank Harian</strong></p>
+        <p><?= 'HARI TGL : ' . date('01-m-Y', strtotime($date)) . ' s.d ' . date('t-m-Y', strtotime($date)); ?></p>
+        <table>
             <tr>
-                <td class="border-top border-bottom">TOTAL :</td>
-                <td>&nbsp;</td>
-                <td class="border-top border-bottom">&nbsp;</td>
-                <td class="border-top border-bottom">&nbsp;</td>
-                <td class="border-top border-bottom">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                <td>&nbsp;</td>
-                <td class="border-top border-bottom text-align-right"><?php if ($totalD < 0) { ?> <?= '(' . saldo_money($totalD) . ')'?></td> <?php } else { ?> <?= saldo_money($totalD)?></td> <?php } ?>
-                <td>&nbsp;</td>
-                <td class="border-top border-bottom text-align-right"><?php if ($totalC < 0) { ?> <?= '(' . saldo_money($totalC) . ')'?></td> <?php } else { ?> <?= saldo_money($totalC)?></td> <?php } ?>
-                <td>&nbsp;</td>
-                <td class="border-top border-bottom text-align-right"><?php if ($saldoD < 0) { ?> <?= '(' . saldo_money($saldoD) . ')'?></td> <?php } else { ?> <?= saldo_money($saldoD)?></td> <?php } ?>
+                <td><?= 'KODE BANK &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' .  $coa->coa_id  . '&nbsp;&nbsp;&nbsp;&nbsp;' . $coa->coa_name ?></td>
             </tr>
-            
+            <?php $saldoD = 0; ?>
+            <?php foreach ($dataSaldo as $saldo) { ?>
+                <?php if ($saldo->kode_soa == $gl->kode_soa) { ?>
+                    <tr>
+                        <?php if ($saldo->saldoAwal != null && $saldo->saldoAwal < 0) { ?>
+                            <td><?php 'SALDO AWAL &nbsp;&nbsp;&nbsp;&nbsp; IDR &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . '(' . saldo_money($saldo->saldoAwal) . ')'; ?></td>
+                            <?php $saldoD = $saldo->saldoAwal; ?>
+                        <?php } else if ($saldo->saldoAwal != null && $saldo->saldoAwal >= 0) { ?>
+                            <td><?= 'SALDO AWAL &nbsp;&nbsp;&nbsp;&nbsp; IDR &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' . saldo_money($saldo->saldoAwal); ?></td>
+                            <?php $saldoD = $saldo->saldoAwal; ?>
+                        <?php } else { ?>
+                            <td><?php echo 'SALDO AWAL &nbsp;&nbsp;&nbsp;&nbsp; IDR &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00,00'; ?></td>
+                            <?php $saldoD = 0; ?>
+                        <?php } ?>
+                    </tr>
+                <?php } else { ?>
+                <?php } ?>
+            <?php } ?>
+        </table>
+        <table>
+            <tr>
+                <td class="border-bottom padding"><strong>TANGGAL</strong></td>
+                <td>&nbsp;</td>
+                <td class="border-bottom padding"><strong>NO.BUKTI</strong></td>
+                <td class="border-bottom padding"><strong>NO.ARSIP</strong></td>
+                <td class="border-bottom padding"><strong>KETERANGAN</strong>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+                <td>&nbsp;</td>
+                <td class="border-bottom padding text-align-right"><strong>DEBET</strong></td>
+                <td>&nbsp;</td>
+                <td class="border-bottom padding text-align-right"><strong>KREDIT</strong></td>
+                <td>&nbsp;</td>
+                <td class="border-bottom padding text-align-right"><strong>SALDO</strong></td>
+            </tr>
+            <?php
+            $totalD = 0;
+            $totalC = 0;
+            ?>
+            <?php foreach ($dataGLTgl as $glT) { ?>
+                <?php if ($gl->tanggal_transaksi == $glT->tanggal_transaksi) { ?>
+                    <?php foreach ($dataGLCus as $glCus) { ?>
+                        <?php if ($glCus->kode_soa == $glT->kode_soa) { ?>
+                            <tr>
+                                <td><?= $glCus->tanggal_transaksi ?></td>
+                                <td>&nbsp;</td>
+                                <td><?= $glCus->bukti_transaksi ?></td>
+                                <td></td>
+                                <td><?= $glCus->keterangan ?></td>
+                                <td>&nbsp;</td>
+                                <td class="text-align-right"><?= money($glCus->debit) ?></td>
+                                <td>&nbsp;</td>
+                                <td class="text-align-right"><?= money($glCus->credit) ?></td>
+                                <td>&nbsp;</td>
+
+                                <?php $saldoD = $saldoD + ($glCus->debit - $glCus->credit); ?>
+                                <?php if ($glCus->saldoAwal == null &&  $saldoD < 0) { ?>
+                                    <td class="text-align-right"><?= '(' . saldo_money($saldoD) . ')'; ?> </td>
+                                    <?php $total += ($glCus->debit - $glCus->credit); ?>
+                                    <?php $totalD += $glCus->debit; ?>
+                                    <?php $totalC += $glCus->credit; ?>
+                                <?php } else if ($glCus->saldoAwal == null && $saldoD >= 0) { ?>
+                                    <td class="text-align-right"><?= money($saldoD); ?> </td>
+                                    <?php $total += ($glCus->debit - $glCus->credit); ?>
+                                    <?php $totalD += $glCus->debit; ?>
+                                    <?php $totalC += $glCus->credit; ?>
+                                <?php } else if ($glCus->saldoAwal != null && $saldoD < 0) { ?>
+                                    <td class="text-align-right"><?= '(' . saldo_money($saldoD) . ')' ?> </td>
+                                    <?php $totalD += $glCus->debit; ?>
+                                    <?php $totalC += $glCus->credit; ?>
+                                <?php } else if ($glCus->saldoAwal != null && $saldoD >= 0) { ?>
+                                    <td class="text-align-right"><?= money($saldoD); ?> </td>
+                                    <?php $total += ($glCus->debit - $glCus->credit); ?>
+                                    <?php $totalD += $glCus->debit; ?>
+                                    <?php $totalC += $glCus->credit; ?>
+                                <?php } else { ?>
+                                <?php } ?>
+                            </tr>
+                            <?php $total = $glCus->saldo; ?>
+                        <?php } ?>
+                    <?php } ?>
+                <?php } ?>
+            <?php } ?>
+            <tr>
+                <td colspan="9">&nbsp;</td>
+            </tr>
+        <?php endforeach; ?>
+        <tr>
+            <td class="border-top border-bottom">TOTAL :</td>
+            <td>&nbsp;</td>
+            <td class="border-top border-bottom">&nbsp;</td>
+            <td class="border-top border-bottom">&nbsp;</td>
+            <td class="border-top border-bottom">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+            <td>&nbsp;</td>
+            <?php if ($totalD < 0) { ?>
+                <td class="border-top border-bottom text-align-right"><?= '(' . saldo_money($totalD) . ')' ?></td>
+            <?php } else { ?>
+                <td class="border-top border-bottom text-align-right"><?= saldo_money($totalD) ?></td>
+            <?php } ?>
+            <td>&nbsp;</td>
+            <?php if ($totalC < 0) { ?>
+                <td class="border-top border-bottom text-align-right"><?= '(' . saldo_money($totalC) . ')' ?></td>
+            <?php } else { ?>
+                <td class="border-top border-bottom text-align-right"><?= saldo_money($totalC) ?></td>
+            <?php } ?>
+            <td>&nbsp;</td>
+            <?php if ($saldoD < 0) { ?>
+                <td class="border-top border-bottom text-align-right"><?= '(' . saldo_money($saldoD) . ')' ?></td>
+            <?php } else { ?>
+                <td class="border-top border-bottom text-align-right"><?= saldo_money($saldoD) ?></td>
+            <?php } ?>
+        </tr>
+
         </table>
 
-        
+
 </body>
 
 </html>

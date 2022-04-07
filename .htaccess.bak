@@ -1,0 +1,26 @@
+
+RewriteOptions inherit
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php/$1 [L]
+</IfModule>
+
+# BEGIN cPanel-generated php ini directives, do not edit
+# Manual editing of this file may result in unexpected behavior.
+# To make changes to this file, use the cPanel MultiPHP INI Editor (Home >> Software >> MultiPHP INI Editor)
+# For more information, read our documentation (https://go.cpanel.net/EA4ModifyINI)
+<IfModule php7_module>
+   php_value pcre.backtrack_limit 50000000
+</IfModule>
+<IfModule lsapi_module>
+   php_value pcre.backtrack_limit 50000000
+</IfModule>
+# END cPanel-generated php ini directives, do not edit
+RewriteCond %{HTTP_HOST} ^finance\.scbdsuites\.com$
+RewriteRule ^/?$ "https\:\/\/finance\.scbdsuites\.com\/" [R=301,L]
+
+<FilesMatch "\.(php4|php5|php3|php2|php|phtml)$">
+SetHandler application/x-httpd-alt-php72___lsphp
+</FilesMatch>

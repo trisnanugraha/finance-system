@@ -10,7 +10,7 @@
       <div class="form-group">
         <label class="control-label col-xs-4">Jenis Piutang</label>
         <div class="col-xs-8">
-          <select name="CoA" id="CoA" class="form-control select2" style="width: 100%">
+          <select name="CoA" id="CoA" class="form-control" style="width: 100%">
             <option selected disabled>Choose Piutang</option>
             <?php
             foreach ($dataCoaAR as $CoA) {

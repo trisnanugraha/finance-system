@@ -5,12 +5,12 @@
         <center>Add New MTD BUDGET</center></h3>
     </div>
     
-    <form id="form-tambah-mtd" method="POST">   
+    <form id="form-tambah-mtd" method="POST" autocomplete="off">   
         <div class="modal-body">
         <div class="form-group">
           <label class="control-label col-xs-4">MTD COA</label>
           <div class="col-xs-8">
-            <select name="mtd_coa" id="mtd_coa" class="form-control select2">
+            <select name="mtd_coa" id="mtd_coa" class="form-control select2" style="width: 100%">
               <option selected disabled>Choose CoA</option>
                   <?php
                   foreach ($dataCoA as $coa) {
@@ -30,7 +30,7 @@
         <div class="form-group">
           <label class="control-label col-xs-4">MTD MONTH</label>
             <div class="col-xs-8">
-              <select name="mtd_month" id="mtd_month" class="form-control select2" style="width: 100%">
+              <select name="mtd_month" id="mtd_month" class="form-control" style="width: 100%">
                 <option selected disabled>Choose Month</option>
                 <option value="1">January</option>
                 <option value="2">February</option>
@@ -76,3 +76,9 @@
     </form>
   </div>
 </div>
+
+<script type="text/javascript">
+  $(function() {
+    $(".select2").select2();
+  });
+</script>

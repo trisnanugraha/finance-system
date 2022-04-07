@@ -6,7 +6,7 @@
       </h3>
     </div>
 
-    <form method="POST" id="form-update-voucher">
+    <form method="POST" id="form-update-voucher" autocomplete="off">
       <div class="modal-body">
         <input type="hidden" name="id" value="<?php echo $dataVoucher->id_voucher; ?>">
         <input type="hidden" name="idgl" value="<?php echo $dataVoucher->id_gl; ?>">

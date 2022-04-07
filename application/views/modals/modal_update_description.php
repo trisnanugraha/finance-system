@@ -4,7 +4,7 @@
       <h3 class="modal-title"><center>Update Description Data</center></h3>
     </div>
     
-    <form method="POST" id="form-update-description">
+    <form method="POST" id="form-update-description" autocomplete="off">
     <input type="hidden" name="id" value="<?php echo $dataDescription->id; ?>">  
       <div class="modal-body">
        

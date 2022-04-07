@@ -56,6 +56,19 @@ class GL extends AUTH_Controller
 		$this->load->view('gl/list_data', $data);
 	}
 
+	public function cekId()
+	{
+		if (isset($_POST['cek_submit_btn'])) {
+			$glID = $_POST['gl_id'];
+
+			if ($this->M_gl->check_bill_id($glID) > 0) {
+				echo "GL Code Already Inserted";
+			} else {
+				echo "GL Code Available";
+			}
+		}
+	}
+
 	public function billing()
 	{
 		$this->form_validation->set_rules('period', 'Period', 'trim|required');
@@ -247,7 +260,7 @@ class GL extends AUTH_Controller
 				$row = $result;
 			}
 			if ($row > 0) {
-				helper_log("add", "Menambah Data Billing By Period (GL)");
+				helper_log("add", "Menambah Data Billing By Period (GL)", $data['bukti_transaksi']);
 				$out['status'] = '';
 				$out['msg'] = show_succ_msg('General Ledger Data Successfully Added', '20px');
 			} else {
@@ -637,7 +650,7 @@ class GL extends AUTH_Controller
 		$this->M_gl->insert($post);
 
 		if ($this->db->affected_rows() > 0) {
-			helper_log("add", "Menambah Data (GL)");
+			helper_log("add", "Menambah Data (GL)", $post['code']);
 			$out['status'] = '';
 			$out['msg'] = show_succ_msg('General Ledger Data Successfully Added', '20px');
 		} else {
@@ -684,6 +697,7 @@ class GL extends AUTH_Controller
 		$coaB = $this->input->post('coaPrintB');
 		$dateA = $this->input->post('dateA');
 		$dateB = $this->input->post('dateB');
+		$report = $this->input->post('report');
 
 		$gl = $this->M_gl->print($coaA, $coaB, $dateA, $dateB);
 		$saldo = $this->M_gl->saldoAwal($dateA);
@@ -709,6 +723,7 @@ class GL extends AUTH_Controller
 			$data['dateA'] = $dateA;
 			$data['dateB'] = $dateB;
 			$data['dataCoA'] = $coa;
+			$data['report'] = $report;
 
 			// var_dump($gl);
 
@@ -726,6 +741,7 @@ class GL extends AUTH_Controller
 			$data['dateA'] = $dateA;
 			$data['dateB'] = $dateB;
 			$data['dataCoA'] = $coa;
+			$data['report'] = $report;
 
 			// var_dump($gl);
 
@@ -743,6 +759,7 @@ class GL extends AUTH_Controller
 			$data['dateA'] = $dateA;
 			$data['dateB'] = $dateB;
 			$data['dataCoA'] = $coa;
+			$data['report'] = $report;
 
 			// var_dump($gl);
 
@@ -843,6 +860,7 @@ class GL extends AUTH_Controller
 		} else if ($report == 5) {
 			$coa = 8;
 			$gl = $this->M_gl->printBank($coa, $date);
+			$saldo = $this->M_gl->saldoAwal($date);
 			$glCus = $this->M_gl->printCusBank($coa, $date);
 			$glTgl = $this->M_gl->print_tgl_bank($coa, $date);
 
@@ -850,6 +868,7 @@ class GL extends AUTH_Controller
 				$coaName = $this->M_coa->select_by_id($coa);
 
 				$data['dataGL'] = $gl;
+				$data['dataSaldo'] = $saldo;
 				$data['dataGLCus'] = $glCus;
 				$data['dataGLTgl'] = $glTgl;
 				$data['coa'] = $coaName;
@@ -864,6 +883,7 @@ class GL extends AUTH_Controller
 		} else if ($report == 6) {
 			$coa = 9;
 			$gl = $this->M_gl->printBank($coa, $date);
+			$saldo = $this->M_gl->saldoAwal($date);
 			$glCus = $this->M_gl->printCusBank($coa, $date);
 			$glTgl = $this->M_gl->print_tgl_bank($coa, $date);
 
@@ -871,6 +891,7 @@ class GL extends AUTH_Controller
 				$coaName = $this->M_coa->select_by_id($coa);
 
 				$data['dataGL'] = $gl;
+				$data['dataSaldo'] = $saldo;
 				$data['dataGLCus'] = $glCus;
 				$data['dataGLTgl'] = $glTgl;
 				$data['coa'] = $coaName;
@@ -885,6 +906,7 @@ class GL extends AUTH_Controller
 		} else if ($report == 7) {
 			$coa = 10;
 			$gl = $this->M_gl->printBank($coa, $date);
+			$saldo = $this->M_gl->saldoAwal($date);
 			$glCus = $this->M_gl->printCusBank($coa, $date);
 			$glTgl = $this->M_gl->print_tgl_bank($coa, $date);
 
@@ -892,6 +914,7 @@ class GL extends AUTH_Controller
 				$coaName = $this->M_coa->select_by_id($coa);
 
 				$data['dataGL'] = $gl;
+				$data['dataSaldo'] = $saldo;
 				$data['dataGLCus'] = $glCus;
 				$data['dataGLTgl'] = $glTgl;
 				$data['coa'] = $coaName;
@@ -906,6 +929,7 @@ class GL extends AUTH_Controller
 		} else if ($report == 8) {
 			$coa = 452;
 			$gl = $this->M_gl->printBank($coa, $date);
+			$saldo = $this->M_gl->saldoAwal($date);
 			$glCus = $this->M_gl->printCusBank($coa, $date);
 			$glTgl = $this->M_gl->print_tgl_bank($coa, $date);
 
@@ -913,6 +937,7 @@ class GL extends AUTH_Controller
 				$coaName = $this->M_coa->select_by_id($coa);
 
 				$data['dataGL'] = $gl;
+				$data['dataSaldo'] = $saldo;
 				$data['dataGLCus'] = $glCus;
 				$data['dataGLTgl'] = $glTgl;
 				$data['coa'] = $coaName;
@@ -927,6 +952,7 @@ class GL extends AUTH_Controller
 		} else if ($report == 9) {
 			$coa = 11;
 			$gl = $this->M_gl->printBank($coa, $date);
+			$saldo = $this->M_gl->saldoAwal($date);
 			$glCus = $this->M_gl->printCusBank($coa, $date);
 			$glTgl = $this->M_gl->print_tgl_bank($coa, $date);
 
@@ -934,6 +960,7 @@ class GL extends AUTH_Controller
 				$coaName = $this->M_coa->select_by_id($coa);
 
 				$data['dataGL'] = $gl;
+				$data['dataSaldo'] = $saldo;
 				$data['dataGLCus'] = $glCus;
 				$data['dataGLTgl'] = $glTgl;
 				$data['coa'] = $coaName;
@@ -948,6 +975,7 @@ class GL extends AUTH_Controller
 		} else if ($report == 10) {
 			$coa = 2;
 			$gl = $this->M_gl->printBank($coa, $date);
+			$saldo = $this->M_gl->saldoAwal($date);
 			$glCus = $this->M_gl->printCusBank($coa, $date);
 			$glTgl = $this->M_gl->print_tgl_bank($coa, $date);
 
@@ -955,6 +983,7 @@ class GL extends AUTH_Controller
 				$coaName = $this->M_coa->select_by_id($coa);
 
 				$data['dataGL'] = $gl;
+				$data['dataSaldo'] = $saldo;
 				$data['dataGLCus'] = $glCus;
 				$data['dataGLTgl'] = $glTgl;
 				$data['coa'] = $coaName;
@@ -1757,7 +1786,7 @@ class GL extends AUTH_Controller
 		$data['dataBTGL'] = $this->M_gl->select_by_bt($gl->bukti_transaksi);
 		$data['dataCoA'] = $this->M_coa->select_all();
 
-		echo show_my_modal('modals/modal_update_gl', 'update-gl', $data);
+		echo show_my_modal('modals/modal_update_gl', 'update-gl', $data, 'lg');
 	}
 
 	public function prosesUpdate()
@@ -1775,7 +1804,7 @@ class GL extends AUTH_Controller
 			$result = $this->M_gl->update_gl($post);
 
 			if ($result > 0) {
-				helper_log("edit", "Mengubah Data (GL)");
+				helper_log("edit", "Mengubah Data (GL)", $post['id-bukti-tr']);
 				$out['status'] = '';
 				$out['msg'] = show_succ_msg('GL Data Successfully Changed', '20px');
 			} else {

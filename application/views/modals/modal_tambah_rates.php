@@ -4,7 +4,7 @@
       <h3 class="modal-title"><center>Add New Rate Data</center></h3>
     </div>
     
-    <form method="POST" id="form-tambah-rates">
+    <form method="POST" id="form-tambah-rates" autocomplete="off">
       <div class="modal-body">
         <div class="form-group">
           <label class="control-label col-xs-3" >Standing Charge</label>
