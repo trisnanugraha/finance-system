@@ -48,8 +48,10 @@
                 .done(function(data) {
                     $('#konfirmasiHapus').modal('hide');
                     tampilVoucher();
-                    $('.msg').html(data);
-                    effect_msg();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data Berhasil Dihapus!'
+                    });
                 });
         });
 
@@ -81,8 +83,10 @@
                 .done(function(data) {
                     $('#konfirmasiHapusBayar').modal('hide');
                     tampilVoucher();
-                    $('.msg').html(data);
-                    effect_msg();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data Berhasil Dihapus!'
+                    });
                 });
         });
 
@@ -106,8 +110,10 @@
                     } else {
                         document.getElementById("form-tambah-voucher").reset();
                         $('#tambah-voucher').modal('hide');
-                        $('.msg').html(out.msg);
-                        effect_msg();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Data Berhasil Disimpan!'
+                        });
                     }
                 })
 
@@ -168,8 +174,10 @@
                 } else {
                     document.getElementById("form-pengurangan-bank").reset();
                     $('#pengurangan-bank').modal('hide');
-                    $('.msg').html(out.msg);
-                    effect_msg();
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data Berhasil Disimpan!'
+                    });
                     $('#data_table').remove();
                     setInterval('location.reload()', 1000);
                 }
@@ -241,10 +249,18 @@
                     // setInterval('location.reload()', 1000);
                 } else {
                     document.getElementById("form-bayar-ar").reset();
-                    $('.msg').html(out.msg);
-                    effect_msg();
-                    $('#data_table').remove();
-                    // setInterval('location.reload()', 1000);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data Berhasil Disimpan!',
+                        confirmButtonText: 'OK',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    }).then((result) => {
+                        if (result.value) {
+                            $('#data_table').remove();
+                            window.location.href = "http://scbd-2022.test/Voucher/";
+                        }
+                    });
                 }
             });
 
@@ -318,10 +334,18 @@
                     setInterval('location.reload()', 1000);
                 } else {
                     document.getElementById("form-bayar-ar-titipan").reset();
-                    $('.msg').html(out.msg);
-                    effect_msg();
-                    $('#data_table').remove();
-                    setInterval('location.reload()', 1000);
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Data Berhasil Disimpan!',
+                        confirmButtonText: 'OK',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false,
+                    }).then((result) => {
+                        if (result.value) {
+                            $('#data_table').remove();
+                            window.location.href = "http://scbd-2022.test/Voucher/";
+                        }
+                    });
                 }
             });
 
@@ -372,8 +396,10 @@
                     } else {
                         document.getElementById("form-update-voucher").reset();
                         $('#update-voucher').modal('hide');
-                        $('.msg').html(out.msg);
-                        effect_msg();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Data Berhasil Disimpan!'
+                        });
                     }
                 })
 

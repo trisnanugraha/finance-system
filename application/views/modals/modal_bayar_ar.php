@@ -237,7 +237,7 @@
           </div>
 
           <div class="form-group col-md-3 pull-right">
-            <button type="submit" name="bayar" id="bayar" class="col-md-8 btn btn-success">
+            <button type="submit" name="bayar" id="bayar" class="col-md-8 btn btn-success" disabled>
               <i class="fa fa-money"></i> Bayar</button>
           </div>
 
@@ -323,6 +323,7 @@
     var $totalDebit = $('#totalDebit');
     var $totalKredit = $('#totalKredit');
     var $selisih = $('#selisih');
+    var btn = $("#bayar");
     var id = 1;
 
     $('#add').click(function() {
@@ -374,6 +375,18 @@
       $totalDebit.text((totalDebit));
       $totalKredit.text((totalKredit));
       $selisih.text((selisih));
+
+      if (selisih >= 0) {
+        btn.prop('disabled', false);
+      } else {
+        btn.prop('disabled', true);
+        Swal.fire({
+          icon: 'warning',
+          title: 'Total Saldo Tidak Balance!',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+        })
+      }
     }
 
     function getSubtotal(quantity, price) {

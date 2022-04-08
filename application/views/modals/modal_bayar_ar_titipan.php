@@ -258,7 +258,7 @@
           </div>
 
           <div class="form-group col-xs-3 pull-right">
-            <button type="submit" name="bayar" id="bayar" class="btn btn-success">
+            <button type="submit" name="bayar" id="bayar" class="btn btn-success" disabled>
               <i class="fa fa-paper-plane"></i>Bayar</button>
           </div>
 
@@ -388,6 +388,7 @@
     var $totalDebit = $('#totalDebit');
     var $totalKredit = $('#totalKredit');
     var $selisih = $('#selisih');
+    var btn = $("#bayar");
     var id = 1;
 
     $('#add').click(function() {
@@ -399,7 +400,7 @@
       // if ((debit + totalDebit) > total) {
       //   window.alert('Insufficient Funds');
       // } else {
-        $tableBody.append('<tr valign="top" id ="' + newid + '">\n\
+      $tableBody.append('<tr valign="top" id ="' + newid + '">\n\
             <td width="100px" class="vouId' + newid + '">' + $("#vouId").val() + '</td>\n\
             <td width="100px" class="arId' + newid + '">' + $("#idAR").val() + '</td>\n\
             <td width="100px" class="unit' + newid + '">' + $("#unitAR").val() + '</td>\n\
@@ -409,9 +410,9 @@
             <td width="100px" class="kredit">' + $("#kredit").val() + '</td>\n\
             <td><a href="javascript:void(0);" class="deleteRowButton btn btn-danger btn-xs" data-row="#' + newid + '">-</a></td>\n\ </tr>');
 
-        $('#debit').val('');
-        $('#kredit').val('');
-        updateTotals();
+      $('#debit').val('');
+      $('#kredit').val('');
+      updateTotals();
       // }
 
     });
@@ -428,6 +429,17 @@
       $totalDebit.text((totalDebit));
       $totalKredit.text((totalKredit));
       $selisih.text((selisih));
+      if (selisih >= 0) {
+        btn.prop('disabled', false);
+      } else {
+        btn.prop('disabled', true);
+        Swal.fire({
+          icon: 'warning',
+          title: 'Total Saldo Tidak Balance!',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+        })
+      }
     }
 
     function getSubtotal(quantity, price) {

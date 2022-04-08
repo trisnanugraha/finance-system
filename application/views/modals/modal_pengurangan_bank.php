@@ -139,7 +139,7 @@
   </div>
   <div class="modal-footer">
     <button class="btn btn-default" data-dismiss="modal" aria-hidden="true">Close</button>
-    <button type="submit" id="save" class="btn btn-primary">Add Data</button>
+    <button type="submit" id="save" class="btn btn-primary" disabled>Add Data</button>
   </div>
   </form>
 </div>
@@ -151,6 +151,7 @@
     var $totalDebit = $('#totalDebit');
     var $totalKredit = $('#totalKredit');
     var $selisih = $('#selisih');
+    var btn = $("#save");
     var id = 1;
 
     $('#add').click(function() {
@@ -182,6 +183,18 @@
       $totalDebit.text((totalDebit));
       $totalKredit.text((totalKredit));
       $selisih.text((selisih));
+
+      if (selisih >= 0) {
+        btn.prop('disabled', false);
+      } else {
+        btn.prop('disabled', true);
+        Swal.fire({
+          icon: 'warning',
+          title: 'Total Saldo Tidak Balance!',
+          allowOutsideClick: false,
+          allowEscapeKey: false,
+        })
+      }
     }
 
     function getColumnTotal(selector) {
