@@ -289,21 +289,21 @@ class Voucher extends AUTH_Controller
 
 		$data['userdata'] = $this->userdata;
 		$data['dataVoucher'] = $voucher;
-		$data['dataVendor'] = $this->M_voucher->select_all_vendor();
-		$data['dataTitipan'] = $this->M_voucher->select_all_titipan();
-		$data['dataCustomer'] = $this->M_customer->select_all();
-		$data['dataOwner'] = $this->M_owner->select_all();
+		// $data['dataTitipan'] = $this->M_voucher->select_all_titipan();
+		// $data['dataCustomer'] = $this->M_customer->select_all();
+		// $data['dataOwner'] = $this->M_owner->select_all();
 		$data['dataGiroType'] = $this->M_giro_type->select_all();
-		$data['dataBayar'] = $this->M_bayar->select_all();
-		$data['dataAR'] = $this->M_ar->select_all();
+		// $data['dataAR'] = $this->M_ar->select_all();
 		$data['dataCoA'] = $this->M_coa->select_all();
 		$data['dataBank'] = $this->M_coa->select_bank();
-		$data['dataKas'] = $this->M_coa->select_kas();
-		$data['dataPemType'] = $this->M_type_pembayaran->select_all();
+		// $data['dataKas'] = $this->M_coa->select_kas();
+		// $data['dataPemType'] = $this->M_type_pembayaran->select_all();
 
 		if ($voucher->so == 3) {
+			$data['dataVendor'] = $this->M_voucher->select_all_vendor();
 			echo show_my_modal('modals/modal_update_vendor', 'update-voucher', $data);
 		} else {
+			$data['dataBayar'] = $this->M_bayar->select_all();
 			echo show_my_modal('modals/modal_update_bayar', 'update-voucher', $data);
 		}
 	}
