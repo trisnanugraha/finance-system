@@ -332,6 +332,16 @@
         $(document).on("click", ".update-dataVoucher", function() {
             var id = $(this).attr("data-id");
 
+            Swal.fire({
+                title: 'Mohon Tunggu !',
+                html: 'Sedang Memuat Data', // add html attribute if you want or remove
+                allowOutsideClick: false,
+                showConfirmButton: false,
+                onBeforeOpen: () => {
+                    Swal.showLoading()
+                },
+            });
+
             $.ajax({
                     method: "POST",
                     url: "<?php echo base_url('Voucher/update'); ?>",
@@ -340,6 +350,7 @@
                 .done(function(data) {
                     $('#tempat-modal').html(data);
                     $('#update-voucher').modal('show');
+                    Swal.close();
                 });
         })
 
@@ -380,6 +391,5 @@
         $('#bayar-ar').on('hidden.bs.modal', function() {
             $('.form-msg').html('');
         });
-
     });
 </script>

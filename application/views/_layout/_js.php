@@ -12,6 +12,9 @@
 <!-- DatePicker -->
 <script src="<?php echo base_url(); ?>assets/plugins/bootstrap-datepicker/bootstrap-datepicker.min.js"></script>
 
+<!-- SweetAlert2 -->
+<script src="<?php echo base_url(); ?>assets/plugins/sweetalert2/sweetalert2.min.js"></script>
+
 <!-- Admin LTE -->
 <script src="<?php echo base_url(); ?>assets/dist/js/app.min.js"></script>
 
