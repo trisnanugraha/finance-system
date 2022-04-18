@@ -471,17 +471,25 @@
       var total = arTotal - 6000 - pph;
       var vouUnit = $('#unitDT').val();
 
-      if (vouUnit != arOwner) {
-        window.alert('Unit Must Be Same');
-      } else {
-        $('#idAR').val(arId);
-        $('#unitAR').val(arOwner);
-        $('#periodAR').val(arPeriod);
-        $('#buktiAR').val(arBT);
-        $('#coaAR').val(arName);
-        $('#totalAR').val(arTotal);
-        $('#modal-ar').modal('hide');
-      }
+      $('#idAR').val(arId);
+      $('#unitAR').val(arOwner);
+      $('#periodAR').val(arPeriod);
+      $('#buktiAR').val(arBT);
+      $('#coaAR').val(arName);
+      $('#totalAR').val(arTotal);
+      $('#modal-ar').modal('hide');
+
+      // if (vouUnit != arOwner) {
+      //   window.alert('Unit Must Be Same');
+      // } else {
+      //   $('#idAR').val(arId);
+      //   $('#unitAR').val(arOwner);
+      //   $('#periodAR').val(arPeriod);
+      //   $('#buktiAR').val(arBT);
+      //   $('#coaAR').val(arName);
+      //   $('#totalAR').val(arTotal);
+      //   $('#modal-ar').modal('hide');
+      // }
     });
 
     $(document).on('click', '#dtSelect', function() {
