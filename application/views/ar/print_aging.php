@@ -174,6 +174,13 @@
                                     $tambah += $bayar->credit;
                                 } else {
                                 }
+                            } else if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
+                                if ($bayar->total < $bayar->credit) {
+                                    $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += $bayar->credit;
+                                } else {
+                                }
                             } else if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
@@ -263,6 +270,13 @@
                                 } else {
                                 }
                             } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
+                                if ($bayar->total < $bayar->credit) {
+                                    $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += $bayar->credit;
+                                } else {
+                                }
+                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
                                 } else if ($bayar->total >= $bayar->credit) {
