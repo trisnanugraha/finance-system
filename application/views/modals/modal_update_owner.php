@@ -46,6 +46,18 @@
         <br>
 
         <div class="form-group">
+          <label class="control-label col-xs-3">Status</label>
+          <div class="col-xs-8">
+            <input type="radio" id="active" name="status" <?php if ($dataOwner->isActive == 1) echo "checked"; ?> value="true">
+            <label for="active">Aktif</label><br>
+            <input type="radio" id="non_active" name="status" <?php if ($dataOwner->isActive == 0) echo "checked"; ?> value="false">
+            <label for="non_active">Non Aktif</label><br>
+          </div>
+        </div>
+        <br>
+        <br>
+
+        <div class="form-group">
           <label class="control-label col-xs-3">Address</label>
           <div class="col-xs-8">
             <input name="alamat" class="form-control" type="text" placeholder="Jl. Arjuna Utara..." value="<?php echo $dataOwner->alamat; ?>">

@@ -24,7 +24,6 @@
           <th style="text-align: center; width: 120px;">Virtual Code</th>
           <th style="text-align: center; min-width: 200px;">Name</th>
           <th style="text-align: center; width: 100px;">Unit</th>
-          <!-- <th>Customer ID</th> -->
           <th style="text-align: center; width: 150px;">Action</th>
         </tr>
       </thead>

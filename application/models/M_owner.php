@@ -3,8 +3,8 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class M_owner extends CI_Model {
 	private $tableName = 'owner';
-	var $column_order = array('', 'kode_owner', 'kode_virtual', 'nama_owner', 'unit_owner');
-    var $column_search = array('kode_owner', 'kode_virtual', 'nama_owner', 'unit_owner');
+	var $column_order = array('', 'kode_owner', 'kode_virtual', 'nama_owner', 'unit_owner', 'is_active');
+    var $column_search = array('kode_owner', 'kode_virtual', 'nama_owner', 'unit_owner', 'is_active');
     var $order = array('kode_owner' => 'asc'); 
 
 	private function _get_datatables_query() {
@@ -18,7 +18,8 @@ class M_owner extends CI_Model {
 			d.tipe_deskripsi AS tipe,
 			d.kapasitas AS kapasitas,
 			d.sqm AS sqm,
-			o.customer');
+			o.customer,
+			o.is_active,');
 			$this->db->from("{$this->tableName} o");
 			$this->db->join('deskripsi d', 'o.id_deskripsi = d.id_deskripsi');
 		$i = 0;
@@ -87,7 +88,8 @@ class M_owner extends CI_Model {
 				'd.tipe_deskripsi AS tipe',
 				'd.kapasitas AS kapasitas',
 				'd.sqm AS sqm',
-				'o.customer'
+				'o.customer',
+				'o.is_active AS isActive'
 			])->from("{$this->tableName} o")
 				->join('deskripsi d', 'o.id_deskripsi = d.id_deskripsi')
 				->order_by('o.kode_owner', 'ASC')
@@ -107,7 +109,8 @@ class M_owner extends CI_Model {
 			'd.tipe_deskripsi AS tipe',
 			'd.kapasitas AS kapasitas',
 			'd.sqm AS sqm',
-			'o.customer'
+			'o.customer',
+			'o.is_active AS isActive'
 		])->from("{$this->tableName} o")
 			->join('deskripsi d', 'o.id_deskripsi = d.id_deskripsi')
 			->where('o.kode_owner', $id)
@@ -126,7 +129,7 @@ class M_owner extends CI_Model {
 	}
 
 	public function select_detail($id) {
-		$sql = "SELECT owner.kode_owner AS id, owner.customer, owner.kode_virtual AS kodeVir, owner.nama_owner AS nama, owner.unit_owner AS unit, owner.alamat_owner AS alamat, deskripsi.jenis_deskripsi AS jenis, deskripsi.tipe_deskripsi AS tipe, deskripsi.kapasitas AS kapasitas FROM owner, deskripsi WHERE owner.id_deskripsi = deskripsi.id_deskripsi AND owner.kode_owner='{$id}'";
+		$sql = "SELECT owner.kode_owner AS id, owner.customer, owner.kode_virtual AS kodeVir, owner.nama_owner AS nama, owner.unit_owner AS unit, owner.is_active AS isActive, owner.alamat_owner AS alamat, deskripsi.jenis_deskripsi AS jenis, deskripsi.tipe_deskripsi AS tipe, deskripsi.kapasitas AS kapasitas FROM owner, deskripsi WHERE owner.id_deskripsi = deskripsi.id_deskripsi AND owner.kode_owner='{$id}'";
 
 		$data = $this->db->query($sql);
 
@@ -148,7 +151,8 @@ class M_owner extends CI_Model {
 			'nama_owner' => $params['nama'],
 			'unit_owner' => $params['unit'],
 			'alamat_owner' => $params['alamat'],
-			'id_deskripsi' => $params['jenis']
+			'id_deskripsi' => $params['jenis'],
+			'is_active' => $params['is_active']
 		);
 
 		$where = array('kode_owner' => $params['id']);
@@ -175,7 +179,8 @@ class M_owner extends CI_Model {
 			'unit_owner' => $params['unit'],
 			'alamat_owner' => $params['alamat'],
 			'id_deskripsi' => $params['jenis'],
-			'customer' => 'T-'.$params['id']
+			'customer' => 'T-'.$params['id'],
+			'.is_active' => true
 		];
 		$this->db->insert($this->tableName, $data);
 		

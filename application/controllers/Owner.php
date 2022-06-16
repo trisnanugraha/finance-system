@@ -39,7 +39,8 @@ class Owner extends AUTH_Controller
 					'id' => $data['id'],
 					'kodeVir' => $data['kodeVir'],
 				    'nama' => $data['nama'],
-					'unit' => $data['unit']
+					'unit' => $data['unit'],
+					'is_active' => $data['is_active']
 					];
 			$record[] = $row;
         }
