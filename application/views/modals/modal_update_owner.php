@@ -48,9 +48,9 @@
         <div class="form-group">
           <label class="control-label col-xs-3">Status</label>
           <div class="col-xs-8">
-            <input type="radio" id="active" name="status" <?php if ($dataOwner->isActive == 1) echo "checked"; ?> value="true">
+            <input type="radio" id="active" name="status" <?php if ($dataOwner->isActive == 1) echo "checked"; ?> value="1">
             <label for="active">Aktif</label><br>
-            <input type="radio" id="non_active" name="status" <?php if ($dataOwner->isActive == 0) echo "checked"; ?> value="false">
+            <input type="radio" id="non_active" name="status" <?php if ($dataOwner->isActive == 0) echo "checked"; ?> value="0">
             <label for="non_active">Non Aktif</label><br>
           </div>
         </div>

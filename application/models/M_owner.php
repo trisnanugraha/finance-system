@@ -152,7 +152,7 @@ class M_owner extends CI_Model {
 			'unit_owner' => $params['unit'],
 			'alamat_owner' => $params['alamat'],
 			'id_deskripsi' => $params['jenis'],
-			'is_active' => $params['is_active']
+			'is_active' => $params['status']
 		);
 
 		$where = array('kode_owner' => $params['id']);
