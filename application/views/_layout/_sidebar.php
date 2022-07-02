@@ -28,17 +28,20 @@
             <li <?= $this->uri->segment(1) == 'Owner' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Owner'); ?>">
                 <i class="fa fa-building-o">
-                </i> Owner</a></li>
+                </i> Owner</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Customer' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Customer'); ?>">
                 <i class="fa fa-user-plus">
-                </i> Customer</a></li>
+                </i> Customer</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Description' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Description'); ?>">
                 <i class="fa fa-cube">
-                </i> Description</a></li>
+                </i> Description</a>
+            </li>
           </ul>
         </li>
 
@@ -53,27 +56,32 @@
             <li <?= $this->uri->segment(1) == 'Coa' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Coa'); ?>">
                 <i class="fa fa-money">
-                </i>Charts Of Accounts</a></li>
+                </i>Charts Of Accounts</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Voucher' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Voucher'); ?>">
                 <i class="fa fa-money">
-                </i> Voucher</a></li>
+                </i> Voucher</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'AR' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('AR'); ?>">
                 <i class="fa fa-money">
-                </i> Kartu Piutang (AR)</a></li>
+                </i> Kartu Piutang (AR)</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'GL' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('GL'); ?>">
                 <i class="fa fa-money">
-                </i> Link GL</a></li>
+                </i> Link GL</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'CF' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('CF'); ?>">
                 <i class="fa fa-money">
-                </i> Cash Flow</a></li>
+                </i> Cash Flow</a>
+            </li>
           </ul>
         </li>
 
@@ -88,36 +96,42 @@
             <li <?= $this->uri->segment(1) == 'Rates' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Rates'); ?>">
                 <i class="fa fa-tags">
-                </i> Rates</a></li>
+                </i> Rates</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Period' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Period'); ?>">
                 <i class="fa fa-sort">
-                </i> Period</a></li>
+                </i> Period</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Water' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Water'); ?>">
                 <i class="fa fa-tint">
-                </i> Water</a></li>
+                </i> Water</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Electricity' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Electricity'); ?>">
                 <i class="fa fa-flash">
-                </i> Electricity</a></li>
+                </i> Electricity</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'StorageParking' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('StorageParking'); ?>">
                 <i class="fa fa-archive">
-                </i> Storage/Parking</a></li>
+                </i> Storage/Parking</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'WorkingRequest' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('WorkingRequest'); ?>">
                 <i class="fa fa-briefcase">
-                </i> Working Request</a></li>
+                </i> Working Request</a>
+            </li>
           </ul>
         </li>
 
-        <li class="treeview <?= $this->uri->segment(1) == 'Billing' || $this->uri->segment(1) == 'Service' ? 'active' : '' ?>">
+        <li class="treeview <?= $this->uri->segment(1) == 'Billing' || $this->uri->segment(1) == 'Service' || $this->uri->segment(1) == 'Iuran' ? 'active' : '' ?>">
           <!-- <li class="" <?php if ($page == 'tarif' || $page == 'periode') {
                               echo 'class="treeview active"';
                             } ?>> -->
@@ -134,7 +148,8 @@
                         } ?>> -->
               <a href="<?php echo base_url('Billing'); ?>">
                 <i class="fa fa-print">
-                </i> Billing</a></li>
+                </i> Billing</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Service' ? 'class="active"' : '' ?>>
               <!-- <li <?php if ($page == 'report') {
@@ -142,7 +157,17 @@
                         } ?>> -->
               <a href="<?php echo base_url('Service'); ?>">
                 <i class="fa fa-plug">
-                </i> Service Charge</a></li>
+                </i> Service Charge</a>
+            </li>
+
+            <li <?= $this->uri->segment(1) == 'Iuran' ? 'class="active"' : '' ?>>
+              <!-- <li <?php if ($page == 'report') {
+                          echo 'class="active"';
+                        } ?>> -->
+              <a href="<?php echo base_url('Iuran'); ?>">
+                <i class="fa fa-briefcase">
+                </i> Iuran IPK</a>
+            </li>
           </ul>
         </li>
 
@@ -214,17 +239,20 @@
             <li <?= $this->uri->segment(1) == 'Owner' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Owner'); ?>">
                 <i class="fa fa-building-o">
-                </i> Owner</a></li>
+                </i> Owner</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Customer' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Customer'); ?>">
                 <i class="fa fa-user-plus">
-                </i> Customer</a></li>
+                </i> Customer</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Description' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Description'); ?>">
                 <i class="fa fa-cube">
-                </i> Description</a></li>
+                </i> Description</a>
+            </li>
           </ul>
         </li>
 
@@ -239,27 +267,32 @@
             <li <?= $this->uri->segment(1) == 'Coa' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Coa'); ?>">
                 <i class="fa fa-money">
-                </i>Charts Of Accounts</a></li>
+                </i>Charts Of Accounts</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Voucher' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Voucher'); ?>">
                 <i class="fa fa-money">
-                </i> Voucher</a></li>
+                </i> Voucher</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'AR' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('AR'); ?>">
                 <i class="fa fa-money">
-                </i> Kartu Piutang (AR)</a></li>
+                </i> Kartu Piutang (AR)</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'GL' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('GL'); ?>">
                 <i class="fa fa-money">
-                </i> Link GL</a></li>
+                </i> Link GL</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'CF' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('CF'); ?>">
                 <i class="fa fa-money">
-                </i> Cash Flow</a></li>
+                </i> Cash Flow</a>
+            </li>
           </ul>
         </li>
 
@@ -274,32 +307,38 @@
             <li <?= $this->uri->segment(1) == 'Rates' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Rates'); ?>">
                 <i class="fa fa-tags">
-                </i> Rates</a></li>
+                </i> Rates</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Period' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Period'); ?>">
                 <i class="fa fa-sort">
-                </i> Period</a></li>
+                </i> Period</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Water' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Water'); ?>">
                 <i class="fa fa-tint">
-                </i> Water</a></li>
+                </i> Water</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Electricity' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('Electricity'); ?>">
                 <i class="fa fa-flash">
-                </i> Electricity</a></li>
+                </i> Electricity</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'StorageParking' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('StorageParking'); ?>">
                 <i class="fa fa-archive">
-                </i> Storage/Parking</a></li>
+                </i> Storage/Parking</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'WorkingRequest' ? 'class="active"' : '' ?>>
               <a href="<?php echo base_url('WorkingRequest'); ?>">
                 <i class="fa fa-briefcase">
-                </i> Working Request</a></li>
+                </i> Working Request</a>
+            </li>
           </ul>
         </li>
 
@@ -320,7 +359,8 @@
                         } ?>> -->
               <a href="<?php echo base_url('Billing'); ?>">
                 <i class="fa fa-print">
-                </i> Billing</a></li>
+                </i> Billing</a>
+            </li>
 
             <li <?= $this->uri->segment(1) == 'Service' ? 'class="active"' : '' ?>>
               <!-- <li <?php if ($page == 'report') {
@@ -328,7 +368,8 @@
                         } ?>> -->
               <a href="<?php echo base_url('Service'); ?>">
                 <i class="fa fa-plug">
-                </i> Service Charge</a></li>
+                </i> Service Charge</a>
+            </li>
           </ul>
         </li>
 

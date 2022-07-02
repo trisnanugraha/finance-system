@@ -216,6 +216,23 @@ class M_period extends CI_Model
 		return $data->result();
 	}
 
+	public function select_iuran()
+	{
+		$sql = "SELECT 
+					id_periode AS id,
+					start_periode AS periodStart,
+					DATE_ADD(DATE_ADD(LAST_DAY(periode.start_periode), INTERVAL 1 DAY), INTERVAL -1 MONTH) AS start_periode,
+					end_periode AS periodEnd,
+					due_date AS dueDate,
+					LAST_DAY(start_periode + INTERVAL 2 MONTH) AS end_periode,
+					amount_days + 59 AS amount
+				FROM periode
+				WHERE amount_days > 27";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
 
 	public function update($params)
 	{
