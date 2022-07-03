@@ -70,7 +70,7 @@ class Iuran extends AUTH_Controller
                 $id = str_replace('@counter', str_pad($currentNumber->maxNumber, $formatBillingId->counter_count, '0', STR_PAD_LEFT), $id);
             
                 $total = ($owner->sqm / 16329) * $post['total'];
-                $id = 'test';
+                // $id = 'test';
                 $data = [
                     'id_iuran' => $id,
                     'kode_owner' => $a->kode_owner,
