@@ -131,7 +131,7 @@
           </ul>
         </li>
 
-        <li class="treeview <?= $this->uri->segment(1) == 'Billing' || $this->uri->segment(1) == 'Service' || $this->uri->segment(1) == 'Iuran' ? 'active' : '' ?>">
+        <li class="treeview <?= $this->uri->segment(1) == 'Billing' || $this->uri->segment(1) == 'Service' || $this->uri->segment(1) == 'Iuran' || $this->uri->segment(1) == 'Asuransi' ? 'active' : '' ?>">
           <!-- <li class="" <?php if ($page == 'tarif' || $page == 'periode') {
                               echo 'class="treeview active"';
                             } ?>> -->
@@ -167,6 +167,15 @@
               <a href="<?php echo base_url('Iuran'); ?>">
                 <i class="fa fa-briefcase">
                 </i> Iuran IPK</a>
+            </li>
+
+            <li <?= $this->uri->segment(1) == 'Asuransi' ? 'class="active"' : '' ?>>
+              <!-- <li <?php if ($page == 'report') {
+                          echo 'class="active"';
+                        } ?>> -->
+              <a href="<?php echo base_url('Asuransi'); ?>">
+                <i class="fa fa-money">
+                </i> Asuransi</a>
             </li>
           </ul>
         </li>
