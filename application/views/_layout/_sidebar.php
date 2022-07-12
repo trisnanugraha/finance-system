@@ -379,6 +379,24 @@
                 <i class="fa fa-plug">
                 </i> Service Charge</a>
             </li>
+
+            <li <?= $this->uri->segment(1) == 'Iuran' ? 'class="active"' : '' ?>>
+              <!-- <li <?php if ($page == 'report') {
+                          echo 'class="active"';
+                        } ?>> -->
+              <a href="<?php echo base_url('Iuran'); ?>">
+                <i class="fa fa-briefcase">
+                </i> Iuran IPK</a>
+            </li>
+
+            <li <?= $this->uri->segment(1) == 'Asuransi' ? 'class="active"' : '' ?>>
+              <!-- <li <?php if ($page == 'report') {
+                          echo 'class="active"';
+                        } ?>> -->
+              <a href="<?php echo base_url('Asuransi'); ?>">
+                <i class="fa fa-money">
+                </i> Asuransi</a>
+            </li>
           </ul>
         </li>
 
