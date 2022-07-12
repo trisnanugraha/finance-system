@@ -28,7 +28,7 @@ class Asuransi extends AUTH_Controller
         $data['deskripsi'] = "Manage Asuransi Bills";
         $data['dataPeriod'] = $this->m_asuransi->select_period_not_bill();
 
-        $data['modal_tambah_asuransi'] = show_my_modal('modals/modal_tambah_asuranasi', 'tambah-asuransi', $data);
+        $data['modal_tambah_asuransi'] = show_my_modal('modals/modal_tambah_asuransi', 'tambah-asuransi', $data);
 
         $js = $this->load->view('asuransi/asuransi-js', null, true);
         $this->template->views('asuransi/home', $data, $js);

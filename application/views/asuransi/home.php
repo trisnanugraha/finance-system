@@ -5,7 +5,7 @@
 <div class="box">
   <div class="box-header">
     <div class="col-md-3">
-      <button class="form-control btn btn-primary" data-toggle="modal" data-target="#tambah-asuransi"><i class="glyphicon glyphicon-plus-sign"></i> Add New IPK</button>
+      <button class="form-control btn btn-primary" data-toggle="modal" data-target="#tambah-asuransi"><i class="glyphicon glyphicon-plus-sign"></i> Add New Asuransi</button>
     </div>
     <div class="col-md-3">
       <button type="button" name="delete_all" id="delete_all" class="form-control btn btn-danger"><i class="glyphicon glyphicon-trash"></i> Delete All</button>
