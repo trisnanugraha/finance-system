@@ -15,8 +15,8 @@ class M_iuran extends CI_Model
                     o.nama_owner,
                     o.kode_owner,
                     i.id_periode,
-                    p.start_periode AS start_periode,
-                    p.end_periode AS end_periode,
+                    DATE_ADD(DATE_ADD(LAST_DAY(p.start_periode), INTERVAL 1 DAY), INTERVAL -1 MONTH) AS start_periode,
+                    LAST_DAY(p.start_periode + INTERVAL 1 MONTH) AS end_periode,
                     i.total_iuran
                 FROM iuran i
                     JOIN owner o ON o.kode_owner = i.kode_owner
@@ -39,8 +39,8 @@ class M_iuran extends CI_Model
                     o.nama_owner,
                     o.kode_owner,
                     i.id_periode,
-                    p.start_periode AS start_periode,
-                    p.end_periode AS end_periode,
+                    DATE_ADD(DATE_ADD(LAST_DAY(p.start_periode), INTERVAL 1 DAY), INTERVAL -1 MONTH) AS start_periode,
+                    LAST_DAY(p.start_periode) AS end_periode,
                     i.total_iuran
                 FROM iuran i
                     JOIN owner o ON o.kode_owner = i.kode_owner
@@ -59,8 +59,8 @@ class M_iuran extends CI_Model
                     o.nama_owner,
                     o.kode_owner,
                     i.id_periode,
-                    p.start_periode AS start_periode,
-                    p.end_periode AS end_periode,
+                    DATE_ADD(DATE_ADD(LAST_DAY(p.start_periode), INTERVAL 1 DAY), INTERVAL -1 MONTH) AS start_periode,
+                    LAST_DAY(p.start_periode) AS end_periode,
                     i.total_iuran
                 FROM iuran i
                     JOIN owner o ON o.kode_owner = i.kode_owner
@@ -79,8 +79,8 @@ class M_iuran extends CI_Model
                     o.nama_owner,
                     o.kode_owner,
                     i.id_periode,
-                    p.start_periode AS start_periode,
-                    p.end_periode AS end_periode,
+                    DATE_ADD(DATE_ADD(LAST_DAY(p.start_periode), INTERVAL 1 DAY), INTERVAL -1 MONTH) AS start_periode,
+                    LAST_DAY(p.start_periode) AS end_periode,
                     i.total_iuran
                 FROM iuran i
                     JOIN owner o ON o.kode_owner = i.kode_owner
@@ -144,9 +144,9 @@ class M_iuran extends CI_Model
             "SELECT
 				p.id_periode AS id,
 				p.start_periode AS periodStart,
-				p.start_periode AS first_day,
+				DATE_ADD(DATE_ADD(LAST_DAY(p.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH) AS first_day,
 				p.end_periode AS periodEnd,
-				p.end_periode AS last_day,
+				LAST_DAY(p.start_periode) AS last_day,
 				p.due_date AS dueDate,
 				p.amount_days + 59 AS amount
 			FROM periode p
@@ -167,7 +167,7 @@ class M_iuran extends CI_Model
         $query =
             "SELECT
 				i.id_periode,
-				p.start_periode AS start_periode,
+				DATE_ADD(DATE_ADD(LAST_DAY(p.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH) AS start_periode,
 				i.end_periode
 			FROM iuran i
 				JOIN periode p
@@ -186,9 +186,9 @@ class M_iuran extends CI_Model
 			"SELECT 
 				p.id_periode AS id,
 				p.start_periode AS periodStart,
-				p.start_periode AS first_day,
+				DATE_ADD(DATE_ADD(LAST_DAY(p.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH) AS first_day,
 				p.end_periode AS periodEnd,
-				p.end_periode AS last_day,
+				LAST_DAY(p.start_periode) AS last_day,
 				p.due_date AS dueDate,
 				p.amount_days AS amount
 			FROM periode p
