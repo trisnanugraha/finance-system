@@ -116,7 +116,7 @@
                         </tr>
                         <tr>
                             <td style="width:45%;" class="border-left padding-top border-bottom"><b>D / C Note No</b></td>
-                            <td style="width:55%;" class="border-right padding-top border-bottom"><span id="dc-no"><?= $sc->kode_tagihan_service; ?></span></td>
+                            <td style="width:55%;" class="border-right padding-top border-bottom"><span id="dc-no"><?= $sc->id_iuran; ?></span></td>
                         </tr>
                     </table>
                 </td>
@@ -183,8 +183,7 @@
                                         <td><b>Billing</b></td>
                                         <td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
                                         <td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
-                                        <td class="text-align-right" ><b>SQM</b></td>
-                                        <td class="text-align-right" ><b>Rate/Month</b></td>
+                                        <td class="" ><b>SQM</b></td>
                                     </tr>    
                                 </table>
                             </td>
@@ -194,14 +193,8 @@
                             <td class="border-left border-bottom padding-top">
                                 <table>
                                     <tr>
-                                        <td><b>Service Charge</b></td>
+                                        <td><b>Iuran Pengelolaan Kawasan</b></td>
                                         <td><?=$sc->sqm?></td>
-                                        <td><?=money($sc->tarif_service_charge)?></td>
-                                    </tr>
-                                    <tr>
-                                        <td><b>Sinking Fund</b></td>
-                                        <td><?=$sc->sqm?></td>
-                                        <td><?=money($sc->tarif_sinking_fund)?></td>
                                     </tr>
                                 </table>
                             </td>
