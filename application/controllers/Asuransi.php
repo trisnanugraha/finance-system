@@ -6,7 +6,7 @@ class Asuransi extends AUTH_Controller
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('m_asuransi');
+        $this->load->model('M_asuransi');
         $this->load->model('M_owner');
         $this->load->model('M_rates');
         $this->load->model('M_period');
@@ -19,14 +19,14 @@ class Asuransi extends AUTH_Controller
     public function index()
     {
         $data['userdata'] = $this->userdata;
-        $data['dataAsuransi'] = $this->m_asuransi->select_all();
+        $data['dataAsuransi'] = $this->M_asuransi->select_all();
         $data['dataOwner'] = $this->M_owner->select_all();
         $data['dataRates'] = $this->M_rates->current_rate();
 
         $data['page'] = "Asuransi";
         $data['judul'] = "Asuransi Bills";
         $data['deskripsi'] = "Manage Asuransi Bills";
-        $data['dataPeriod'] = $this->m_asuransi->select_period_not_bill();
+        $data['dataPeriod'] = $this->M_asuransi->select_period_not_bill();
 
         $data['modal_tambah_asuransi'] = show_my_modal('modals/modal_tambah_asuransi', 'tambah-asuransi', $data);
 
@@ -39,7 +39,7 @@ class Asuransi extends AUTH_Controller
         $owner = $this->input->get("owner");
         $startDate = $this->input->get("startDate");
         $endDate = $this->input->get("endDate");
-        $data['dataAsuransi'] = $this->m_asuransi->select_filter($owner, $startDate, $endDate);
+        $data['dataAsuransi'] = $this->M_asuransi->select_filter($owner, $startDate, $endDate);
         $this->load->view('asuransi/list_data', $data);
     }
 
@@ -49,26 +49,27 @@ class Asuransi extends AUTH_Controller
         $this->form_validation->set_rules('total', 'Total', 'trim|required');
 
         $post = $this->input->post();
+        // echo json_encode($post);
         $row = 0;
         if ($this->form_validation->run() == TRUE) {
-            $available = $this->m_asuransi->select_inv_not_bill($post['period']);
+            $available = $this->M_asuransi->select_inv_not_bill($post['period']);
             foreach ($available as $a) {
-                $periode = $this->m_asuransi->select_period($post['period']);
+                $periode = $this->M_asuransi->select_period($post['period']);
                 $owner = $this->M_owner->select_by_id($a->kode_owner);
 
                 $dt = DateTime::createFromFormat("Y-m-d", $periode->periodEnd);
                 $dtNextMonth = $dt->modify('first day of next month');
                 $year = $dtNextMonth->format('y');
                 $month = $dtNextMonth->format('m');
-                
-                $currentNumber = $this->m_asuransi->get_last_id($dtNextMonth);
-    
+
+                $currentNumber = $this->M_asuransi->get_last_id($dtNextMonth);
+
                 $formatBillingId = $this->M_candidate_key->select_by_id('asuransi_key');
-    
+
                 $id = str_replace('@year', $year, $formatBillingId->key);
                 $id = str_replace('@month', $month, $id);
                 $id = str_replace('@counter', str_pad($currentNumber->maxNumber, $formatBillingId->counter_count, '0', STR_PAD_LEFT), $id);
-            
+
                 $total = ($owner->sqm / 16329) * $post['total'];
                 // $id = 'test';
                 $data = [
@@ -79,7 +80,7 @@ class Asuransi extends AUTH_Controller
                     'created_by' => $this->userdata->id,
                     'd_c_note_date' => $dtNextMonth->format('Y/m/d')
                 ];
-                
+
                 $dataGL = [
                     'bukti_transaksi' => $id,
                     'id_customer' => $owner->customer,
@@ -92,7 +93,7 @@ class Asuransi extends AUTH_Controller
                     'so' => 1,
                     'cash' => 0
                 ];
-                
+
                 $data2 = [
                     'bukti_transaksi' => $id,
                     'id_customer' => $owner->customer,
@@ -105,13 +106,17 @@ class Asuransi extends AUTH_Controller
                     'so' => 1,
                     'cash' => 0
                 ];
-                $this->M_gl->insert2($dataGL);
-                $this->M_gl->insert2($data2);
-                $result = $this->m_asuransi->insert($data);
-                $row += $result;
+                // $this->M_gl->insert2($dataGL);
+                // $this->M_gl->insert2($data2);
+                // $result = $this->M_asuransi->insert($data);
+
+                // $row += $result;
+                echo json_encode($dataGL);
+                echo json_encode($data2);
+                echo json_encode($data);
             }
 
-            if ($row > 0) {               
+            if ($row > 0) {
                 $out['status'] = '';
                 $out['msg'] = show_succ_msg('Asuransi Bill Data Successfully Added', '20px');
             } else {
@@ -129,7 +134,7 @@ class Asuransi extends AUTH_Controller
     public function delete()
     {
         $id = $_POST['id'];
-       
+
         $result = $this->m_asuransi->delete($id);
         if ($result > 0) {
             helper_log("delete", "Menghapus Data (Asuransi)", $id);
@@ -145,7 +150,7 @@ class Asuransi extends AUTH_Controller
         $id = json_decode($_POST["checkbox_value"]);
 
         for ($count = 0; $count < count($id); $count++) {
-            $result = $this->m_asuransi->delete_all($id[$count]);
+            $result = $this->M_asuransi->delete_all($id[$count]);
         }
         if ($result > 0) {
             echo show_succ_msg('Asuransi Bill List Deleted Successfully', '20px');
@@ -159,7 +164,7 @@ class Asuransi extends AUTH_Controller
     {
         $id_period = $this->input->get('period');
 
-        $availablebill = $this->m_asuransi->select_inv_not_bill($id_period);
+        $availablebill = $this->M_asuransi->select_inv_not_bill($id_period);
 
         $response = [
             'count' => count($availablebill)
@@ -170,7 +175,7 @@ class Asuransi extends AUTH_Controller
 
     public function period()
     {
-        $dataPeriod = $this->m_asuransi->select_periode_asuransi();
+        $dataPeriod = $this->M_asuransi->select_periode_asuransi();
 
         $response = [
             'errorCode' => 0,

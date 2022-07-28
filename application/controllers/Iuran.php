@@ -60,15 +60,15 @@ class Iuran extends AUTH_Controller
                 $dtNextMonth = $dt->modify('first day of next month');
                 $year = $dtNextMonth->format('y');
                 $month = $dtNextMonth->format('m');
-                
+
                 $currentNumber = $this->M_iuran->get_last_id($dtNextMonth);
-    
+
                 $formatBillingId = $this->M_candidate_key->select_by_id('iuran_key');
-    
+
                 $id = str_replace('@year', $year, $formatBillingId->key);
                 $id = str_replace('@month', $month, $id);
                 $id = str_replace('@counter', str_pad($currentNumber->maxNumber, $formatBillingId->counter_count, '0', STR_PAD_LEFT), $id);
-            
+
                 $total = ($owner->sqm / 16329) * $post['total'];
                 // $id = 'test';
                 $data = [
@@ -79,7 +79,7 @@ class Iuran extends AUTH_Controller
                     'created_by' => $this->userdata->id,
                     'd_c_note_date' => $dtNextMonth->format('Y/m/d')
                 ];
-                
+
                 $dataGL = [
                     'bukti_transaksi' => $id,
                     'id_customer' => $owner->customer,
@@ -92,7 +92,7 @@ class Iuran extends AUTH_Controller
                     'so' => 1,
                     'cash' => 0
                 ];
-                
+
                 $data2 = [
                     'bukti_transaksi' => $id,
                     'id_customer' => $owner->customer,
@@ -111,7 +111,7 @@ class Iuran extends AUTH_Controller
                 $row += $result;
             }
 
-            if ($row > 0) {               
+            if ($row > 0) {
                 $out['status'] = '';
                 $out['msg'] = show_succ_msg('IPK Bill Data Successfully Added', '20px');
             } else {
@@ -129,7 +129,7 @@ class Iuran extends AUTH_Controller
     public function delete()
     {
         $id = $_POST['id'];
-       
+
         $result = $this->M_iuran->delete($id);
         if ($result > 0) {
             helper_log("delete", "Menghapus Data (IPK)", $id);
@@ -180,6 +180,26 @@ class Iuran extends AUTH_Controller
 
         header('Content-Type: application/json');
         echo json_encode($response);
+    }
+
+    public function print($id)
+    {
+        $sc = $this->M_iuran->print($id);
+        // echo json_encode($sc);
+
+        if ($sc != null) {
+            $signature = $this->M_parameter->select_by_id('authorized_signature_billing_key');
+
+            $data['dataIuran'] = [$sc];
+            $data['signature'] = $signature;
+
+
+            $html = $this->load->view('iuran/print', $data, true);
+            $filename = 'report_' . time();
+            $this->pdf->generate($html, $filename, true, 'letter');
+        } else {
+            redirect('/Service', 'refresh');
+        }
     }
 }
 

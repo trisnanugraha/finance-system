@@ -91,7 +91,7 @@
 <body>
     <?php
     $x = 0;
-    foreach ($dataService as $sc) : ?>
+    foreach ($dataIuran as $sc) : ?>
         <table>
             <tr>
                 <td style="width: 55%"></td>
@@ -157,7 +157,7 @@
                 <td colspan="2">
                     <table>
                         <tr style="text-align: center">
-                            <td style="width: 70%;" class="border padding"><b>Invoice Summary Service Charge & Sinking Fund</b></td>
+                            <td style="width: 70%;" class="border padding"><b>Invoice Summary Building Insurance</b></td>
                             <td style="width: 30%;" class="border-top border-right border-bottom padding text-align-center"><b>AMOUNT</b></td>
                         </tr>
                         <tr>
@@ -185,7 +185,6 @@
                                         <td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
                                         <td class="text-align-right" ><b>SQM</b></td>
                                         <td class="text-align-right" ><b>Rate/Month</b></td>
-                                        <td class="text-align-right" ><b>Bill Cycle</b></td>
                                     </tr>    
                                 </table>
                             </td>
@@ -198,13 +197,11 @@
                                         <td><b>Service Charge</b></td>
                                         <td><?=$sc->sqm?></td>
                                         <td><?=money($sc->tarif_service_charge)?></td>
-                                        <td>3</td>
                                     </tr>
                                     <tr>
                                         <td><b>Sinking Fund</b></td>
                                         <td><?=$sc->sqm?></td>
                                         <td><?=money($sc->tarif_sinking_fund)?></td>
-                                        <td>3</td>
                                     </tr>
                                 </table>
                             </td>
@@ -244,10 +241,10 @@
                         </tr>
                         <tr class="text-align-right">
                             <td class="border-left border-bottom padding-right" style="padding-top: 5px; padding-bottom:5px;"><b>TOTAL AMOUNT DUE</b></td>
-                            <td class="border-left border-bottom border-right text-align-right" style="padding-top: 5px; padding-bottom:5px;"><span id="total-amount-due"><?= money(round($sc->total + $sc->previous + $sc->previous * 3 / 100)); ?></span></td>
+                            <td class="border-left border-bottom border-right text-align-right" style="padding-top: 5px; padding-bottom:5px;"><span id="total-amount-due"><?= money(round($sc->total_iuran + $sc->previous + $sc->previous * 3 / 100)); ?></span></td>
                         </tr>
                         <tr>
-                            <td class="padding-top padding-left text-valign-top padding-bottom">In Word &nbsp;&nbsp;&nbsp;&nbsp;: <span id="in-word"><?= ucwords(number_to_words_rupiah(($sc->total + $sc->previous + $sc->previous * 3 / 100))) ?></span></td>
+                            <td class="padding-top padding-left text-valign-top padding-bottom">In Word &nbsp;&nbsp;&nbsp;&nbsp;: <span id="in-word"><?= ucwords(number_to_words_rupiah(($sc->total_iuran + $sc->previous + $sc->previous * 3 / 100))) ?></span></td>
                             <td class="padding-top padding-right text-align-center padding-bottom" style="padding-left: 3%; padding-right: 3%;">
                                 Authorized Signature
                                 <br>
@@ -285,7 +282,7 @@
 
         <?php $x++;
 
-        if ($x < count($dataService)) {
+        if ($x < count($dataIuran)) {
             echo '<div class="page_break"></div>';
         } ?>
 
