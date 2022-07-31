@@ -8,6 +8,9 @@
       <button class="form-control btn btn-primary" data-toggle="modal" data-target="#tambah-iuran"><i class="glyphicon glyphicon-plus-sign"></i> Add New IPK</button>
     </div>
     <div class="col-md-3">
+      <button class="form-control btn btn-success" data-toggle="modal" data-target="#print-multiple-iuran"><i class="glyphicon glyphicon-print"></i> Print Multiple</button>
+    </div>
+    <div class="col-md-3">
       <button type="button" name="delete_all" id="delete_all" class="form-control btn btn-danger"><i class="glyphicon glyphicon-trash"></i> Delete All</button>
     </div>
   </div>
@@ -71,10 +74,10 @@
 
 <div id="tempat-modal"></div>
 
+<?php echo $modal_tambah_iuran; ?>
 <?php
   show_my_confirm('konfirmasiHapus', 'hapus-dataIuran', 'Delete This Data ?', 'Yes, Delete This Data');
-  // $data['judul'] = 'Print Multiple Bills';
-  // $data['url'] = 'Iuran/printMultiple';
-  // echo show_my_modal('modals/modal_print_iuran', 'print-multiple-iuran', $data);
+  $data['judul'] = 'Print Multiple Bills';
+  $data['url'] = 'Iuran/printMultiple';
+  echo show_my_modal('modals/modal_print_iuran', 'print-multiple-iuran', $data);
 ?>
-<?php echo $modal_tambah_iuran; ?>

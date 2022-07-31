@@ -91,7 +91,7 @@
 <body>
     <?php
     $x = 0;
-    foreach ($dataService as $sc) : ?>
+    foreach ($dataAsuransi as $sc) : ?>
         <table>
             <tr>
                 <td style="width: 55%"></td>
@@ -100,7 +100,6 @@
                     <b>Mr / Mrs</b><br><br>
                     <span id="name"><?= strtoupper($sc->nama_owner); ?></span><br>
                     <span id="address"><?= strtoupper($sc->alamat_owner); ?></span><br>
-                    <!-- <span id="city"><b>D / C Note Date</b></span> -->
                 </td>
             </tr>
             <tr>
@@ -116,7 +115,7 @@
                         </tr>
                         <tr>
                             <td style="width:45%;" class="border-left padding-top border-bottom"><b>D / C Note No</b></td>
-                            <td style="width:55%;" class="border-right padding-top border-bottom"><span id="dc-no"><?= $sc->kode_tagihan_service; ?></span></td>
+                            <td style="width:55%;" class="border-right padding-top border-bottom"><span id="dc-no"><?= $sc->id_asuransi; ?></span></td>
                         </tr>
                     </table>
                 </td>
@@ -139,10 +138,10 @@
                             <td colspan="5">&nbsp;</td>
                         </tr>
                         <tr style="text-align: center;">
-                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="previous-balance-Rp"><?= money($sc->totalp); ?></span></td>
-                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="payment-Rp"><?= money($sc->last); ?></span></td>
-                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="current-month-transaction"><?= money($sc->sinking_fund + $sc->service_charge + $sc->stamp); ?></span></td>
-                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="amount-to-be-paid"><?= money($sc->sinking_fund + $sc->service_charge + $sc->stamp); ?></span></td>
+                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="previous-balance-Rp">0</span></td>
+                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="payment-Rp">0</span></td>
+                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="current-month-transaction"><?= money($sc->total_asuransi + $sc->stamp); ?></span></td>
+                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="amount-to-be-paid"><?= money($sc->total_asuransi + $sc->stamp); ?></span></td>
                             <td style="padding:4px;" class="border-top border-bottom border-left border-right"><span id="payment-due-date"><?= toLongDate($sc->dueDate); ?></span></td>
                         </tr>
                     </table>
@@ -157,20 +156,20 @@
                 <td colspan="2">
                     <table>
                         <tr style="text-align: center">
-                            <td style="width: 70%;" class="border padding"><b>Invoice Summary Service Charge & Sinking Fund</b></td>
+                            <td style="width: 70%;" class="border padding"><b>Invoice Summary Building Insurance</b></td>
                             <td style="width: 30%;" class="border-top border-right border-bottom padding text-align-center"><b>AMOUNT</b></td>
                         </tr>
                         <tr>
                             <td class="border-left" style="padding-top:5px;"><b>Previous Balance</b></td>
-                            <td class="border-left border-right text-align-right" style="padding-top:5px;"><span id="previous-balance"><?= money($sc->totalp); ?></span></td>
+                            <td class="border-left border-right text-align-right" style="padding-top:5px;"><span id="previous-balance">0</span></td>
                         </tr>
                         <tr>
                             <td class="border-left border-bottom padding-top"><b>Last Payment</b></td>
-                            <td class="border-left border-bottom border-right text-align-right padding-top"><span id="last-payment"><?= money($sc->last); ?></span></td>
+                            <td class="border-left border-bottom border-right text-align-right padding-top"><span id="last-payment">0</span></td>
                         </tr>
                         <tr>
                             <td class="border-left" style="padding-top:5px;"><b>Total Previous Balance</b></td>
-                            <td class="border-left border-right text-align-right" style="padding-top:5px;"><span id="total-previous-balance"><?= money($sc->previous); ?></span></td>
+                            <td class="border-left border-right text-align-right" style="padding-top:5px;"><span id="total-previous-balance">0</span></td>
                         </tr>
                         <tr>
                             <td class="border-left border-bottom padding-top"><b>Current Balance Period</b> <span id="period" style="margin-left: 25px"><?= date('d-M-Y', strtotime($sc->periodStart)) . ' to ' .  date('d-M-Y', strtotime($sc->periodEnd)); ?></span></td>
@@ -183,10 +182,8 @@
                                         <td><b>Billing</b></td>
                                         <td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
                                         <td><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b></td>
-                                        <td class="text-align-right" ><b>SQM</b></td>
-                                        <td class="text-align-right" ><b>Rate/Month</b></td>
-                                        <td class="text-align-right" ><b>Bill Cycle</b></td>
-                                    </tr>    
+                                        <td class=""><b>SQM</b></td>
+                                    </tr>
                                 </table>
                             </td>
                             <td class="border-left border-right padding-top">&nbsp;</td>
@@ -195,16 +192,8 @@
                             <td class="border-left border-bottom padding-top">
                                 <table>
                                     <tr>
-                                        <td><b>Service Charge</b></td>
-                                        <td><?=$sc->sqm?></td>
-                                        <td><?=money($sc->tarif_service_charge)?></td>
-                                        <td>3</td>
-                                    </tr>
-                                    <tr>
-                                        <td><b>Sinking Fund</b></td>
-                                        <td><?=$sc->sqm?></td>
-                                        <td><?=money($sc->tarif_sinking_fund)?></td>
-                                        <td>3</td>
+                                        <td><b>Asuransi</b></td>
+                                        <td><?= $sc->sqm ?></td>
                                     </tr>
                                 </table>
                             </td>
@@ -212,42 +201,26 @@
                                 <table class="text-align-right">
                                     <tr>
                                         <td class="padding-bottom">
-                                            <span id="total-electricity"><?= money($sc->service_charge); ?></span>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <span id="total-water"><?= money($sc->sinking_fund); ?></span>
+                                            <span id="total-electricity"><?= money($sc->total_asuransi); ?></span>
                                         </td>
                                     </tr>
                                 </table>
                             </td>
                         </tr>
-                        <!-- <tr>
-                            <td colspan="2" style="border:1px solid black"></td>
-                        </tr> -->
                         <tr>
-                            <td class="border-left padding-top"><b>Grand Total Service Charge & Sinking Fund</b></td>
-                            <td class="border-left border-right padding-top text-align-right"><span id="grand-total"><?= money(($sc->service_charge + $sc->sinking_fund)); ?></span></td>
+                            <td class="border-left padding-top"><b>Grand Total Asuransi</b></td>
+                            <td class="border-left border-right padding-top text-align-right"><span id="grand-total"><?= money(($sc->total_asuransi)); ?></span></td>
                         </tr>
                         <tr>
                             <td class="border-left padding-top"><b>Stamp Duty</b></td>
                             <td class="border-left border-right padding-top text-align-right"><span id="stamp"><?= money($sc->stamp); ?></span></td>
                         </tr>
-                        <tr>
-                            <td class="border-left padding-top"><b>Total Current Balanced</b></td>
-                            <td class="border-left border-right padding-top text-align-right"><span id="total-current"><?= money($sc->service_charge + $sc->sinking_fund + $sc->stamp); ?></span></td>
-                        </tr>
-                        <tr>
-                            <td class="border-left border-bottom padding-top"><b>Pinalty From The Previous Period</b></td>
-                            <td class="border-left border-bottom border-right padding-top text-align-right"><span id="pinalty"><?= money(round($sc->previous * 3 / 100)); ?></span></td>
-                        </tr>
                         <tr class="text-align-right">
                             <td class="border-left border-bottom padding-right" style="padding-top: 5px; padding-bottom:5px;"><b>TOTAL AMOUNT DUE</b></td>
-                            <td class="border-left border-bottom border-right text-align-right" style="padding-top: 5px; padding-bottom:5px;"><span id="total-amount-due"><?= money(round($sc->total + $sc->previous + $sc->previous * 3 / 100)); ?></span></td>
+                            <td class="border-left border-bottom border-right text-align-right" style="padding-top: 5px; padding-bottom:5px;"><span id="total-amount-due"><?= money(round($sc->total_asuransi + $sc->stamp)); ?></span></td>
                         </tr>
                         <tr>
-                            <td class="padding-top padding-left text-valign-top padding-bottom">In Word &nbsp;&nbsp;&nbsp;&nbsp;: <span id="in-word"><?= ucwords(number_to_words_rupiah(($sc->total + $sc->previous + $sc->previous * 3 / 100))) ?></span></td>
+                            <td class="padding-top padding-left text-valign-top padding-bottom">In Word &nbsp;&nbsp;&nbsp;&nbsp;: <span id="in-word"><?= ucwords(number_to_words_rupiah(($sc->total_asuransi + $sc->stamp))) ?></span></td>
                             <td class="padding-top padding-right text-align-center padding-bottom" style="padding-left: 3%; padding-right: 3%;">
                                 Authorized Signature
                                 <br>
@@ -285,7 +258,7 @@
 
         <?php $x++;
 
-        if ($x < count($dataService)) {
+        if ($x < count($dataAsuransi)) {
             echo '<div class="page_break"></div>';
         } ?>
 

@@ -1,35 +1,39 @@
 <script>
-    $(function(){
+    $(function() {
         let startDate = "";
         let endDate = "";
         let owner = "";
 
-        window.onload = function(){
+        window.onload = function() {
             tampilIuran(owner, startDate, endDate);
             tampilOwner();
         }
 
-        $('#filter').on("click", function(){
+        $('#filter').on("click", function() {
             owner = $('#owner').find(':selected').val();
             startDate = $('#startDate').val();
             endDate = $('#endDate').val();
             tampilIuran(owner, startDate, endDate);
         });
 
-        function  tampilIuran(owner, startDate, endDate){
+        function tampilIuran(owner, startDate, endDate) {
             $.ajax({
-                url : "<?php echo base_url('Iuran/Tampil')?>",
-                data : {owner : owner, startDate : startDate, endDate : endDate},
+                url: "<?php echo base_url('Iuran/Tampil') ?>",
+                data: {
+                    owner: owner,
+                    startDate: startDate,
+                    endDate: endDate
+                },
                 type: "GET",
                 datatype: "html",
-                success: function(response){
+                success: function(response) {
                     MyTable.fnDestroy();
                     $("#data-iuran").html(response);
                     refresh();
                 }
             })
         }
-        
+
         function tampilOwner() {
             $.getJSON('<?php echo base_url('Owner/getOwnerJson'); ?>',
                 function(response) {
@@ -182,10 +186,10 @@
                         text: moment(data.data[i].start_periode, 'YYYY/MM/DD').format('DD/MMM/YYYY') + ' ~ ' + moment(data.data[i].end_periode, 'YYYY/MM/DD').format('DD/MMM/YYYY')
                     }));
                 }
-        }); 
-    });
+            });
+        });
 
-    $(".kodeOwner").on("change", function() {
+        $(".kodeOwner").on("change", function() {
             var kode_owner = $(this).find(':selected').val();
             $.ajax({
                 method: 'POST',
@@ -210,53 +214,55 @@
                 }
             });
         });
-    
-    $("#check_all").click(function(){
-        if($(this).is(":checked")){
-            $(".check_item").prop("checked", true);
-            $(this).closest('tr').addClass('removeRow');
-        }else{
-            $(".check_item").prop("checked", false);
-            $(this).closest('tr').removeClass('removeRow');
-        }
+
+        $("#check_all").click(function() {
+            if ($(this).is(":checked")) {
+                $(".check_item").prop("checked", true);
+                $(this).closest('tr').addClass('removeRow');
+            } else {
+                $(".check_item").prop("checked", false);
+                $(this).closest('tr').removeClass('removeRow');
+            }
+        });
+
+        $('.check_item').click(function() {
+            if ($(this).is(':checked')) {
+                $(this).closest('tr').addClass('removeRow');
+            } else {
+                $(this).closest('tr').removeClass('removeRow');
+            }
+        });
+
+        $(document).on("click", "#delete_all", function() {
+            var checkbox = $('.check_item:checked');
+            var confirm = window.confirm("Delete This Data ?")
+
+            if (checkbox.length > 0 && confirm) {
+                var checkbox_value = new Array();
+
+                $(checkbox).each(function() {
+                    checkbox_value.push($(this).val());
+                });
+
+                sendValue = JSON.stringify(checkbox_value);
+
+                $.ajax({
+                        url: "<?php echo base_url('Iuran/delete_all'); ?>",
+                        method: "POST",
+                        data: {
+                            checkbox_value: sendValue
+                        },
+                    })
+                    .done(function(data) {
+                        tampilIuran();
+                        $('.msg').html(data);
+                        effect_msg();
+                        setInterval('location.reload()', 1000);
+                    })
+
+            } else if (checkbox.length <= 0 && confirm) {
+                alert('Select at least one records');
+            } else {}
+        });
     });
-
-    $('.check_item').click(function(){
-        if($(this).is(':checked')){
-            $(this).closest('tr').addClass('removeRow');
-        }else{
-            $(this).closest('tr').removeClass('removeRow');
-        }
-    });
-
-    $(document).on("click", "#delete_all", function() {
-        var checkbox = $('.check_item:checked');
-        var confirm = window.confirm("Delete This Data ?")
-
-        if(checkbox.length > 0 && confirm){
-            var checkbox_value = new Array();
-            
-            $(checkbox).each(function(){
-                checkbox_value.push($(this).val());
-            });
-
-            sendValue = JSON.stringify(checkbox_value);
-            
-            $.ajax({
-                url:"<?php echo base_url('Iuran/delete_all'); ?>",
-                method:"POST",
-                data: {checkbox_value : sendValue},
-            })
-            .done(function(data) {
-                tampilIuran();
-                $('.msg').html(data);
-                effect_msg();
-                setInterval('location.reload()', 1000);
-            })
-            
-        }else if(checkbox.length <= 0 && confirm){
-            alert('Select at least one records');
-        }else{}
-    });
-});
 </script>
