@@ -156,7 +156,7 @@
                 <td colspan="2">
                     <table>
                         <tr style="text-align: center">
-                            <td style="width: 70%;" class="border padding"><b>Invoice Iuran Pengelolaan Kawasan</b></td>
+                            <td style="width: 70%;" class="border padding"><b>Invoice Summary Iuran Pengelolaan Kawasan</b></td>
                             <td style="width: 30%;" class="border-top border-right border-bottom padding text-align-center"><b>AMOUNT</b></td>
                         </tr>
                         <tr>
