@@ -217,8 +217,8 @@
                             <td colspan="2" style="border:1px solid black"></td>
                         </tr> -->
                         <tr>
-                            <td class="border-left padding-top"><b>Grand Total Service Charge & Sinking Fund</b></td>
-                            <td class="border-left border-right padding-top text-align-right"><span id="grand-total"><?= money(($sc->service_charge + $sc->sinking_fund)); ?></span></td>
+                            <td class="border-left padding-top"><b>Grand Total Iuran Pengelolaan Kawasan</b></td>
+                            <td class="border-left border-right padding-top text-align-right"><span id="grand-total"><?= money($sc->total_iuran); ?></span></td>
                         </tr>
                         <tr>
                             <td class="border-left padding-top"><b>Stamp Duty</b></td>
