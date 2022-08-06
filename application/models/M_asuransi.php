@@ -3,13 +3,13 @@ defined('BASEPATH') or exit('No direct script access allowed');
 
 class M_asuransi extends CI_Model
 {
-	private $tableName = 'asuransi';
+    private $tableName = 'asuransi';
 
     public function select_all()
     {
 
         $sql =
-                "SELECT
+            "SELECT
                     i.id_asuransi,
                     i.kode_owner,
                     o.nama_owner,
@@ -23,8 +23,8 @@ class M_asuransi extends CI_Model
                     JOIN periode p ON p.id_periode = i.id_periode
 				ORDER BY p.start_periode DESC, i.id_asuransi";
 
-            $query = $this->db->query($sql);
-            return $query->result();
+        $query = $this->db->query($sql);
+        return $query->result();
     }
 
     public function select_filter($owner, $startDate, $endDate)
@@ -168,7 +168,7 @@ class M_asuransi extends CI_Model
             "SELECT
 				i.id_periode,
 				p.start_periode AS start_periode,
-				i.end_periode
+				p.end_periode
 			FROM asuransi i
 				JOIN periode p
 					ON(p.id_periode = i.id_periode)
@@ -181,9 +181,9 @@ class M_asuransi extends CI_Model
     }
 
     public function select_period($id)
-	{
-		$query  = 
-			"SELECT 
+    {
+        $query  =
+            "SELECT
 				p.id_periode AS id,
 				p.start_periode AS periodStart,
 				p.start_periode AS first_day,
@@ -194,8 +194,82 @@ class M_asuransi extends CI_Model
 			FROM periode p
 			WHERE p.id_periode = '{$id}'";
 
-		$data = $this->db->query($query);
+        $data = $this->db->query($query);
 
-		return $data->row();
-	}
+        return $data->row();
+    }
+
+    public function print($id)
+    {
+        $sql =
+            "SELECT
+				s.id_asuransi,
+				s.kode_owner,
+				o.nama_owner,
+				o.unit_owner,
+				o.kode_virtual,
+				o.alamat_owner,
+				o.id_deskripsi,
+				d.jenis_deskripsi,
+				d.sqm,
+				s.id_periode,
+				p.start_periode,
+				p.start_periode AS periodStart,
+				p.due_date AS dueDate,
+				p.end_periode,
+				p.end_periode AS periodEnd,
+                s.stamp,
+                s.total_asuransi,
+				s.created_at,
+				s.updated_at
+			FROM asuransi s
+				JOIN owner o
+					ON(o.kode_owner = s.kode_owner)
+				JOIN periode p
+					ON(p.id_periode = s.id_periode)
+				JOIN deskripsi d
+					ON(d.id_deskripsi = o.id_deskripsi)
+			WHERE s.id_iuran = '{$id}'";
+
+        $data = $this->db->query($sql);
+
+        return $data->row();
+    }
+
+    public function print_by_periode($id_periode)
+    {
+        $query =
+            "SELECT
+                s.id_asuransi,
+                s.kode_owner,
+                o.nama_owner,
+                o.unit_owner,
+                o.kode_virtual,
+                o.alamat_owner,
+                o.id_deskripsi,
+                d.jenis_deskripsi,
+                d.sqm,
+                s.id_periode,
+                p.start_periode,
+                p.start_periode AS periodStart,
+                p.due_date AS dueDate,
+                p.end_periode,
+                p.end_periode AS periodEnd,
+                s.stamp,
+                s.total_asuransi,
+                s.created_at,
+                s.updated_at
+            FROM asuransi s
+                JOIN owner o
+                    ON(o.kode_owner = s.kode_owner)
+                JOIN periode p
+                    ON(p.id_periode = s.id_periode)
+                JOIN deskripsi d
+                    ON(d.id_deskripsi = o.id_deskripsi)
+			WHERE s.id_periode = '{$id_periode}'";
+
+        $data = $this->db->query($query);
+
+        return $data->result();
+    }
 }

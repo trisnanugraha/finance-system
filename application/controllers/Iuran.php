@@ -56,8 +56,8 @@ class Iuran extends AUTH_Controller
                 $periode = $this->M_iuran->select_period($post['period']);
                 $owner = $this->M_owner->select_by_id($a->kode_owner);
 
-                $dt = DateTime::createFromFormat("Y-m-d", $periode->periodEnd);
-                $dtNextMonth = $dt->modify('first day of next month');
+                $dt = DateTime::createFromFormat("Y-m-d", $periode->periodStart);
+                $dtNextMonth = $dt->modify('+1 day');
                 $year = $dtNextMonth->format('y');
                 $month = $dtNextMonth->format('m');
 
@@ -70,11 +70,20 @@ class Iuran extends AUTH_Controller
                 $id = str_replace('@counter', str_pad($currentNumber->maxNumber, $formatBillingId->counter_count, '0', STR_PAD_LEFT), $id);
 
                 $total = ($owner->sqm / 16329) * $post['total'];
-                // $id = 'test';
+
+                $stamp = $this->M_parameter->select_by_id('stamp_key');
+                $bill_stamp_limit_key = $this->M_parameter->select_by_id('bill_stamp_limit_key');
+                if (($total) < floatval($bill_stamp_limit_key->param1)) {
+                    $stampValue = floatval($stamp->param1);
+                } else {
+                    $stampValue = floatval($stamp->param2);
+                }
+
                 $data = [
                     'id_iuran' => $id,
                     'kode_owner' => $a->kode_owner,
                     'id_periode' => $post['period'],
+                    'stamp' => $stampValue,
                     'total_iuran' => $total,
                     'created_by' => $this->userdata->id,
                     'd_c_note_date' => $dtNextMonth->format('Y/m/d')
@@ -177,7 +186,6 @@ class Iuran extends AUTH_Controller
             'data' => $dataPeriod
         ];
 
-
         header('Content-Type: application/json');
         echo json_encode($response);
     }
@@ -185,7 +193,6 @@ class Iuran extends AUTH_Controller
     public function print($id)
     {
         $sc = $this->M_iuran->print($id);
-        // echo json_encode($sc);
 
         if ($sc != null) {
             $signature = $this->M_parameter->select_by_id('authorized_signature_billing_key');
@@ -198,7 +205,26 @@ class Iuran extends AUTH_Controller
             $filename = 'report_' . time();
             $this->pdf->generate($html, $filename, true, 'letter');
         } else {
-            redirect('/Service', 'refresh');
+            redirect('/Iuran', 'refresh');
+        }
+    }
+
+    public function printMultiple()
+    {
+        $idPeriode = $this->input->post('period');
+        $sc = $this->M_iuran->print_by_periode($idPeriode);
+
+        if ($sc != null) {
+            $signature = $this->M_parameter->select_by_id('authorized_signature_billing_key');
+
+            $data['dataIuran'] = $sc;
+            $data['signature'] = $signature;
+
+            $html = $this->load->view('iuran/print', $data, true);
+            $filename = 'report_' . time();
+            $this->pdf->generate($html, $filename);
+        } else {
+            redirect('/Iuran', 'refresh');
         }
     }
 }

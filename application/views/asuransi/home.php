@@ -8,6 +8,9 @@
       <button class="form-control btn btn-primary" data-toggle="modal" data-target="#tambah-asuransi"><i class="glyphicon glyphicon-plus-sign"></i> Add New Asuransi</button>
     </div>
     <div class="col-md-3">
+      <button class="form-control btn btn-success" data-toggle="modal" data-target="#print-multiple-asuransi"><i class="glyphicon glyphicon-print"></i> Print Multiple</button>
+    </div>
+    <div class="col-md-3">
       <button type="button" name="delete_all" id="delete_all" class="form-control btn btn-danger"><i class="glyphicon glyphicon-trash"></i> Delete All</button>
     </div>
   </div>
@@ -71,10 +74,10 @@
 
 <div id="tempat-modal"></div>
 
+<?php echo $modal_tambah_asuransi; ?>
 <?php
   show_my_confirm('konfirmasiHapus', 'hapus-dataAsuransi', 'Delete This Data ?', 'Yes, Delete This Data');
-  // $data['judul'] = 'Print Multiple Bills';
-  // $data['url'] = 'Asuransi/printMultiple';
-  // echo show_my_modal('modals/modal_print_asuransi', 'print-multiple-asuransi', $data);
+  $data['judul'] = 'Print Multiple Bills';
+  $data['url'] = 'Asuransi/printMultiple';
+  echo show_my_modal('modals/modal_print_asuransi', 'print-multiple-asuransi', $data);
 ?>
-<?php echo $modal_tambah_asuransi; ?>

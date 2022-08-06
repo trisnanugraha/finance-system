@@ -49,7 +49,6 @@ class Asuransi extends AUTH_Controller
         $this->form_validation->set_rules('total', 'Total', 'trim|required');
 
         $post = $this->input->post();
-        // echo json_encode($post);
         $row = 0;
         if ($this->form_validation->run() == TRUE) {
             $available = $this->M_asuransi->select_inv_not_bill($post['period']);
@@ -57,8 +56,8 @@ class Asuransi extends AUTH_Controller
                 $periode = $this->M_asuransi->select_period($post['period']);
                 $owner = $this->M_owner->select_by_id($a->kode_owner);
 
-                $dt = DateTime::createFromFormat("Y-m-d", $periode->periodEnd);
-                $dtNextMonth = $dt->modify('first day of next month');
+                $dt = DateTime::createFromFormat("Y-m-d", $periode->periodStart);
+                $dtNextMonth = $dt->modify('+1 day');
                 $year = $dtNextMonth->format('y');
                 $month = $dtNextMonth->format('m');
 
@@ -71,11 +70,20 @@ class Asuransi extends AUTH_Controller
                 $id = str_replace('@counter', str_pad($currentNumber->maxNumber, $formatBillingId->counter_count, '0', STR_PAD_LEFT), $id);
 
                 $total = ($owner->sqm / 16329) * $post['total'];
-                // $id = 'test';
+
+                $stamp = $this->M_parameter->select_by_id('stamp_key');
+                $bill_stamp_limit_key = $this->M_parameter->select_by_id('bill_stamp_limit_key');
+                if (($total) < floatval($bill_stamp_limit_key->param1)) {
+                    $stampValue = floatval($stamp->param1);
+                } else {
+                    $stampValue = floatval($stamp->param2);
+                }
+
                 $data = [
                     'id_asuransi' => $id,
                     'kode_owner' => $a->kode_owner,
                     'id_periode' => $post['period'],
+                    'stamp' => $stampValue,
                     'total_asuransi' => $total,
                     'created_by' => $this->userdata->id,
                     'd_c_note_date' => $dtNextMonth->format('Y/m/d')
@@ -106,14 +114,11 @@ class Asuransi extends AUTH_Controller
                     'so' => 1,
                     'cash' => 0
                 ];
-                // $this->M_gl->insert2($dataGL);
-                // $this->M_gl->insert2($data2);
-                // $result = $this->M_asuransi->insert($data);
+                $this->M_gl->insert2($dataGL);
+                $this->M_gl->insert2($data2);
+                $result = $this->M_asuransi->insert($data);
 
-                // $row += $result;
-                echo json_encode($dataGL);
-                echo json_encode($data2);
-                echo json_encode($data);
+                $row += $result;
             }
 
             if ($row > 0) {
@@ -185,6 +190,44 @@ class Asuransi extends AUTH_Controller
 
         header('Content-Type: application/json');
         echo json_encode($response);
+    }
+
+    public function print($id)
+    {
+        $sc = $this->M_asuransi->print($id);
+
+        if ($sc != null) {
+            $signature = $this->M_parameter->select_by_id('authorized_signature_billing_key');
+
+            $data['dataAsuransi'] = [$sc];
+            $data['signature'] = $signature;
+
+
+            $html = $this->load->view('asuransi/print', $data, true);
+            $filename = 'report_' . time();
+            $this->pdf->generate($html, $filename, true, 'letter');
+        } else {
+            redirect('/Asuransi', 'refresh');
+        }
+    }
+
+    public function printMultiple()
+    {
+        $idPeriode = $this->input->post('period');
+        $sc = $this->M_asuransi->print_by_periode($idPeriode);
+
+        if ($sc != null) {
+            $signature = $this->M_parameter->select_by_id('authorized_signature_billing_key');
+
+            $data['dataAsuransi'] = $sc;
+            $data['signature'] = $signature;
+
+            $html = $this->load->view('asuransi/print', $data, true);
+            $filename = 'report_' . time();
+            $this->pdf->generate($html, $filename);
+        } else {
+            redirect('/Asuransi', 'refresh');
+        }
     }
 }
 
