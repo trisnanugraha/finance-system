@@ -92,7 +92,7 @@ class M_bayar extends CI_Model
 					bayar.debit, 
 					bayar.credit, 
 					bayar.so,
-					(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = bayar.id_voucher AND gl.kode_soa = bayar.kode_soa AND gl.keterangan = bayar.keterangan) AS id_gl
+					gl.id_gl
 				FROM bayar 
 					JOIN ar 
 					ON ar.id_ar = bayar.id_ar 
@@ -101,7 +101,9 @@ class M_bayar extends CI_Model
 					JOIN owner 
 					ON owner.kode_owner = ar.id_owner 
 					JOIN coa 
-					ON coa.id_akun = bayar.kode_soa 
+					ON coa.id_akun = bayar.kode_soa
+					LEFT JOIN gl
+					ON gl.bukti_transaksi = bayar.id_voucher
 				WHERE coa.parent <> 1 
 					AND coa.parent <> 3 
 					AND coa.parent <> 4 
@@ -143,7 +145,7 @@ class M_bayar extends CI_Model
 					bayar.debit, 
 					bayar.credit, 
 					bayar.so,
-					(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = bayar.id_voucher AND gl.kode_soa = bayar.kode_soa AND gl.keterangan = bayar.keterangan) AS id_gl
+					gl.id_gl
 				FROM bayar 
 					JOIN ar 
 					ON ar.id_ar = bayar.id_ar 
@@ -153,6 +155,8 @@ class M_bayar extends CI_Model
 					ON owner.kode_owner = ar.id_owner 
 					JOIN coa 
 					ON coa.id_akun = bayar.kode_soa 
+					LEFT JOIN gl
+					ON gl.bukti_transaksi = bayar.id_voucher
 				WHERE coa.parent <> 1 
 					AND coa.parent <> 3 
 					AND coa.parent <> 4 

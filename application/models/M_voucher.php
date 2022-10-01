@@ -4,7 +4,6 @@ defined('BASEPATH') or exit('No direct script access allowed');
 class M_voucher extends CI_Model
 {
 	private $tableName = 'voucher';
-	private $formatId = 'BM@year-@month@counter';
 
 	public function select_all()
 	{
@@ -35,9 +34,11 @@ class M_voucher extends CI_Model
 				v.titipan,
 				v.created_at,
 				v.updated_at,
-				(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = v.id_voucher AND gl.kode_soa = v.bank AND gl.keterangan = v.keterangan AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND gl.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND gl.credit = v.total))) AS id_gl,
-				(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_voucher = v.id_voucher AND bayar.kode_soa = v.bank AND bayar.keterangan = v.keterangan AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND bayar.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND bayar.credit = v.total))) AS id_bayar,
-				(SELECT vendor.id_vendor FROM vendor WHERE vendor.id_voucher = v.id_voucher AND vendor.kode_soa = v.bank AND vendor.keterangan = v.keterangan AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND vendor.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND vendor.credit = v.total))) AS id_vendor
+				gl.id_gl,
+				gl.debit,
+				gl.credit,
+				b.id_bayar,
+				ve.id_vendor
 			FROM voucher v
 				JOIN customer c 
 				ON c.kode_customer = v.id_customer
@@ -46,7 +47,8 @@ class M_voucher extends CI_Model
 				JOIN coa co 
 				ON co.id_akun = v.bank
 				JOIN giro_type gt 
-				ON gt.giro_type_id = v.tipe_giro";
+				ON gt.giro_type_id = v.tipe_giro
+			GROUP BY gl.id_gl";
 
 		$data = $this->db->query($query);
 
@@ -84,9 +86,11 @@ class M_voucher extends CI_Model
 					v.titipan,
 					v.created_at,
 					v.updated_at,
-					(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = v.id_voucher AND gl.kode_soa = v.bank AND gl.keterangan = v.keterangan  AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND gl.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND gl.credit = v.total))) AS id_gl,
-					(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_voucher = v.id_voucher AND bayar.kode_soa = v.bank AND bayar.keterangan = v.keterangan AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND bayar.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND bayar.credit = v.total))) AS id_bayar,
-					(SELECT vendor.id_vendor FROM vendor WHERE vendor.id_voucher = v.id_voucher AND vendor.kode_soa = v.bank AND vendor.keterangan = v.keterangan AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND vendor.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND vendor.credit = v.total))) AS id_vendor
+					gl.id_gl,
+					gl.debit,
+					gl.credit,
+					b.id_bayar,
+					ve.id_vendor
 				FROM voucher v
 					JOIN customer c 
 					ON c.kode_customer = v.id_customer
@@ -96,7 +100,14 @@ class M_voucher extends CI_Model
 					ON co.id_akun = v.bank
 					JOIN giro_type gt 
 					ON gt.giro_type_id = v.tipe_giro
-				WHERE v.tanggal_voucher BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)";
+					JOIN gl
+					ON gl.bukti_transaksi = v.id_voucher
+					LEFT JOIN vendor ve
+					ON ve.id_voucher = v.id_voucher
+					LEFT JOIN bayar b
+					ON b.id_voucher = v.id_voucher
+				WHERE v.tanggal_voucher BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
+				GROUP BY gl.id_gl";
 
 			$data = $this->db->query($query);
 
@@ -129,9 +140,11 @@ class M_voucher extends CI_Model
 					v.titipan,
 					v.created_at,
 					v.updated_at,
-					(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = v.id_voucher AND gl.kode_soa = v.bank AND gl.keterangan = v.keterangan  AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND gl.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND gl.credit = v.total))) AS id_gl,
-					(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_voucher = v.id_voucher AND bayar.kode_soa = v.bank AND bayar.keterangan = v.keterangan AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND bayar.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND bayar.credit = v.total))) AS id_bayar,
-					(SELECT vendor.id_vendor FROM vendor WHERE vendor.id_voucher = v.id_voucher AND vendor.kode_soa = v.bank AND vendor.keterangan = v.keterangan AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND vendor.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND vendor.credit = v.total))) AS id_vendor
+					gl.id_gl,
+					gl.debit,
+					gl.credit,
+					b.id_bayar,
+					ve.id_vendor
 				FROM voucher v
 					JOIN customer c 
 					ON c.kode_customer = v.id_customer
@@ -141,7 +154,14 @@ class M_voucher extends CI_Model
 					ON co.id_akun = v.bank
 					JOIN giro_type gt 
 					ON gt.giro_type_id = v.tipe_giro
+					JOIN gl
+					ON gl.bukti_transaksi = v.id_voucher
+					LEFT JOIN vendor ve
+					ON ve.id_voucher = v.id_voucher
+					LEFT JOIN bayar b
+					ON b.id_voucher = v.id_voucher
 				WHERE v.tanggal_voucher <= CURDATE() AND (MONTH(v.tanggal_voucher) = MONTH(CURDATE()) OR MONTH(v.tanggal_voucher) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) AND YEAR(v.tanggal_voucher) = YEAR(CURDATE())
+				GROUP BY gl.id_gl
 				LIMIT 10";
 
 			$data = $this->db->query($query);
@@ -179,9 +199,11 @@ class M_voucher extends CI_Model
 				v.titipan,
 				v.created_at,
 				v.updated_at,
-				(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = v.id_voucher AND gl.kode_soa = v.bank AND gl.keterangan = v.keterangan  AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND gl.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND gl.credit = v.total))) AS id_gl,
-				(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_voucher = v.id_voucher AND bayar.kode_soa = v.bank AND bayar.keterangan = v.keterangan AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND bayar.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND bayar.credit = v.total))) AS id_bayar,
-				(SELECT vendor.id_vendor FROM vendor WHERE vendor.id_voucher = v.id_voucher AND vendor.kode_soa = v.bank AND vendor.keterangan = v.keterangan AND ((v.tipe_giro = 1 OR v.tipe_giro = 2 AND vendor.debit = v.total) OR (v.tipe_giro = 3 OR v.tipe_giro = 4 AND vendor.credit = v.total))) AS id_vendor
+				gl.id_gl,
+				gl.debit,
+				gl.credit,
+				b.id_bayar,
+				ve.id_vendor
 			FROM voucher v
 				JOIN customer c 
 				ON c.kode_customer = v.id_customer
@@ -370,10 +392,12 @@ class M_voucher extends CI_Model
 					vendor.credit,
 					SUM(vendor.debit) - SUM(vendor.credit) AS total, 
 					vendor.so,
-					(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = vendor.id_voucher AND gl.kode_soa = vendor.kode_soa AND gl.keterangan = vendor.keterangan  AND gl.debit = vendor.debit AND gl.credit = vendor.credit) AS id_gl
+					gl.id_gl
 				FROM vendor 
 					JOIN coa 
 					ON coa.id_akun = vendor.kode_soa
+					LEFT JOIN gl
+					ON gl.bukti_transaksi = vendor.id_voucher
 				WHERE 
 					-- coa.parent <> 1
 					-- AND coa.parent <> 3
@@ -403,10 +427,12 @@ class M_voucher extends CI_Model
 					vendor.credit,
 					SUM(vendor.debit) - SUM(vendor.credit) AS total, 
 					vendor.so,
-					(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = vendor.id_voucher AND gl.kode_soa = vendor.kode_soa AND gl.keterangan = vendor.keterangan  AND gl.debit = vendor.debit AND gl.credit = vendor.credit) AS id_gl
+					gl.id_gl	
 				FROM vendor 
 					JOIN coa 
 					ON coa.id_akun = vendor.kode_soa
+					LEFT JOIN gl
+					ON gl.bukti_transaksi = vendor.id_voucher
 				WHERE 
 					-- coa.parent <> 1
 					-- AND coa.parent <> 3
