@@ -339,6 +339,109 @@
                     <td class="text-align-right"><?= saldo_money($total2) ?></td>
                 </tr>
         <?php
+            }else if ($ar->kode_soa == 24) {
+                $total2 = 0;
+                $totalC = 0;
+                $totalO = 0;
+                $totalT = 0;
+                $totalL = 0;
+                foreach ($dataARCus as $arCus) {
+                    $tambah = 0;
+                    foreach ($dataBayar as $bayar) {
+                        if ($bayar->tanggal_bayar < $bayar->datekeluar) {
+                            if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
+                                if ($bayar->total < $bayar->credit) {
+                                    $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += ($bayar->total - $bayar->credit);
+                                } else {
+                                }
+                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
+                                if ($bayar->total < $bayar->credit) {
+                                    $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += ($bayar->total - $bayar->credit);
+                                } else {
+                                }
+                            }
+                        } else if ($bayar->tanggal_bayar >= $bayar->datekeluar) {
+                            if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
+                                if ($bayar->total < $bayar->credit) {
+                                    $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += $bayar->credit;
+                                } else {
+                                }
+                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
+                                if ($bayar->total < $bayar->credit) {
+                                    $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += $bayar->credit;
+                                } else {
+                                }
+                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
+                                if ($bayar->total < $bayar->credit) {
+                                    $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += $bayar->credit;
+                                } else {
+                                }
+                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
+                                if ($bayar->total < $bayar->credit) {
+                                    $tambah += $bayar->total;
+                                } else if ($bayar->total >= $bayar->credit) {
+                                    $tambah += $bayar->credit;
+                                } else {
+                                }
+                            }
+                        }
+                    }
+                    if ($arCus->id_customer == $ar->id_customer) {
+                        if ($arCus->selisih == 0 && $arCus->status == 0) {
+                            $totalC += $arCus->sisa;
+                        } else if ($arCus->selisih == 0 && $arCus->status == 1) {
+                            $totalC += ($tambah);
+                        } else if ($arCus->selisih == 0 && $arCus->status == 2) {
+                            $totalC += ($arCus->sisa + $tambah);
+                        } else if (($arCus->selisih == 1) && $arCus->status == 0) {
+                            $totalO += $arCus->sisa;
+                        } else if (($arCus->selisih == 1) && $arCus->status == 1) {
+                            $totalO += ($tambah);
+                        } else if (($arCus->selisih == 1) && $arCus->status == 2) {
+                            $totalO += ($arCus->sisa + $tambah);
+                        } else if (($arCus->selisih == 2) && $arCus->status == 0) {
+                            $totalT += $arCus->sisa;
+                        } else if (($arCus->selisih == 2) && $arCus->status == 1) {
+                            $totalT += ($tambah);
+                        } else if (($arCus->selisih == 2) && $arCus->status == 2) {
+                            $totalT += ($arCus->sisa + $tambah);
+                        } else if (($arCus->selisih > 2) && $arCus->status == 0) {
+                            $totalL += $arCus->sisa;
+                        } else if (($arCus->selisih > 2) && $arCus->status == 1) {
+                            $totalL += ($tambah);
+                        } else if (($arCus->selisih > 2) && $arCus->status == 2) {
+                            $totalL += ($arCus->sisa + $tambah);
+                        }
+                    }
+                }
+                $total2 = $totalC + $totalO + $totalT + $totalL;
+                $totalCA += $totalC;
+                $totalOA += $totalO;
+                $totalTA += $totalT;
+                $totalLA += $totalL;
+                $total += $total2;
+            ?>
+                <tr>
+                    <td><?= $ar->id_customer ?></td>
+                    <td><?= $ar->nama_customer ?></td>
+                    <td><?php echo 'IDR'; ?></td>
+                    <td class="text-align-right"><?= saldo_money($totalC) ?></td>
+                    <td class="text-align-right"><?= saldo_money($totalO) ?></td>
+                    <td class="text-align-right"><?= saldo_money($totalT) ?></td>
+                    <td class="text-align-right"><?= saldo_money($totalL) ?></td>
+                    <td class="text-align-right"><?= saldo_money($total2) ?></td>
+                </tr>
+        <?php
             }
         endforeach; ?>
         <tr>

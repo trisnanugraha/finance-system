@@ -335,6 +335,16 @@ class AR extends AUTH_Controller
             $arCus = $this->M_ar->print_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
             $bayarCus = $this->M_ar->print_bayar_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
             $saldo = $this->M_ar->saldo_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
+        } else if($CoA == 24){
+            $ar = $this->M_ar->print($kodeCusA, $kodeCusB, $dateA, $dateB, $CoA);
+            $arCus = $this->M_ar->print_cus_iuran($kodeCusA, $kodeCusB, $dateA, $dateB);
+            $bayarCus = $this->M_ar->print_bayar_cus_iuran($kodeCusA, $kodeCusB, $dateA, $dateB);
+            $saldo = $this->M_ar->saldo_cus_iuran($kodeCusA, $kodeCusB, $dateA, $dateB);
+        }else if ($CoA == 25){
+            $ar = $this->M_ar->print($kodeCusA, $kodeCusB, $dateA, $dateB, $CoA);
+            $arCus = $this->M_ar->print_cus_asuransi($kodeCusA, $kodeCusB, $dateA, $dateB);
+            $bayarCus = $this->M_ar->print_bayar_cus_asuransi($kodeCusA, $kodeCusB, $dateA, $dateB);
+            $saldo = $this->M_ar->saldo_cus_asuransi($kodeCusA, $kodeCusB, $dateA, $dateB);
         }
 
         if ($ar != null) {
@@ -374,6 +384,14 @@ class AR extends AUTH_Controller
             $ar = $this->M_ar->print_aging_scsf($date);
             $arCus = $this->M_ar->print_aging_scsf_cus($date);
             $bayar = $this->M_ar->print_aging_scsf_bayar($date);
+        } else if ($CoA == 24) {
+            $ar = $this->M_ar->print_aging_iuran($date);
+            $arCus = $this->M_ar->print_aging_iuran_cus($date);
+            $bayar = $this->M_ar->print_aging_iuran_bayar($date);
+        } else if ($CoA == 25) {
+            $ar = $this->M_ar->print_aging_asuransi($date);
+            $arCus = $this->M_ar->print_aging_asuransi_cus($date);
+            $bayar = $this->M_ar->print_aging_asuransi_bayar($date);
         }
 
         if ($ar != null) {

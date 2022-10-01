@@ -173,45 +173,47 @@ class M_bayar extends CI_Model
 	public function select_by_id($id)
 	{
 		$query =
-			"SELECT 
-				bayar.id_bayar, 
-				bayar.id_voucher, 
-				bayar.id_ar, 
-				ar.id_customer AS arCus, 
-				customer.nama_customer AS arNama, 
-				customer.unit_customer AS arUnit, 
-				customer.alamat_customer AS arAlamat, 
-				ar.id_owner AS owner, 
-				owner.nama_owner AS arNamaOwner, 
-				owner.alamat_owner AS arAlamatOwner, 
-				owner.unit_owner AS arUnitOwner, 
-				ar.bukti_transaksi, 
-				UPPER(ar.keterangan) AS arKet, 
-				ar.total, 
-				ar.sisa, 
-				ar.status, 
-				ar.so, 
-				UPPER(bayar.keterangan) AS keterangan, 
-				bayar.tanggal_bayar, 
-				bayar.tipe_pembayaran, 
-				bayar.kode_soa, 
-				coa.coa_id, 
-				coa.coa_name, 
-				coa.parent, 
-				coa.cf, 
-				bayar.debit, 
-				bayar.credit, 
+			"SELECT
+				bayar.id_bayar,
+				bayar.id_voucher,
+				bayar.id_ar,
+				ar.id_customer AS arCus,
+				customer.nama_customer AS arNama,
+				customer.unit_customer AS arUnit,
+				customer.alamat_customer AS arAlamat,
+				ar.id_owner AS owner,
+				owner.nama_owner AS arNamaOwner,
+				owner.alamat_owner AS arAlamatOwner,
+				owner.unit_owner AS arUnitOwner,
+				ar.bukti_transaksi,
+				UPPER(ar.keterangan) AS arKet,
+				ar.total,
+				ar.sisa,
+				ar.status,
+				ar.so,
+				UPPER(bayar.keterangan) AS keterangan,
+				bayar.tanggal_bayar,
+				bayar.tipe_pembayaran,
+				bayar.kode_soa,
+				coa.coa_id,
+				coa.coa_name,
+				coa.parent,
+				coa.cf,
+				bayar.debit,
+				bayar.credit,
 				bayar.so,
-				(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = bayar.id_voucher AND gl.kode_soa = bayar.kode_soa AND gl.keterangan = bayar.keterangan) AS id_gl
-			FROM bayar 
-				JOIN ar 
-				ON ar.id_ar = bayar.id_ar 
-				JOIN customer 
-				ON customer.kode_customer = ar.id_customer 
-				JOIN owner 
-				ON owner.kode_owner = ar.id_owner 
-				JOIN coa 
-				ON coa.id_akun = bayar.kode_soa 
+				gl.id_gl
+			FROM bayar
+				JOIN ar
+					ON ar.id_ar = bayar.id_ar
+				JOIN customer
+					ON customer.kode_customer = ar.id_customer
+				JOIN owner
+					ON owner.kode_owner = ar.id_owner
+				JOIN coa
+					ON coa.id_akun = bayar.kode_soa
+				LEFT JOIN gl
+					ON gl.bukti_transaksi = bayar.id_voucher
 			WHERE bayar.id_voucher = '{$id}'";
 
 		$data = $this->db->query($query);

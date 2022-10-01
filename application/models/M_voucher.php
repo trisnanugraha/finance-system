@@ -107,7 +107,7 @@ class M_voucher extends CI_Model
 					LEFT JOIN bayar b
 					ON b.id_voucher = v.id_voucher
 				WHERE v.tanggal_voucher BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
-				GROUP BY gl.id_gl";
+				GROUP BY v.id_voucher";
 
 			$data = $this->db->query($query);
 
@@ -161,7 +161,7 @@ class M_voucher extends CI_Model
 					LEFT JOIN bayar b
 					ON b.id_voucher = v.id_voucher
 				WHERE v.tanggal_voucher <= CURDATE() AND (MONTH(v.tanggal_voucher) = MONTH(CURDATE()) OR MONTH(v.tanggal_voucher) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) AND YEAR(v.tanggal_voucher) = YEAR(CURDATE())
-				GROUP BY gl.id_gl
+				GROUP BY v.id_voucher
 				LIMIT 10";
 
 			$data = $this->db->query($query);
@@ -466,10 +466,12 @@ class M_voucher extends CI_Model
 				vendor.credit,
 				SUM(vendor.debit) - SUM(vendor.credit) AS total, 
 				vendor.so,
-				(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = vendor.id_voucher AND gl.kode_soa = vendor.kode_soa AND gl.keterangan = vendor.keterangan  AND gl.debit = vendor.debit AND gl.credit = vendor.credit) AS id_gl
+				gl.id_gl
 			FROM vendor 
 				JOIN coa 
-				ON coa.id_akun = vendor.kode_soa
+					ON coa.id_akun = vendor.kode_soa
+				LEFT JOIN gl
+					ON gl.bukti_transaksi = vendor.id_voucher
 			WHERE vendor.id_voucher = '{$id}'
 			GROUP BY vendor.id_vendor";
 

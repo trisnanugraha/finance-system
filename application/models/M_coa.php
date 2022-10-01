@@ -75,7 +75,7 @@ class M_coa extends CI_Model
 
 	public function select_all_coa_ar()
 	{
-		$sql = "SELECT * FROM coa WHERE (coa.id_akun = 21 OR coa.id_akun = 22) ORDER BY coa.coa_id";
+		$sql = "SELECT * FROM coa WHERE (coa.id_akun = 21 OR coa.id_akun = 22 OR coa.id_akun = 24) ORDER BY coa.coa_id";
 
 		$data = $this->db->query($sql);
 

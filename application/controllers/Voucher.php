@@ -98,8 +98,8 @@ class Voucher extends AUTH_Controller
 		$startDate = $this->input->get("startDate");
 		$endDate = $this->input->get("endDate");
 		$data['dataVoucher'] = $this->M_voucher->select_filter($startDate, $endDate);
-		// $data['dataBayar'] = $this->M_bayar->select_filter($startDate, $endDate);
-		// $data['dataVendor'] = $this->M_voucher->select_filter_vendor($startDate, $endDate);
+		$data['dataBayar'] = $this->M_bayar->select_filter($startDate, $endDate);
+		$data['dataVendor'] = $this->M_voucher->select_filter_vendor($startDate, $endDate);
 		$this->load->view('voucher/list_data', $data);
 	}
 

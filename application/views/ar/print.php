@@ -331,6 +331,121 @@
                     <td colspan="9">&nbsp;</td>
                 </tr>
             </table>
+        <?php } else if ($ar->kode_soa == 24) { ?>
+            <table>
+                <tr>
+                    <td>Kode CUST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="owner-id"><?= $ar->id_customer . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $ar->nama_customer; ?></span></td>
+                </tr>
+                <tr>
+                    <td>Valuta &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>IDR</span></td>
+                </tr>
+                <tr>
+                    <td>Uang Muka &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>0,00</span></td>
+                </tr>
+                <tr>
+                    <td>Giro Mundur &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>0,00</span></td>
+                </tr>
+            </table>
+            <br>
+            <br>
+            <table>
+                <tr>
+                    <td style="width: 15%; font-size: 9pt;" class="border-bottom"><strong>TANGGAL</strong></td>
+                    <td style="width: 15%; font-size: 9pt;" class="border-bottom"><strong>NO.BUKTI</strong></td>
+                    <td style="width: 34%; font-size: 9pt;" class="border-bottom"><strong>KETERANGAN</strong></td>
+                    <td style="width: 13%; font-size: 9pt;" class="text-align-right border-bottom"><strong>DEBET</strong></td>
+                    <td style="width: 13%; font-size: 9pt;" class="text-align-right border-bottom"><strong>KREDIT</strong></td>
+                    <td style="width: 13%; font-size: 9pt;" class="text-align-right border-bottom"><strong>SALDO</strong></td>
+                </tr>
+                <?php $saldoA = 0; ?>
+                <?php foreach ($dataSaldo as $saldo) : ?>
+                    <?php if ($saldo->id_customer == $ar->id_customer) { ?>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td>SALDO AWAL</td>
+                            <td class="text-align-right">-</td>
+                            <td class="text-align-right">-</td>
+                            <td class="text-align-right"><?= saldo_money($saldo->saldo); ?>
+                                <?php $saldoA += $saldo->saldo; ?>
+                            </td>
+                        </tr>
+                    <?php } ?>
+                <?php endforeach ?>
+                <?php $debit = 0;
+                $credit = 0; ?>
+                <?php foreach ($dataARCus as $arCus) : ?>
+                    <?php if ($arCus->id_bayar != NULL && $arCus->id_customer == $ar->id_customer) { ?>
+                        <tr>
+                            <td><?= $arCus->arTgl ?></td>
+                            <td><?= $arCus->arBT ?></td>
+                            <td><?= $arCus->arKet ?></td>
+                            <td class="text-align-right"><?= saldo_money($arCus->arTotal); ?>
+                                <?php $debit += $arCus->arTotal; ?>
+                            </td>
+                            <td class="text-align-right"><?= '0,00' ?></td>
+                            <td class="text-align-right"><?= saldo_money($saldoA + $debit - $credit) ?></td>
+                        </tr>
+                        <?php foreach ($dataBayarCus as $bayarCus) : ?>
+                            <?php if ($bayarCus->id_ar == $arCus->id_ar) { ?>
+                                <tr>
+                                    <td><?= $bayarCus->pemTgl ?></td>
+                                    <td><?= $arCus->pemBT ?></td>
+                                    <td><?= $bayarCus->pemKet ?></td>
+                                    <td class="text-align-right"><?= '0,00' ?></td>
+                                    <td class="text-align-right"><?= saldo_money($bayarCus->pemTotal); ?>
+                                        <?php $credit += $bayarCus->pemTotal; ?>
+                                    </td>
+
+                                    <?php if ($saldoA + $debit - $credit < 0) { ?>
+                                        <td class="text-align-right"><?= '(' . saldo_money($saldoA + $debit - $credit) . ')' ?></td>
+                                    <?php } else { ?>
+                                        <td class="text-align-right"><?= saldo_money($saldoA + $debit - $credit) ?></td>
+                                    <?php } ?>
+                                </tr>
+                            <?php } ?>
+                        <?php endforeach ?>
+                    <?php } else if ($arCus->id_bayar != NULL && $arCus->id_customer != $ar->id_customer) { ?>
+                    <?php } else if ($arCus->id_bayar == NULL && $arCus->id_customer == $ar->id_customer) { ?>
+                        <tr>
+                            <td><?= $arCus->arTgl ?></td>
+                            <td><?= $arCus->arBT ?></td>
+                            <td><?= $arCus->arKet ?></td>
+                            <td class="text-align-right"><?= saldo_money($arCus->arTotal); ?>
+                                <?php $debit += $arCus->arTotal; ?>
+                            </td>
+                            <td class="text-align-right"><?= '0,00'; ?>
+                                <?php $credit += $arCus->pemTotal; ?>
+                            </td>
+                            <td class="text-align-right"><?= saldo_money($saldoA + $debit - $credit) ?></td>
+                        </tr>
+                    <?php } else if ($arCus->id_bayar != NULL && $arCus->id_customer != $ar->id_customer) { ?>
+                    <?php } ?>
+                <?php endforeach ?>
+                <tr>
+                    <td colspan="9">&nbsp;</td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td class="border-top border-bottom">TOTAl PER CUSTOMER :</td>
+                    <td class="text-align-right border-top border-bottom"><?= saldo_money($debit) ?></td>
+                    <td class="text-align-right border-top border-bottom"><?= saldo_money($credit) ?></td>
+
+                    <?php if ($saldoA + $debit - $credit < 0) { ?>
+                        <td class="text-align-right border-top border-bottom"><?= '(' . saldo_money($saldoA + $debit - $credit) . ')' ?> </td>
+                    <?php } else { ?>
+                        <td class="text-align-right border-top border-bottom"><?= saldo_money($saldoA + $debit - $credit) ?></td>
+                    <?php } ?>
+
+                    <?php $totalD += $debit;
+                    $totalC += $credit;
+                    $total += ($saldoA + $debit - $credit); ?>
+                </tr>
+                <tr>
+                    <td colspan="9">&nbsp;</td>
+                </tr>
+            </table>
         <?php } ?>
     <?php endforeach; ?>
     <table>

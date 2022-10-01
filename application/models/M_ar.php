@@ -751,6 +751,226 @@ class M_ar extends CI_Model
 		return $data->result();
 	}
 
+	public function print_cus_iuran($kodeCusA, $kodeCusB, $dateA, $dateB)
+	{
+
+		$sql =
+			"SELECT
+				ar.id_ar,
+				ar.id_customer,
+                customer.nama_customer,
+				ar.id_periode,
+				ar.id_owner,
+				owner.nama_owner,
+                ar.kode_soa,
+				DATE_ADD(DATE_ADD(LAST_DAY(periode.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH) AS arTgl,
+				periode.start_periode,
+				ar.keterangan AS arKet,
+				ar.bukti_transaksi AS arBT,
+				ar.total AS arTotal,
+				(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS id_bayar,
+				(SELECT bayar.id_voucher FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS id_voucher,
+				(SELECT bayar.tanggal_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemTgl,
+				(SELECT bayar.keterangan FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemKet,
+				(SELECT voucher.bukti_transaksi FROM voucher JOIN bayar ON bayar.id_voucher = voucher.id_voucher WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa GROUP BY ar.kode_soa) AS pemBT,
+				(SELECT SUM(bayar.credit) FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemTotal
+			FROM ar
+				JOIN periode
+				ON periode.id_periode = ar.id_periode
+				JOIN owner
+				ON owner.kode_owner = ar.id_owner
+				JOIN customer
+                ON customer.kode_customer = ar.id_customer
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND ((DATE_ADD(DATE_ADD(LAST_DAY(periode.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE))
+				AND ar.kode_soa = 24
+			ORDER BY ar.id_customer ASC, periode.start_periode";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_bayar_cus_iuran($kodeCusA, $kodeCusB, $dateA, $dateB)
+	{
+
+		$sql =
+			"SELECT
+				bayar.id_bayar,
+				bayar.id_ar,
+				bayar.id_voucher,
+				bayar.tanggal_bayar AS pemTgl,
+				bayar.keterangan  AS pemKet,
+				bayar.credit AS pemTotal,
+				bayar.kode_soa,
+				ar.id_ar,
+				ar.kode_soa,
+				ar.id_periode,
+				ar.id_customer,
+				periode.start_periode
+			FROM ar
+				JOIN bayar
+				ON ar.id_ar = bayar.id_ar
+				JOIN periode
+				ON periode.id_periode = ar.id_periode
+				JOIN owner
+				ON owner.kode_owner = ar.id_owner
+				JOIN customer
+				ON customer.kode_customer = ar.id_customer
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE))
+				AND bayar.kode_soa = 24
+				ORDER BY ar.id_customer ASC, bayar.tanggal_bayar";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function saldo_cus_iuran($kodeCusA, $kodeCusB, $dateA, $dateB)
+	{
+
+		$sql =
+			"SELECT
+				ar.id_ar,
+				ar.id_customer,
+				customer.nama_customer,
+				ar.id_owner,
+				owner.nama_owner,
+				ar.id_periode,
+				periode.start_periode,
+				ar.kode_soa,
+				ar.bukti_transaksi,
+				ar.total,
+				SUM(ar.sisa) as saldo
+			FROM ar
+				JOIN periode
+				ON periode.id_periode = ar.id_periode
+				JOIN owner
+				ON owner.kode_owner = ar.id_owner
+				JOIN customer
+                ON customer.kode_customer = ar.id_customer
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND (periode.start_periode < '{$dateA}')
+				AND ar.kode_soa = 24
+			GROUP BY ar.id_customer
+			ORDER BY ar.id_customer ASC, periode.start_periode";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_cus_asuransi($kodeCusA, $kodeCusB, $dateA, $dateB)
+	{
+
+		$sql =
+			"SELECT
+				ar.id_ar,
+				ar.id_customer,
+                customer.nama_customer,
+				ar.id_periode,
+				ar.id_owner,
+				owner.nama_owner,
+                ar.kode_soa,
+				DATE_ADD(DATE_ADD(LAST_DAY(periode.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH) AS arTgl,
+				periode.start_periode,
+				ar.keterangan AS arKet,
+				ar.bukti_transaksi AS arBT,
+				ar.total AS arTotal,
+				(SELECT bayar.id_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS id_bayar,
+				(SELECT bayar.id_voucher FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS id_voucher,
+				(SELECT bayar.tanggal_bayar FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemTgl,
+				(SELECT bayar.keterangan FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemKet,
+				(SELECT voucher.bukti_transaksi FROM voucher JOIN bayar ON bayar.id_voucher = voucher.id_voucher WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa GROUP BY ar.kode_soa) AS pemBT,
+				(SELECT SUM(bayar.credit) FROM bayar WHERE bayar.id_ar = ar.id_ar AND bayar.kode_soa = ar.kode_soa AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE)) GROUP BY ar.kode_soa) AS pemTotal
+			FROM ar
+				JOIN periode
+				ON periode.id_periode = ar.id_periode
+				JOIN owner
+				ON owner.kode_owner = ar.id_owner
+				JOIN customer
+                ON customer.kode_customer = ar.id_customer
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND ((DATE_ADD(DATE_ADD(LAST_DAY(periode.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH)) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE))
+				AND ar.kode_soa = 25
+			ORDER BY ar.id_customer ASC, periode.start_periode";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_bayar_cus_asuransi($kodeCusA, $kodeCusB, $dateA, $dateB)
+	{
+
+		$sql =
+			"SELECT
+				bayar.id_bayar,
+				bayar.id_ar,
+				bayar.id_voucher,
+				bayar.tanggal_bayar AS pemTgl,
+				bayar.keterangan  AS pemKet,
+				bayar.credit AS pemTotal,
+				bayar.kode_soa,
+				ar.id_ar,
+				ar.kode_soa,
+				ar.id_periode,
+				ar.id_customer,
+				periode.start_periode
+			FROM ar
+				JOIN bayar
+				ON ar.id_ar = bayar.id_ar
+				JOIN periode
+				ON periode.id_periode = ar.id_periode
+				JOIN owner
+				ON owner.kode_owner = ar.id_owner
+				JOIN customer
+				ON customer.kode_customer = ar.id_customer
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND ((bayar.tanggal_bayar) BETWEEN CAST('{$dateA}' AS DATE) AND CAST('{$dateB}' AS DATE))
+				AND bayar.kode_soa = 25
+				ORDER BY ar.id_customer ASC, bayar.tanggal_bayar";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function saldo_cus_asuransi($kodeCusA, $kodeCusB, $dateA, $dateB)
+	{
+
+		$sql =
+			"SELECT
+				ar.id_ar,
+				ar.id_customer,
+				customer.nama_customer,
+				ar.id_owner,
+				owner.nama_owner,
+				ar.id_periode,
+				periode.start_periode,
+				ar.kode_soa,
+				ar.bukti_transaksi,
+				ar.total,
+				SUM(ar.sisa) as saldo
+			FROM ar
+				JOIN periode
+				ON periode.id_periode = ar.id_periode
+				JOIN owner
+				ON owner.kode_owner = ar.id_owner
+				JOIN customer
+                ON customer.kode_customer = ar.id_customer
+			WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}')
+				AND (periode.start_periode < '{$dateA}')
+				AND ar.kode_soa = 25
+			GROUP BY ar.id_customer
+			ORDER BY ar.id_customer ASC, periode.start_periode";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
 	public function print_aging_la($date)
 	{
 		$sql =
@@ -1035,6 +1255,297 @@ class M_ar extends CI_Model
 						GROUP BY ar.bukti_transaksi)
 				AND bayar.credit > 0
 				AND bayar.kode_soa = 22
+		GROUP BY bayar.id_bayar";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_aging_iuran($date)
+	{
+		$sql =
+			"SELECT
+				pa.id_ar,
+				pa.id_customer,
+				c.nama_customer,
+				c.unit_customer,
+				c.kode_virtual AS cusVirtual,
+				c.alamat_customer,
+				pa.id_owner,
+				o.nama_owner,
+				o.unit_owner,
+				o.alamat_owner,
+				o.kode_virtual AS ownerVirtual,
+				pa.id_periode,
+				p.start_periode,
+				p.end_periode,
+				p.due_date,
+				TIMESTAMPDIFF(MONTH, (p.due_date), ('{$date}')) as selisih,
+				p.amount_days,
+				pa.kode_soa,
+				co.coa_id,
+				co.coa_name,
+				pa.keterangan,
+				pa.bukti_transaksi,
+				pa.sisa,
+				pa.total,
+				pa.status,
+				pa.so,
+				pa.created_at,
+				pa.updated_at,
+				bayar.tanggal_bayar
+			FROM ar pa
+				JOIN customer c
+				ON pa.id_customer = c.kode_customer
+				JOIN periode p
+				ON pa.id_periode = p.id_periode
+				JOIN owner o
+				ON pa.id_owner = o.kode_owner
+				JOIN coa co
+				ON co.id_akun = pa.kode_soa,
+				bayar
+			WHERE (status != 1 AND (p.due_date) <= ('{$date}') AND pa.kode_soa = 24) 
+				OR (pa.status = 1 AND (bayar.tanggal_bayar) > ('{$date}')AND (p.due_date) <= ('{$date}') AND pa.id_ar = bayar.id_ar AND pa.kode_soa = 24 AND bayar.kode_soa = pa.kode_soa)
+			GROUP BY pa.id_customer
+			ORDER BY pa.id_customer";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_aging_iuran_cus($date)
+	{
+		$sql =
+			"SELECT
+				pa.id_ar,
+				pa.id_customer,
+				c.nama_customer,
+				c.unit_customer,
+				c.kode_virtual AS cusVirtual,
+				c.alamat_customer,
+				pa.id_owner,
+				o.nama_owner,
+				o.unit_owner,
+				o.alamat_owner,
+				o.kode_virtual AS ownerVirtual,
+				pa.id_periode,
+				p.start_periode,
+				p.end_periode,
+				p.due_date,
+				TIMESTAMPDIFF(MONTH, (p.due_date), ('{$date}')) as selisih,
+				p.amount_days,
+				pa.kode_soa,
+				co.coa_id,
+				co.coa_name,
+				pa.keterangan,
+				pa.bukti_transaksi,
+				pa.sisa,
+				pa.total,
+				pa.status,
+				pa.so,
+				pa.created_at,
+				pa.updated_at,
+				bayar.tanggal_bayar
+			FROM ar pa
+				JOIN customer c
+				ON pa.id_customer = c.kode_customer
+				JOIN periode p
+				ON pa.id_periode = p.id_periode
+				JOIN owner o
+				ON pa.id_owner = o.kode_owner
+				JOIN coa co
+				ON co.id_akun = pa.kode_soa,
+				bayar
+			WHERE (status != 1 AND (p.due_date) <= ('{$date}') AND pa.kode_soa = 24) 
+				OR (pa.status = 1 AND (bayar.tanggal_bayar) > ('{$date}') AND (p.due_date) <= ('{$date}') AND pa.id_ar = bayar.id_ar AND pa.kode_soa = 24 AND bayar.kode_soa = pa.kode_soa)
+			GROUP BY pa.bukti_transaksi
+			ORDER BY pa.id_customer";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_aging_iuran_bayar($date)
+	{
+		$sql =
+			"SELECT 
+				bayar.id_bayar, 
+				bayar.id_ar, 
+				MONTH(bayar.tanggal_bayar) - MONTH('{$date}') as monthbayar,
+				('{$date}') as datekeluar,
+				bayar.tanggal_bayar,
+				bayar.credit, 
+				bayar.debit,
+				ar.id_customer,
+				bayar.kode_soa,
+				ar.status,
+                p.due_date,
+                ar.total
+			FROM bayar
+				JOIN ar
+				ON ar.id_ar = bayar.id_ar
+				JOIN periode p 
+				ON ar.id_periode = p.id_periode
+			WHERE 
+				bayar.id_ar IN 
+					(SELECT ar.id_ar 
+					FROM ar 
+						JOIN periode p 
+						ON ar.id_periode = p.id_periode 
+					WHERE (ar.status != 1 AND (p.due_date) <= ('{$date}') AND ar.kode_soa = 24)
+						OR (ar.status = 1 AND (bayar.tanggal_bayar) > ('{$date}') AND (p.due_date) <= ('{$date}') AND ar.id_ar = bayar.id_ar AND ar.kode_soa = 24 AND bayar.kode_soa = ar.kode_soa)
+					GROUP BY ar.bukti_transaksi)
+				AND bayar.credit > 0
+				AND bayar.kode_soa = 24
+			GROUP BY bayar.id_bayar";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_aging_asuransi($date)
+	{
+		$sql =
+			"SELECT
+				pa.id_ar,
+				pa.id_customer,
+				c.nama_customer,
+				c.unit_customer,
+				c.kode_virtual AS cusVirtual,
+				c.alamat_customer,
+				pa.id_owner,
+				o.nama_owner,
+				o.unit_owner,
+				o.alamat_owner,
+				o.kode_virtual AS ownerVirtual,
+				pa.id_periode,
+				p.start_periode,
+				p.end_periode,
+				p.due_date,
+				TIMESTAMPDIFF(MONTH, (p.start_periode), ('{$date}')) as selisih,
+				p.amount_days,
+				pa.kode_soa,
+				co.coa_id,
+				co.coa_name,
+				pa.keterangan,
+				pa.bukti_transaksi,
+				pa.sisa,
+				pa.total,
+				pa.status,
+				pa.so,
+				pa.created_at,
+				pa.updated_at,
+				bayar.tanggal_bayar
+			FROM ar pa
+				JOIN customer c
+				ON pa.id_customer = c.kode_customer
+				JOIN periode p
+				ON pa.id_periode = p.id_periode
+				JOIN owner o
+				ON pa.id_owner = o.kode_owner
+				JOIN coa co
+				ON co.id_akun = pa.kode_soa,
+				bayar
+			WHERE (status != 1 AND (p.start_periode) <= ('{$date}') AND pa.kode_soa = 25) 
+				OR (pa.status = 1 AND (bayar.tanggal_bayar) > ('{$date}') AND (p.start_periode) <= ('{$date}') AND pa.id_ar = bayar.id_ar AND pa.kode_soa = 22 AND bayar.kode_soa = pa.kode_soa)
+			GROUP BY pa.id_owner
+			ORDER BY pa.id_owner";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_aging_asuransi_cus($date)
+	{
+		$sql =
+			"SELECT
+				pa.id_ar,
+				pa.id_customer,
+				c.nama_customer,
+				c.unit_customer,
+				c.kode_virtual AS cusVirtual,
+				c.alamat_customer,
+				pa.id_owner,
+				o.nama_owner,
+				o.unit_owner,
+				o.alamat_owner,
+				o.kode_virtual AS ownerVirtual,
+				pa.id_periode,
+				p.start_periode,
+				p.end_periode,
+				p.due_date,
+				TIMESTAMPDIFF(MONTH, (p.start_periode), ('{$date}')) as selisih,
+				p.amount_days,
+				pa.kode_soa,
+				co.coa_id,
+				co.coa_name,
+				pa.keterangan,
+				pa.bukti_transaksi,
+				pa.sisa,
+				pa.total,
+				pa.status,
+				pa.so,
+				pa.created_at,
+				pa.updated_at,
+				bayar.tanggal_bayar
+			FROM ar pa
+				JOIN customer c
+				ON pa.id_customer = c.kode_customer
+				JOIN periode p
+				ON pa.id_periode = p.id_periode
+				JOIN owner o
+				ON pa.id_owner = o.kode_owner
+				JOIN coa co
+				ON co.id_akun = pa.kode_soa,
+				bayar
+			WHERE (status != 1 AND (p.start_periode) <= ('{$date}')  AND pa.kode_soa = 25) 
+				OR (pa.status = 1 AND (bayar.tanggal_bayar) > ('{$date}') AND (p.start_periode) <= ('{$date}') AND pa.id_ar = bayar.id_ar AND pa.kode_soa = 22 AND bayar.kode_soa = pa.kode_soa)
+			GROUP BY pa.bukti_transaksi
+			ORDER BY pa.id_owner";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
+	public function print_aging_asuransi_bayar($date)
+	{
+		$sql =
+			"SELECT 
+				bayar.id_bayar, 
+				bayar.id_ar, 
+				MONTH(bayar.tanggal_bayar) - MONTH('{$date}') as monthbayar,
+				('{$date}') as datekeluar,
+				bayar.tanggal_bayar,
+				bayar.credit, 
+				bayar.debit,
+				ar.id_customer,
+				ar.id_owner,
+				bayar.kode_soa,
+				ar.status,
+				p.start_periode,
+				ar.total
+			FROM bayar
+				JOIN ar
+				ON ar.id_ar = bayar.id_ar
+				JOIN periode p 
+				ON ar.id_periode = p.id_periode
+			WHERE 
+				bayar.id_ar IN 
+					(SELECT ar.id_ar 
+					FROM ar 
+						JOIN periode p 
+						ON ar.id_periode = p.id_periode 
+					WHERE (ar.status != 1 AND (p.start_periode) <= ('{$date}') AND ar.kode_soa = 24)
+							OR (ar.status = 1 AND (bayar.tanggal_bayar) > ('{$date}') AND (p.start_periode) <= ('{$date}') AND ar.id_ar = bayar.id_ar AND ar.kode_soa = 22 AND bayar.kode_soa = ar.kode_soa)
+						GROUP BY ar.bukti_transaksi)
+				AND bayar.credit > 0
+				AND bayar.kode_soa = 25
 		GROUP BY bayar.id_bayar";
 
 		$data = $this->db->query($sql);

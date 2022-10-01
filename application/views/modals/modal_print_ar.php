@@ -109,25 +109,3 @@
     $(".select2").select2();
   });
 </script>
-
-<!-- <script>
-$(document).ready(function(){
-    $('#print').click(function(){
-      var kodeCus = $('#kodeCus').val();
-      var year = $('#year').val();
-      var monthA = $('#monthA').val();
-      var monthB = $('#monthB').val();
-      console.log(kodeCus);
-      $.ajax({
-        type : 'POST',
-        url  : '<?php echo base_url('AR/print'); ?>',
-        data : {
-            kodeCus : kodeCus,
-            year : year, 
-            monthA : monthA, 
-            monthB : monthB
-          }
-      });
-    });
-});
-</script> -->
