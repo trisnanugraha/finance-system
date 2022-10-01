@@ -322,7 +322,6 @@ class Voucher extends AUTH_Controller
 
 		$post = $this->input->post();
 
-
 		if ($this->form_validation->run() == TRUE) {
 			$voucher = $this->M_voucher->select_by_id($post['id']);
 			$coa = $this->M_coa->select_by_coa($voucher->coa_id);

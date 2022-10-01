@@ -12,6 +12,7 @@ class Asuransi extends AUTH_Controller
         $this->load->model('M_period');
         $this->load->model('M_parameter');
         $this->load->model('M_gl');
+        $this->load->model('M_ar');
         $this->load->model('M_candidate_key');
         $this->load->library('pdf');
     }
@@ -84,7 +85,7 @@ class Asuransi extends AUTH_Controller
                     'kode_owner' => $a->kode_owner,
                     'id_periode' => $post['period'],
                     'stamp' => $stampValue,
-                    'total_asuransi' => $total,
+                    'total_asuransi' => $total + $stampValue,
                     'created_by' => $this->userdata->id,
                     'd_c_note_date' => $dtNextMonth->format('Y/m/d')
                 ];
@@ -96,7 +97,7 @@ class Asuransi extends AUTH_Controller
                     'tanggal_transaksi' => $periode->first_day,
                     'keterangan' => '' . date('d/m/Y', strtotime($periode->first_day)) . '-' . date('d/m/Y', strtotime($periode->last_day)) . ' ' . $owner->id . ' ' . $owner->nama,
                     'kode_soa' => 25,
-                    'debit' => $total,
+                    'debit' => $total + $stampValue,
                     'credit' => 0,
                     'so' => 1,
                     'cash' => 0
@@ -114,8 +115,37 @@ class Asuransi extends AUTH_Controller
                     'so' => 1,
                     'cash' => 0
                 ];
+
+                $data3 = [
+                    'bukti_transaksi' => $id,
+                    'id_customer' => $owner->customer,
+                    'id_owner' => $a->kode_owner,
+                    'tanggal_transaksi' => $periode->first_day,
+                    'keterangan' => '' . date('d/m/Y', strtotime($periode->first_day)) . '-' . date('d/m/Y', strtotime($periode->last_day)) . ' ' . $owner->id . ' ' . $owner->nama,
+                    'kode_soa' => 302,
+                    'debit' => 0,
+                    'credit' => $stampValue,
+                    'so' => 1,
+                    'cash' => 0
+                ];
+
+                $dataAR = [
+                    'id_periode' => $post['period'],
+                    'id_customer' => $owner->customer,
+                    'id_owner' => $a->kode_owner,
+                    'kode_soa' => 25,
+                    'bukti_transaksi' => $id,
+                    'total' => $total + $stampValue,
+                    'sisa' => $total + $stampValue,
+                    'status' => 0,
+                    'so' => 0,
+                    'keterangan' => '' . date('d/m/Y', strtotime($periode->periodStart)) . '-' . date('d/m/Y', strtotime($periode->periodEnd)) . ' ' . $customer->kodeCus . ' ' . $customer->nama
+                ];
+                
+                $this->M_ar->insert($dataAR);
                 $this->M_gl->insert2($dataGL);
                 $this->M_gl->insert2($data2);
+                $this->M_gl->insert2($data3);
                 $result = $this->M_asuransi->insert($data);
 
                 $row += $result;
