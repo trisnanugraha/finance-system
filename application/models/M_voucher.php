@@ -40,14 +40,20 @@ class M_voucher extends CI_Model
 				b.id_bayar,
 				ve.id_vendor
 			FROM voucher v
-				JOIN customer c 
+				JOIN customer c
 				ON c.kode_customer = v.id_customer
-				JOIN owner o 
+				JOIN owner o
 				ON o.kode_owner = v.id_owner
-				JOIN coa co 
+				JOIN coa co
 				ON co.id_akun = v.bank
-				JOIN giro_type gt 
+				JOIN giro_type gt
 				ON gt.giro_type_id = v.tipe_giro
+				JOIN gl
+				ON gl.bukti_transaksi = v.id_voucher
+				LEFT JOIN vendor ve
+				ON ve.id_voucher = v.id_voucher
+				LEFT JOIN bayar b
+				ON b.id_voucher = v.id_voucher
 			GROUP BY gl.id_gl";
 
 		$data = $this->db->query($query);
@@ -92,13 +98,13 @@ class M_voucher extends CI_Model
 					b.id_bayar,
 					ve.id_vendor
 				FROM voucher v
-					JOIN customer c 
+					JOIN customer c
 					ON c.kode_customer = v.id_customer
-					JOIN owner o 
+					JOIN owner o
 					ON o.kode_owner = v.id_owner
-					JOIN coa co 
+					JOIN coa co
 					ON co.id_akun = v.bank
-					JOIN giro_type gt 
+					JOIN giro_type gt
 					ON gt.giro_type_id = v.tipe_giro
 					JOIN gl
 					ON gl.bukti_transaksi = v.id_voucher
@@ -146,13 +152,13 @@ class M_voucher extends CI_Model
 					b.id_bayar,
 					ve.id_vendor
 				FROM voucher v
-					JOIN customer c 
+					JOIN customer c
 					ON c.kode_customer = v.id_customer
-					JOIN owner o 
+					JOIN owner o
 					ON o.kode_owner = v.id_owner
-					JOIN coa co 
+					JOIN coa co
 					ON co.id_akun = v.bank
-					JOIN giro_type gt 
+					JOIN giro_type gt
 					ON gt.giro_type_id = v.tipe_giro
 					JOIN gl
 					ON gl.bukti_transaksi = v.id_voucher
@@ -205,15 +211,22 @@ class M_voucher extends CI_Model
 				b.id_bayar,
 				ve.id_vendor
 			FROM voucher v
-				JOIN customer c 
+				JOIN customer c
 				ON c.kode_customer = v.id_customer
-				JOIN owner o 
+				JOIN owner o
 				ON o.kode_owner = v.id_owner
-				JOIN coa co 
+				JOIN coa co
 				ON co.id_akun = v.bank
-				JOIN giro_type gt 
+				JOIN giro_type gt
 				ON gt.giro_type_id = v.tipe_giro
-			WHERE v.id_voucher = '{$id}'";
+				JOIN gl
+				ON gl.bukti_transaksi = v.id_voucher
+				LEFT JOIN vendor ve
+				ON ve.id_voucher = v.id_voucher
+				LEFT JOIN bayar b
+				ON b.id_voucher = v.id_voucher
+			WHERE v.id_voucher = '{$id}'
+			GROUP BY v.id_voucher";
 
 		$data = $this->db->query($query);
 
@@ -357,10 +370,12 @@ class M_voucher extends CI_Model
 				vendor.credit,
 				SUM(vendor.debit) - SUM(vendor.credit) AS total, 
 				vendor.so,
-				(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = vendor.id_voucher AND gl.kode_soa = vendor.kode_soa AND gl.keterangan = vendor.keterangan AND gl.debit = vendor.debit AND gl.credit = vendor.credit) AS id_gl
+				gl.id_gl
 			FROM vendor 
 				JOIN coa 
 				ON coa.id_akun = vendor.kode_soa
+				LEFT JOIN gl
+				ON gl.bukti_transaksi = vendor.id_voucher
 			-- WHERE coa.parent <> 1
 			-- 	AND coa.parent <> 3
 			-- 	AND coa.parent <> 4
