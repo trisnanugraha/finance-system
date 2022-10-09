@@ -254,18 +254,25 @@ class M_voucher extends CI_Model
 				titipan.tanggal_masuk,
 				titipan.total,
 				titipan.keterangan,
-				(SELECT voucher.bank FROM voucher WHERE voucher.id_voucher = titipan.id_voucher) AS bank,
-				(SELECT coa.coa_id FROM voucher JOIN coa ON voucher.bank = coa.id_akun WHERE voucher.id_voucher = titipan.id_voucher) AS coa_bank,
-				(SELECT coa.coa_name FROM voucher JOIN coa ON voucher.bank = coa.id_akun WHERE voucher.id_voucher = titipan.id_voucher) AS name_bank,
-				(SELECT voucher.relasi FROM voucher WHERE voucher.id_voucher = titipan.id_voucher) AS relasi,
-				(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = titipan.id_voucher AND gl.kode_soa = titipan.kode_soa AND gl.keterangan = titipan.keterangan) AS id_gl
+				voucher.bank,
+                cv.coa_id,
+                cv.coa_name,
+                voucher.relasi,
+                gl.id_gl
 			FROM titipan
-				JOIN customer 
+				JOIN customer
 				ON customer.kode_customer = titipan.id_customer
-				JOIN owner 
+				JOIN owner
 				ON owner.kode_owner = titipan.id_owner
-				JOIN coa 
-				ON coa.id_akun = titipan.kode_soa";
+				JOIN coa
+				ON coa.id_akun = titipan.kode_soa
+				LEFT JOIN voucher
+                ON voucher.id_voucher = titipan.id_voucher
+                LEFT JOIN coa cv
+                ON cv.id_akun = voucher.bank
+                LEFT JOIN gl
+                ON gl.bukti_transaksi = titipan.id_voucher
+            GROUP BY titipan.id_titipan";
 
 		$data = $this->db->query($query);
 
@@ -293,19 +300,26 @@ class M_voucher extends CI_Model
 				titipan.tanggal_masuk,
 				titipan.total,
 				titipan.keterangan,
-				(SELECT voucher.bank FROM voucher WHERE voucher.id_voucher = titipan.id_voucher) AS bank,
-				(SELECT coa.coa_id FROM voucher JOIN coa ON voucher.bank = coa.id_akun WHERE voucher.id_voucher = titipan.id_voucher) AS coa_bank,
-				(SELECT coa.coa_name FROM voucher JOIN coa ON voucher.bank = coa.id_akun WHERE voucher.id_voucher = titipan.id_voucher) AS name_bank,
-				(SELECT voucher.relasi FROM voucher WHERE voucher.id_voucher = titipan.id_voucher) AS relasi,
-				(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = titipan.id_voucher AND gl.kode_soa = titipan.kode_soa AND gl.keterangan = titipan.keterangan) AS id_gl
+				voucher.bank,
+                cv.coa_id,
+                cv.coa_name,
+                voucher.relasi,
+                gl.id_gl
 			FROM titipan
-				JOIN customer 
+				JOIN customer
 				ON customer.kode_customer = titipan.id_customer
-				JOIN owner 
+				JOIN owner
 				ON owner.kode_owner = titipan.id_owner
-				JOIN coa 
+				JOIN coa
 				ON coa.id_akun = titipan.kode_soa
-			WHERE titipan.id_titipan = '{$id}'";
+				LEFT JOIN voucher
+                ON voucher.id_voucher = titipan.id_voucher
+                LEFT JOIN coa cv
+                ON cv.id_akun = voucher.bank
+                LEFT JOIN gl
+                ON gl.bukti_transaksi = titipan.id_voucher
+			WHERE titipan.id_titipan = '{$id}'
+			GROUP BY titipan.id_titipan";
 
 		$data = $this->db->query($query);
 
@@ -333,20 +347,26 @@ class M_voucher extends CI_Model
 				titipan.tanggal_masuk,
 				titipan.total,
 				titipan.keterangan,
-				(SELECT voucher.bank FROM voucher WHERE voucher.id_voucher = titipan.id_voucher) AS bank,
-				(SELECT coa.coa_id FROM voucher JOIN coa ON voucher.bank = coa.id_akun WHERE voucher.id_voucher = titipan.id_voucher) AS coa_bank,
-				(SELECT coa.coa_name FROM voucher JOIN coa ON voucher.bank = coa.id_akun WHERE voucher.id_voucher = titipan.id_voucher) AS name_bank,
-				(SELECT voucher.total FROM voucher JOIN coa ON voucher.bank = coa.id_akun WHERE voucher.id_voucher = titipan.id_voucher) AS total_voucher,
-				(SELECT voucher.relasi FROM voucher WHERE voucher.id_voucher = titipan.id_voucher) AS relasi,
-				(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = titipan.id_voucher AND gl.kode_soa = titipan.kode_soa AND gl.keterangan = titipan.keterangan) AS id_gl
+				voucher.bank,
+                cv.coa_id,
+                cv.coa_name,
+                voucher.relasi,
+                gl.id_gl
 			FROM titipan
-				JOIN customer 
+				JOIN customer
 				ON customer.kode_customer = titipan.id_customer
-				JOIN owner 
+				JOIN owner
 				ON owner.kode_owner = titipan.id_owner
-				JOIN coa 
+				JOIN coa
 				ON coa.id_akun = titipan.kode_soa
-			WHERE titipan.id_voucher = '{$id}'";
+				LEFT JOIN voucher
+                ON voucher.id_voucher = titipan.id_voucher
+                LEFT JOIN coa cv
+                ON cv.id_akun = voucher.bank
+                LEFT JOIN gl
+                ON gl.bukti_transaksi = titipan.id_voucher
+			WHERE titipan.id_voucher = '{$id}'
+			GROUP BY titipan.id_titipan";
 
 		$data = $this->db->query($query);
 
@@ -356,31 +376,26 @@ class M_voucher extends CI_Model
 	public function select_all_vendor()
 	{
 		$query =
-			"SELECT 
-				vendor.id_vendor, 
-				vendor.id_voucher, 
-				vendor.tanggal_transaksi, 
-				vendor.kode_soa, 
-				coa.coa_id, 
-				coa.coa_name, 
+			"SELECT
+				vendor.id_vendor,
+				vendor.id_voucher,
+				vendor.tanggal_transaksi,
+				vendor.kode_soa,
+				coa.coa_id,
+				coa.coa_name,
 				coa.parent,
 				coa.cf,
 				vendor.keterangan,
 				vendor.debit,
 				vendor.credit,
-				SUM(vendor.debit) - SUM(vendor.credit) AS total, 
+				SUM(vendor.debit) - SUM(vendor.credit) AS total,
 				vendor.so,
 				gl.id_gl
-			FROM vendor 
-				JOIN coa 
+			FROM vendor
+				JOIN coa
 				ON coa.id_akun = vendor.kode_soa
 				LEFT JOIN gl
 				ON gl.bukti_transaksi = vendor.id_voucher
-			-- WHERE coa.parent <> 1
-			-- 	AND coa.parent <> 3
-			-- 	AND coa.parent <> 4
-			-- 	AND coa.parent <> 5
-			-- 	AND coa.parent <> 7
 			GROUP BY vendor.id_vendor";
 
 		$data = $this->db->query($query);
@@ -393,34 +408,27 @@ class M_voucher extends CI_Model
 		if (!empty($startDate) && !empty($endDate)) {
 
 			$query =
-				"SELECT 
-					vendor.id_vendor, 
-					vendor.id_voucher, 
-					vendor.tanggal_transaksi, 
-					vendor.kode_soa, 
-					coa.coa_id, 
-					coa.coa_name, 
+				"SELECT
+					vendor.id_vendor,
+					vendor.id_voucher,
+					vendor.tanggal_transaksi,
+					vendor.kode_soa,
+					coa.coa_id,
+					coa.coa_name,
 					coa.parent,
 					coa.cf,
 					vendor.keterangan,
 					vendor.debit,
 					vendor.credit,
-					SUM(vendor.debit) - SUM(vendor.credit) AS total, 
+					SUM(vendor.debit) - SUM(vendor.credit) AS total,
 					vendor.so,
 					gl.id_gl
-				FROM vendor 
-					JOIN coa 
+				FROM vendor
+					JOIN coa
 					ON coa.id_akun = vendor.kode_soa
 					LEFT JOIN gl
 					ON gl.bukti_transaksi = vendor.id_voucher
-				WHERE 
-					-- coa.parent <> 1
-					-- AND coa.parent <> 3
-					-- AND coa.parent <> 4
-					-- AND coa.parent <> 5
-					-- AND coa.parent <> 7
-					-- AND 
-					vendor.tanggal_transaksi BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
+				WHERE vendor.tanggal_transaksi BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
 				GROUP BY vendor.id_vendor";
 
 			$data = $this->db->query($query);
@@ -428,34 +436,27 @@ class M_voucher extends CI_Model
 			return $data->result();
 		} else {
 			$query =
-				"SELECT 
-					vendor.id_vendor, 
-					vendor.id_voucher, 
-					vendor.tanggal_transaksi, 
-					vendor.kode_soa, 
-					coa.coa_id, 
-					coa.coa_name, 
+				"SELECT
+					vendor.id_vendor,
+					vendor.id_voucher,
+					vendor.tanggal_transaksi,
+					vendor.kode_soa,
+					coa.coa_id,
+					coa.coa_name,
 					coa.parent,
 					coa.cf,
 					vendor.keterangan,
 					vendor.debit,
 					vendor.credit,
-					SUM(vendor.debit) - SUM(vendor.credit) AS total, 
+					SUM(vendor.debit) - SUM(vendor.credit) AS total,
 					vendor.so,
-					gl.id_gl	
-				FROM vendor 
-					JOIN coa 
+					gl.id_gl
+				FROM vendor
+					JOIN coa
 					ON coa.id_akun = vendor.kode_soa
 					LEFT JOIN gl
 					ON gl.bukti_transaksi = vendor.id_voucher
-				WHERE 
-					-- coa.parent <> 1
-					-- AND coa.parent <> 3
-					-- AND coa.parent <> 4
-					-- AND coa.parent <> 5
-					-- AND coa.parent <> 7
-					-- AND 
-					vendor.tanggal_transaksi <= CURDATE() AND (MONTH(vendor.tanggal_transaksi) = MONTH(CURDATE()) OR MONTH(vendor.tanggal_transaksi) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)))
+				WHERE vendor.tanggal_transaksi <= CURDATE() AND (MONTH(vendor.tanggal_transaksi) = MONTH(CURDATE()) OR MONTH(vendor.tanggal_transaksi) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)))
 				GROUP BY vendor.id_vendor";
 
 			$data = $this->db->query($query);
@@ -464,31 +465,31 @@ class M_voucher extends CI_Model
 		}
 	}
 
-	public function select_all_vendor_voucher($id)
+	public function select_by_voucher_id($id)
 	{
 		$query =
-			"SELECT 
-				vendor.id_vendor, 
-				vendor.id_voucher, 
-				vendor.tanggal_transaksi, 
-				vendor.kode_soa, 
-				coa.coa_id, 
-				coa.coa_name, 
+			"SELECT
+				vendor.id_vendor,
+				vendor.id_voucher,
+				vendor.tanggal_transaksi,
+				vendor.kode_soa,
+				coa.coa_id,
+				coa.coa_name,
 				coa.parent,
 				coa.cf,
 				UPPER(vendor.keterangan) AS keterangan,
 				vendor.debit,
 				vendor.credit,
-				SUM(vendor.debit) - SUM(vendor.credit) AS total, 
+				SUM(vendor.debit) - SUM(vendor.credit) AS total,
 				vendor.so,
 				gl.id_gl
-			FROM vendor 
-				JOIN coa 
+			FROM vendor
+				JOIN coa
 					ON coa.id_akun = vendor.kode_soa
 				LEFT JOIN gl
 					ON gl.bukti_transaksi = vendor.id_voucher
 			WHERE vendor.id_voucher = '{$id}'
-			GROUP BY vendor.id_vendor";
+			GROUP BY gl.id_gl";
 
 		$data = $this->db->query($query);
 

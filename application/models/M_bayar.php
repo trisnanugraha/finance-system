@@ -53,7 +53,8 @@ class M_bayar extends CI_Model
 				AND coa.parent <> 3
 				AND coa.parent <> 4
 				AND coa.parent <> 5
-				AND coa.parent <> 7";
+				AND coa.parent <> 7
+			GROUP BY bayar.id_bayar";
 
 		$data = $this->db->query($query);
 
@@ -111,7 +112,8 @@ class M_bayar extends CI_Model
 					AND coa.parent <> 4
 					AND coa.parent <> 5
 					AND coa.parent <> 7
-					AND bayar.tanggal_bayar BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)";
+					AND bayar.tanggal_bayar BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
+				GROUP BY bayar.id_bayar";
 
 			$data = $this->db->query($query);
 
@@ -164,7 +166,8 @@ class M_bayar extends CI_Model
 					AND coa.parent <> 4
 					AND coa.parent <> 5
 					AND coa.parent <> 7
-					AND bayar.tanggal_bayar <= CURDATE() AND (MONTH(bayar.tanggal_bayar) = MONTH(CURDATE()) OR MONTH(bayar.tanggal_bayar) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)))";
+					AND bayar.tanggal_bayar <= CURDATE() AND (MONTH(bayar.tanggal_bayar) = MONTH(CURDATE()) OR MONTH(bayar.tanggal_bayar) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)))
+				GROUP BY bayar.id_bayar";
 
 			$data = $this->db->query($query);
 
@@ -172,7 +175,7 @@ class M_bayar extends CI_Model
 		}
 	}
 
-	public function select_by_id($id)
+	public function select_by_voucher_id($id)
 	{
 		$query =
 			"SELECT
@@ -216,7 +219,8 @@ class M_bayar extends CI_Model
 					ON coa.id_akun = bayar.kode_soa
 				LEFT JOIN gl
 					ON gl.bukti_transaksi = bayar.id_voucher
-			WHERE bayar.id_voucher = '{$id}'";
+			WHERE bayar.id_voucher = '{$id}'
+			GROUP BY gl.id_gl";
 
 		$data = $this->db->query($query);
 

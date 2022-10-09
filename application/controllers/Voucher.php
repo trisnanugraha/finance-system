@@ -139,16 +139,16 @@ class Voucher extends AUTH_Controller
 	{
 		$post = $this->input->post(null, TRUE);
 
+		$this->M_bayar->insert_out($post);
+		$this->M_voucher->insert_titipan($post);
+		$this->M_ar->update_ar_out($post);
+		$this->M_gl->insert_voucher($post);
+		$this->M_billing->pembayaran($post);
+		$this->M_service->pembayaran($post);
+
 		$result = $this->M_voucher->insert_voucher($post);
 
 		if ($result > 0) {
-			$this->M_bayar->insert_out($post);
-			$this->M_voucher->insert_titipan($post);
-			$this->M_ar->update_ar_out($post);
-			$this->M_gl->insert_voucher($post);
-
-			$this->M_billing->pembayaran($post);
-			$this->M_service->pembayaran($post);
 			helper_log("add", "Pembayaran (Piutang)", $post['bukti_transaksi']);
 			$out['status'] = '';
 			$out['msg'] = show_succ_msg('Pembayaran Piutang Successfully', '20px');
@@ -300,12 +300,19 @@ class Voucher extends AUTH_Controller
 		// $data['dataPemType'] = $this->M_type_pembayaran->select_all();
 
 		if ($voucher->so == 3) {
-			$data['dataVendor'] = $this->M_voucher->select_all_vendor();
+			$data['dataVendor'] = $this->M_voucher->select_by_voucher_id($id);
 			echo show_my_modal('modals/modal_update_vendor', 'update-voucher', $data);
 		} else {
-			$data['dataBayar'] = $this->M_bayar->select_all();
+			$data['dataBayar'] = $this->M_bayar->select_by_voucher_id($id);
 			echo show_my_modal('modals/modal_update_bayar', 'update-voucher', $data);
 		}
+
+		// $data['page'] = "Update Voucher";
+		// $data['judul'] = "Update Voucher";
+		// $data['deskripsi'] = "Manage Update Voucher Data";
+
+		// $js = $this->load->view('voucher/voucher-js', null, true);
+		// $this->template->views('modals/modal_update_voucher', $data, $js);
 	}
 
 	public function prosesUpdate()
