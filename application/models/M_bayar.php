@@ -191,12 +191,12 @@ class M_bayar extends CI_Model
 				owner.alamat_owner AS arAlamatOwner,
 				owner.unit_owner AS arUnitOwner,
 				ar.bukti_transaksi,
-				UPPER(ar.keterangan) AS arKet,
+				ar.keterangan AS arKet,
 				ar.total,
 				ar.sisa,
 				ar.status,
 				ar.so,
-				UPPER(bayar.keterangan) AS keterangan,
+				bayar.keterangan AS keterangan,
 				bayar.tanggal_bayar,
 				bayar.tipe_pembayaran,
 				bayar.kode_soa,
@@ -207,7 +207,7 @@ class M_bayar extends CI_Model
 				bayar.debit,
 				bayar.credit,
 				bayar.so,
-				gl.id_gl
+				(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = bayar.id_voucher AND gl.kode_soa = bayar.kode_soa AND gl.keterangan = bayar.keterangan) AS id_gl
 			FROM bayar
 				JOIN ar
 					ON ar.id_ar = bayar.id_ar
@@ -220,7 +220,7 @@ class M_bayar extends CI_Model
 				LEFT JOIN gl
 					ON gl.bukti_transaksi = bayar.id_voucher
 			WHERE bayar.id_voucher = '{$id}'
-			GROUP BY gl.id_gl";
+			GROUP BY bayar.id_bayar";
 
 		$data = $this->db->query($query);
 

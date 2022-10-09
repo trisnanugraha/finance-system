@@ -51,8 +51,10 @@ class GL extends AUTH_Controller
 		$akun = $this->input->get('akun');
 		$startDate = $this->input->get("startDate");
 		$endDate = $this->input->get("endDate");
-		$data['dataGL'] = $this->M_gl->select_filter($akun, $startDate, $endDate);
 		$data['dataTotalGL'] = $this->M_gl->select_filter_total($akun, $startDate, $endDate);
+		$data['dataGL'] = $this->M_gl->select_filter($akun, $startDate, $endDate);
+		var_dump($data['dataTotalGL']);
+		var_dump($data['dataGL']);
 		$this->load->view('gl/list_data', $data);
 	}
 

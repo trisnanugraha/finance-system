@@ -1,5 +1,5 @@
 <?php foreach ($dataVoucher as $vou) { ?>
-    <tr class="bg-primary">
+    <tr>
         <td class="text-center"><?php echo $vou->bukti_transaksi; ?></td>
         <td class="text-center">-</td>
         <td class="text-center">
@@ -39,7 +39,7 @@
             <button class="btn btn-danger btn-xs konfirmasiHapus-voucher" data-id="<?php echo $vou->id_voucher; ?>" data-toggle="modal" data-target="#konfirmasiHapus"><i class="glyphicon glyphicon-trash"></i></button>
         </td>
     </tr>
-    <?php
+    <!-- <?php
     if ($vou->so != 3) {
         foreach ($dataBayar as $bayar) {
             if ($bayar->id_voucher == $vou->id_voucher) { ?>
@@ -87,5 +87,5 @@
                 </tr>
     <?php   }
         }
-    } ?>
+    } ?> -->
 <?php } ?>

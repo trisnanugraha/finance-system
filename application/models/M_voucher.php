@@ -136,8 +136,6 @@ class M_voucher extends CI_Model
 					v.tipe_giro,
 					gt.type_giro_name,
 					v.bank,
-					co.coa_id,
-					co.coa_name,
 					v.tanggal_voucher,
 					v.keterangan,
 					v.total,
@@ -147,6 +145,9 @@ class M_voucher extends CI_Model
 					v.created_at,
 					v.updated_at,
 					gl.id_gl,
+					gl.kode_soa,
+					cgl.coa_id,
+					cgl.coa_name,
 					gl.debit,
 					gl.credit,
 					b.id_bayar,
@@ -162,12 +163,14 @@ class M_voucher extends CI_Model
 					ON gt.giro_type_id = v.tipe_giro
 					JOIN gl
 					ON gl.bukti_transaksi = v.id_voucher
+					JOIN coa cgl
+					ON cgl.id_akun = gl.kode_soa
 					LEFT JOIN vendor ve
 					ON ve.id_voucher = v.id_voucher
 					LEFT JOIN bayar b
 					ON b.id_voucher = v.id_voucher
 				WHERE v.tanggal_voucher <= CURDATE() AND (MONTH(v.tanggal_voucher) = MONTH(CURDATE()) OR MONTH(v.tanggal_voucher) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) AND YEAR(v.tanggal_voucher) = YEAR(CURDATE())
-				GROUP BY v.id_voucher
+				GROUP BY gl.id_gl
 				LIMIT 10";
 
 			$data = $this->db->query($query);
@@ -477,19 +480,19 @@ class M_voucher extends CI_Model
 				coa.coa_name,
 				coa.parent,
 				coa.cf,
-				UPPER(vendor.keterangan) AS keterangan,
+				vendor.keterangan AS keterangan,
 				vendor.debit,
 				vendor.credit,
 				SUM(vendor.debit) - SUM(vendor.credit) AS total,
 				vendor.so,
-				gl.id_gl
+				(SELECT gl.id_gl FROM gl WHERE gl.bukti_transaksi = vendor.id_voucher AND gl.kode_soa = vendor.kode_soa AND gl.keterangan = vendor.keterangan AND gl.debit = vendor.debit AND gl.credit = vendor.credit) AS id_gl
 			FROM vendor
 				JOIN coa
 					ON coa.id_akun = vendor.kode_soa
 				LEFT JOIN gl
 					ON gl.bukti_transaksi = vendor.id_voucher
 			WHERE vendor.id_voucher = '{$id}'
-			GROUP BY gl.id_gl";
+			GROUP BY vendor.id_vendor";
 
 		$data = $this->db->query($query);
 
@@ -1063,7 +1066,7 @@ class M_voucher extends CI_Model
 	{
 
 		$query =
-			"SELECT 
+			"SELECT
 				voucher.id_voucher,
 				voucher.bukti_transaksi,
 				voucher.tanggal_voucher,
@@ -1078,10 +1081,10 @@ class M_voucher extends CI_Model
 				voucher.total,
 				voucher.so,
 				voucher.relasi
-			FROM voucher 
-				JOIN customer 
-				ON customer.kode_customer = voucher.id_customer 
-				JOIN owner 
+			FROM voucher
+				JOIN customer
+				ON customer.kode_customer = voucher.id_customer
+				JOIN owner
 				ON owner.kode_owner = voucher.id_owner
 			WHERE voucher.id_voucher = '{$id}'";
 

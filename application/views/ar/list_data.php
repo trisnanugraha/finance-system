@@ -5,6 +5,8 @@
           echo $ar->first_billing;
         } else if ($ar->kode_soa == 22) {
           echo $ar->first_service;
+        } else {
+          echo $ar->start_periode;
         }
         ?></td>
     <td><?php echo $ar->bukti_transaksi; ?></td>
