@@ -273,8 +273,7 @@ class M_gl extends CI_Model
 					ON gl.kode_soa = co.id_akun
 				WHERE gl.tanggal_transaksi BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
 				GROUP BY gl.bukti_transaksi
-				ORDER BY gl.tanggal_transaksi DESC, gl.bukti_transaksi
-				LIMIT 10";
+				ORDER BY gl.tanggal_transaksi DESC, gl.bukti_transaksi";
 
 			$query = $this->db->query($sql);
 			return $query->result();
@@ -314,8 +313,7 @@ class M_gl extends CI_Model
 					ON gl.kode_soa = co.id_akun
 				WHERE gl.kode_soa = '{$akun}' AND gl.tanggal_transaksi BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
 				GROUP BY gl.bukti_transaksi
-				ORDER BY gl.tanggal_transaksi DESC, gl.bukti_transaksi
-				LIMIT 10";
+				ORDER BY gl.tanggal_transaksi DESC, gl.bukti_transaksi";
 
 			$query = $this->db->query($sql);
 			return $query->result();
@@ -355,8 +353,7 @@ class M_gl extends CI_Model
 					ON gl.kode_soa = co.id_akun
 				WHERE gl.tanggal_transaksi <= CURDATE() AND (MONTH(gl.tanggal_transaksi) = MONTH(CURDATE()) OR MONTH(gl.tanggal_transaksi) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH)))
 				GROUP BY gl.bukti_transaksi
-				ORDER BY gl.tanggal_transaksi DESC, gl.bukti_transaksi
-				LIMIT 10";
+				ORDER BY gl.tanggal_transaksi DESC, gl.bukti_transaksi";
 
 			$query = $this->db->query($sql);
 			return $query->result();
