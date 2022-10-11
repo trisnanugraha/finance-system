@@ -170,8 +170,7 @@ class M_voucher extends CI_Model
 					LEFT JOIN bayar b
 					ON b.id_voucher = v.id_voucher
 				WHERE v.tanggal_voucher <= CURDATE() AND (MONTH(v.tanggal_voucher) = MONTH(CURDATE()) OR MONTH(v.tanggal_voucher) = MONTH(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))) AND YEAR(v.tanggal_voucher) = YEAR(CURDATE())
-				GROUP BY gl.id_gl
-				LIMIT 10";
+				GROUP BY gl.id_gl";
 
 			$data = $this->db->query($query);
 
