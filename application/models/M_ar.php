@@ -377,6 +377,38 @@ class M_ar extends CI_Model
 						$where = array('id_ar' => $id[$i]);
 						$this->db->update($this->tableName, $data, $where);
 					}
+				} else if ($CoA->id_akun == 24) {
+					if ($sisa <= 50) {
+						$data = array(
+							'status' => 1,
+							'sisa' => 0
+						);
+						$where = array('id_ar' => $id[$i]);
+						$this->db->update($this->tableName, $data, $where);
+					} else {
+						$data = array(
+							'status' => 2,
+							'sisa' => $sisa
+						);
+						$where = array('id_ar' => $id[$i]);
+						$this->db->update($this->tableName, $data, $where);
+					}
+				} else if ($CoA->id_akun == 25) {
+					if ($sisa <= 50) {
+						$data = array(
+							'status' => 1,
+							'sisa' => 0
+						);
+						$where = array('id_ar' => $id[$i]);
+						$this->db->update($this->tableName, $data, $where);
+					} else {
+						$data = array(
+							'status' => 2,
+							'sisa' => $sisa
+						);
+						$where = array('id_ar' => $id[$i]);
+						$this->db->update($this->tableName, $data, $where);
+					}
 				} else {
 				}
 			}

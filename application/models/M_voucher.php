@@ -113,7 +113,7 @@ class M_voucher extends CI_Model
 					LEFT JOIN bayar b
 					ON b.id_voucher = v.id_voucher
 				WHERE v.tanggal_voucher BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
-				GROUP BY v.id_voucher";
+				GROUP BY gl.id_gl";
 
 			$data = $this->db->query($query);
 
