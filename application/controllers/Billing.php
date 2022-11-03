@@ -6,10 +6,12 @@ class Billing extends AUTH_Controller
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('M_ar');
         $this->load->model('M_billing');
         $this->load->model('M_period');
         $this->load->model('M_customer');
         $this->load->model('M_electricity');
+        $this->load->model('M_gl');
         $this->load->model('M_water');
         $this->load->model('M_parameter');
         $this->load->model('M_candidate_key');
@@ -104,10 +106,10 @@ class Billing extends AUTH_Controller
                 $resultAR = $this->M_ar->insert($dataAR);
 
                 if ($resultAR > 0) {
-                    if ($this->M_gl->check_bill($post['kodeCus'], $end->periode_satu, 21) > 0) {
-                        $out['status'] = '';
-                        $out['msg'] = show_err_msg('General Ledger For This Period Already Inserted', '20px');
-                    } else {
+                    // if ($this->M_gl->check_bill($post['kodeCus'], $end->periode_satu, 21) > 0) {
+                    //     $out['status'] = '';
+                    //     $out['msg'] = show_err_msg('General Ledger For This Period Already Inserted', '20px');
+                    // } else {
                         $dataGL1 = [
                             'bukti_transaksi' => $listrik->id_listrik,
                             'id_customer' => $post['kodeCus'],
@@ -190,7 +192,7 @@ class Billing extends AUTH_Controller
                             $out['status'] = '';
                             $out['msg'] = show_err_msg('General Ledger Data Failed To Add', '20px');
                         }
-                    }
+                    // }
                 } else {
                     $out['status'] = '';
                     $out['msg'] = show_err_msg('Kartu Piutang Data Failed To Add', '20px');
@@ -211,6 +213,7 @@ class Billing extends AUTH_Controller
         if ($this->form_validation->run() == TRUE) {
             $available = $this->M_billing->select_inv_not_bill($post['period']);
             foreach ($available as $a) {
+                $customer = $this->M_customer->select_by_id($a->kode_customer);
                 $periode = $this->M_period->select_by_id($a->id_periode);
                 $end = $this->M_period->get_end_periode($a->id_periode);
                 $dt = DateTime::createFromFormat("Y-m-d", $periode->periodEnd);
@@ -231,21 +234,110 @@ class Billing extends AUTH_Controller
                 } else {
                     $stampValue = floatval($stamp->param2);
                 }
-                $data = [
-                    'id_billing' => $listrik->id_listrik,
-                    'id_customer' =>  $a->kode_customer,
-                    'id_periode' => $a->id_periode,
-                    'kode_tagihan_listrik' => $listrik->id_listrik,
-                    'kode_tagihan_air' => $air->kode_tagihan_air,
-                    'total_pinalty' => 0,
-                    'paid' => 0,
-                    'admin' => $this->userdata->id,
-                    'paid_date' => null,
-                    'd_c_note_date' => $dtNextMonth->format('Y/m/d'),
-                    'stamp' => $stampValue
-                ];
-                $result = $this->M_billing->insert($data);
-                $row = $result;
+
+                if ($this->M_ar->check_bill($a->kode_customer, $a->id_periode, 21) > 0) {
+                    $out['status'] = '';
+                    $out['msg'] = show_err_msg('Kartu Piutang For This Period Already Inserted', '20px');
+                } else {
+                    $dataAR = [
+                        'id_periode' => $a->id_periode,
+                        'id_customer' => $a->kode_customer,
+                        'id_owner' => $customer->owner,
+                        'kode_soa' => 21,
+                        'bukti_transaksi' => $listrik->id_listrik,
+                        'total' => $listrik->total + $air->total + $stampValue,
+                        'sisa' => $listrik->total + $air->total + $stampValue,
+                        'status' => 0,
+                        'so' => 0,
+                        'keterangan' => '' . date('d/m/Y', strtotime($periode->periodStart)) . '-' . date('d/m/Y', strtotime($periode->periodEnd)) . ' ' . $customer->kodeCus . ' ' . $customer->nama
+                    ];
+                    $resultAR = $this->M_ar->insert($dataAR);
+
+                    if ($resultAR > 0) {
+                        // if ($this->M_gl->check_bill($post['kodeCus'], $end->periode_satu, 21) > 0) {
+                        //     $out['status'] = '';
+                        //     $out['msg'] = show_err_msg('General Ledger For This Period Already Inserted', '20px');
+                        // } else {
+                            $dataGL1 = [
+                                'bukti_transaksi' => $listrik->id_listrik,
+                                'id_customer' => $a->kode_customer,
+                                'id_owner' => $customer->owner,
+                                'tanggal_transaksi' => $periode->tanggal_start,
+                                'keterangan' => '' . date('d/m/Y', strtotime($periode->periodStart)) . '-' . date('d/m/Y', strtotime($periode->periodEnd)) . ' ' . $customer->kodeCus . ' ' . $customer->nama,
+                                'kode_soa' => 21,
+                                'debit' => $listrik->total + $air->total + $stampValue,
+                                'credit' => 0,
+                                'so' => 1,
+                                'cash' => 0
+                            ];
+                            $dataGL2 = [
+                                'bukti_transaksi' => $listrik->id_listrik,
+                                'id_customer' => $a->kode_customer,
+                                'id_owner' => $customer->owner,
+                                'tanggal_transaksi' => $periode->tanggal_start,
+                                'keterangan' => '' . date('d/m/Y', strtotime($periode->periodStart)) . '-' . date('d/m/Y', strtotime($periode->periodEnd)) . ' ' . $customer->kodeCus . ' ' . $customer->nama,
+                                'kode_soa' => 276,
+                                'debit' => 0,
+                                'credit' => $listrik->total,
+                                'so' => 1,
+                                'cash' => 0
+                            ];
+                            $dataGL3 = [
+                                'bukti_transaksi' => $listrik->id_listrik,
+                                'id_customer' => $a->kode_customer,
+                                'id_owner' => $customer->owner,
+                                'tanggal_transaksi' => $periode->tanggal_start,
+                                'keterangan' => '' . date('d/m/Y', strtotime($periode->periodStart)) . '-' . date('d/m/Y', strtotime($periode->periodEnd)) . ' ' . $customer->kodeCus . ' ' . $customer->nama,
+                                'kode_soa' => 277,
+                                'debit' => 0,
+                                'credit' => $air->total,
+                                'so' => 1,
+                                'cash' => 0
+                            ];
+                            $dataGL4 = [
+                                'bukti_transaksi' => $listrik->id_listrik,
+                                'id_customer' => $a->kode_customer,
+                                'id_owner' => $customer->owner,
+                                'tanggal_transaksi' => $periode->tanggal_start,
+                                'keterangan' => '' . date('d/m/Y', strtotime($periode->periodStart)) . '-' . date('d/m/Y', strtotime($periode->periodEnd)) . ' ' . $customer->kodeCus . ' ' . $customer->nama,
+                                'kode_soa' => 302,
+                                'debit' => 0,
+                                'credit' => $stampValue,
+                                'so' => 1,
+                                'cash' => 0
+                            ];
+
+                            $this->M_gl->insert2($dataGL2);
+                            $this->M_gl->insert2($dataGL3);
+                            $this->M_gl->insert2($dataGL4);
+                            $resultGL = $this->M_gl->insert2($dataGL1);
+
+                            if ($resultGL > 0) {
+                                $data = [
+                                    'id_billing' => $listrik->id_listrik,
+                                    'id_customer' => $a->kode_customer,
+                                    'id_periode' => $a->id_periode,
+                                    'kode_tagihan_listrik' => $listrik->id_listrik,
+                                    'kode_tagihan_air' => $air->kode_tagihan_air,
+                                    'total_pinalty' => 0,
+                                    'paid' => 0,
+                                    'admin' => $this->userdata->id,
+                                    'paid_date' => null,
+                                    'd_c_note_date' => $dtNextMonth->format('Y/m/d'),
+                                    'stamp' => $stampValue
+                                ];
+                                $result = $this->M_billing->insert($data);
+                                $row = $result;
+                            // } else {
+                            //     $out['status'] = '';
+                            //     $out['msg'] = show_err_msg('General Ledger Data Failed To Add', '20px');
+                            // }
+                        }
+                    } else {
+                        $out['status'] = '';
+                        $out['msg'] = show_err_msg('Kartu Piutang Data Failed To Add', '20px');
+                    }
+                }
             }
             if ($row > 0) {
                 $out['status'] = '';
