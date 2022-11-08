@@ -16,6 +16,8 @@ class Voucher extends AUTH_Controller
 		$this->load->model('M_period');
 		$this->load->model('M_billing');
 		$this->load->model('M_service');
+		$this->load->model('M_iuran');
+		$this->load->model('M_asuransi');
 		$this->load->model('M_type_pembayaran');
 		$this->load->model('M_coa');
 		$this->load->model('M_candidate_key');
@@ -143,6 +145,8 @@ class Voucher extends AUTH_Controller
 		$this->M_gl->insert_voucher($post);
 		$this->M_billing->pembayaran($post);
 		$this->M_service->pembayaran($post);
+		$this->M_iuran->pembayaran($post);
+		$this->M_asuransi->pembayaran($post);
 
 		$result = $this->M_voucher->insert_voucher($post);
 
@@ -162,16 +166,19 @@ class Voucher extends AUTH_Controller
 	{
 		$post = $this->input->post(null, TRUE);
 
+		$this->M_bayar->insert_out($post);
+		$this->M_voucher->titipan_out($post);
+		$this->M_ar->update_ar_out($post);
+		$this->M_gl->insert_titipan($post);
+
+		$this->M_billing->pembayaran($post);
+		$this->M_service->pembayaran($post);
+		$this->M_iuran->pembayaran($post);
+		$this->M_asuransi->pembayaran($post);
+
 		$result = $this->M_voucher->insert_voucher_titipan($post);
 
 		if ($result > 0) {
-			$this->M_bayar->insert_out($post);
-			$this->M_voucher->titipan_out($post);
-			$this->M_ar->update_ar_out($post);
-			$this->M_gl->insert_titipan($post);
-
-			$this->M_billing->pembayaran($post);
-			$this->M_service->pembayaran($post);
 			helper_log("add", "Pembayaran Titipan (Piutang)", $_POST['vouId']);
 			$out['status'] = '';
 			$out['msg'] = show_succ_msg('Pembayaran Piutang Successfully', '20px');

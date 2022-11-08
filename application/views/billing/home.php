@@ -79,11 +79,11 @@
 </div>
 <div id="tempat-modal"></div>
 
-<?php echo $modal_tambah_billing; ?>
-
 <?php
-$data['judul'] = 'Print Multiple Bills';
-$data['url'] = 'Billing/printMultiple';
-show_my_confirm('konfirmasiHapus', 'hapus-dataBilling', 'Delete This Data ?', 'Yes, Delete This Data');
-echo show_my_modal('modals/modal_print_billing', 'print-multiple-billing', $data);
+  show_my_confirm('konfirmasiHapus', 'hapus-dataBilling', 'Delete This Data ?', 'Yes, Delete This Data');
+  $data['judul'] = 'Print Multiple Bills';
+  $data['url'] = 'Billing/printMultiple';
+  echo show_my_modal('modals/modal_print_billing', 'print-multiple-billing', $data);
 ?>
+
+<?php echo $modal_tambah_billing; ?>

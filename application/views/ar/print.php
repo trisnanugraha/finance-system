@@ -334,7 +334,7 @@
         <?php } else if ($ar->kode_soa == 24) { ?>
             <table>
                 <tr>
-                    <td>Kode CUST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="owner-id"><?= $ar->id_customer . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $ar->nama_customer; ?></span></td>
+                    <td>Kode CUST &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="owner-id"><?= $ar->id_owner . "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" . $ar->nama_owner; ?></span></td>
                 </tr>
                 <tr>
                     <td>Valuta &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>IDR</span></td>
@@ -343,7 +343,7 @@
                     <td>Uang Muka &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>0,00</span></td>
                 </tr>
                 <tr>
-                    <td>Giro Mundur &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>0,00</span></td>
+                    <td>Giro Mundur &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span>0,00</span></td>
                 </tr>
             </table>
             <br>
@@ -359,7 +359,7 @@
                 </tr>
                 <?php $saldoA = 0; ?>
                 <?php foreach ($dataSaldo as $saldo) : ?>
-                    <?php if ($saldo->id_customer == $ar->id_customer) { ?>
+                    <?php if ($saldo->id_owner == $ar->id_owner) { ?>
                         <tr>
                             <td></td>
                             <td></td>
@@ -375,7 +375,7 @@
                 <?php $debit = 0;
                 $credit = 0; ?>
                 <?php foreach ($dataARCus as $arCus) : ?>
-                    <?php if ($arCus->id_bayar != NULL && $arCus->id_customer == $ar->id_customer) { ?>
+                    <?php if ($arCus->id_bayar != NULL && $arCus->id_owner == $ar->id_owner) { ?>
                         <tr>
                             <td><?= $arCus->arTgl ?></td>
                             <td><?= $arCus->arBT ?></td>
@@ -405,8 +405,8 @@
                                 </tr>
                             <?php } ?>
                         <?php endforeach ?>
-                    <?php } else if ($arCus->id_bayar != NULL && $arCus->id_customer != $ar->id_customer) { ?>
-                    <?php } else if ($arCus->id_bayar == NULL && $arCus->id_customer == $ar->id_customer) { ?>
+                    <?php } else if ($arCus->id_bayar != NULL && $arCus->id_owner != $ar->id_owner) { ?>
+                    <?php } else if ($arCus->id_bayar == NULL && $arCus->id_owner == $ar->id_owner) { ?>
                         <tr>
                             <td><?= $arCus->arTgl ?></td>
                             <td><?= $arCus->arBT ?></td>
@@ -419,7 +419,7 @@
                             </td>
                             <td class="text-align-right"><?= saldo_money($saldoA + $debit - $credit) ?></td>
                         </tr>
-                    <?php } else if ($arCus->id_bayar != NULL && $arCus->id_customer != $ar->id_customer) { ?>
+                    <?php } else if ($arCus->id_bayar != NULL && $arCus->id_owner != $ar->id_owner) { ?>
                     <?php } ?>
                 <?php endforeach ?>
                 <tr>

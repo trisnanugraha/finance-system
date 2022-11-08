@@ -73,7 +73,7 @@
         <br>
         <br>
 
-        <div class="form-group">
+        <div class="form-group" hidden>
           <label class="control-label col-xs-3">Voucher Bank</label>
           <div class="col-xs-8">
             <select name="bank" class="form-control select2">
@@ -89,17 +89,13 @@
             </select>
           </div>
         </div>
-        <br>
-        <br>
 
-        <div class="form-group">
+        <div class="form-group" hidden>
           <label class="control-label col-xs-3">Total Voucher</label>
           <div class="col-xs-8">
             <input name="vouTotal" class="form-control" type="text" value="<?php echo $dataVoucher->total; ?>">
           </div>
         </div>
-        <br>
-        <br>
 
         <div class="form-group table-responsive">
           <table class="table table-bordered table-striped" name="data_table" id="data_table">

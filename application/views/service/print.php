@@ -186,7 +186,7 @@
                                         <td class="text-align-right" ><b>SQM</b></td>
                                         <td class="text-align-right" ><b>Rate/Month</b></td>
                                         <td class="text-align-right" ><b>Bill Cycle</b></td>
-                                    </tr>    
+                                    </tr>
                                 </table>
                             </td>
                             <td class="border-left border-right padding-top">&nbsp;</td>

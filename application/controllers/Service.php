@@ -7,6 +7,8 @@ class Service extends AUTH_Controller
     {
         parent::__construct();
         $this->load->model('M_service');
+        $this->load->model('M_ar');
+        $this->load->model('M_gl');
         $this->load->model('M_owner');
         $this->load->model('M_rates');
         $this->load->model('M_period');
@@ -68,7 +70,6 @@ class Service extends AUTH_Controller
                 $out['msg'] = show_err_msg('Service Bill For This Period Already Inserted', '20px');
             } else {
                 $rate = $this->M_rates->select_by_id($post['hiddenIdTarif']);
-                $period = $this->M_period->select_by_id($post['period']);
                 $end = $this->M_period->get_end_periode($post['period']);
                 $owner = $this->M_owner->select_by_id($post['kodeOwner']);
 
@@ -86,28 +87,195 @@ class Service extends AUTH_Controller
                     $stampValue = floatval($stamp->param2);
                 }
 
-                $data = [
-                    'kode_tagihan_service' => $id->id_service,
-                    'kode_owner' => $post['kodeOwner'],
-                    'id_tarif' => $rate->id,
-                    'id_periode' => $post['period'],
-                    'end_periode' => $end->end_periode,
-                    'sinking_fund' => $sinking,
-                    'service_charge' => $service,
-                    'stamp' => $stampValue,
-                    'paid' => 0,
-                    'total' => $service + $sinking + $stampValue
-                ];
+                $rate = $this->M_rates->select_by_id($post['tarif']);
 
-                $result = $this->M_service->insert($data);
+				$id = $this->M_service->select_invoice_owner_period($post['kodeOwner'], $post['period']);
 
-                if ($result > 0) {
-                    helper_log("add", "Menambah Data (Service Charge)", $data['kode_tagihan_service']);
+				$stamp = $this->M_parameter->select_by_id('stamp_key');
+				$bill_stamp_limit_key = $this->M_parameter->select_by_id('bill_stamp_limit_key');
+
+				$sinking = $owner->sqm * 3 * $rate->sinking;
+				$service = $owner->sqm * 3 * $rate->service;
+
+				if (($sinking + $service) < floatval($bill_stamp_limit_key->param1)) {
+					$stampValue = floatval($stamp->param1);
+				} else {
+					$stampValue = floatval($stamp->param2);
+				}
+
+                if ($this->M_ar->check_bill($owner->customer, $post['period'], 22) > 0) {
                     $out['status'] = '';
-                    $out['msg'] = show_succ_msg('Service Bill Data Successfully Added', '20px');
+                    $out['msg'] = show_err_msg('Kartu Piutang For This Period Already Inserted', '20px');
                 } else {
-                    $out['status'] = '';
-                    $out['msg'] = show_err_msg('Service Bill Data Failed To Add', '20px');
+                    $dataAR = [
+                        'id_periode' => $post['period'],
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'kode_soa' => 22,
+                        'bukti_transaksi' => $id->id_service,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'total' => $sinking + $service + $stampValue,
+                        'sisa' => $sinking + $service + $stampValue,
+                        'status' => 0,
+                        'so' => 1
+                    ];
+                    $this->M_ar->insert($dataAR);
+
+                    $data10 = [
+                        'bukti_transaksi' => $id->id_service,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'tanggal_transaksi' => $end->periode_satu,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'kode_soa' => 22,
+                        'debit' => $sinking + $service + $stampValue,
+                        'credit' => 0,
+                        'so' => 1,
+                        'cash' => 0
+                    ];
+                    $data11 = [
+                        'bukti_transaksi' => $id->id_service,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'tanggal_transaksi' => $end->periode_satu,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'kode_soa' => 302,
+                        'debit' => 0,
+                        'credit' => $stampValue,
+                        'so' => 1,
+                        'cash' => 0
+                    ];
+                    $data12 = [
+                        'bukti_transaksi' => $id->id_service,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'tanggal_transaksi' => $end->periode_satu,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'kode_soa' => 189,
+                        'debit' => 0,
+                        'credit' => $sinking,
+                        'so' => 1,
+                        'cash' => 0
+                    ];
+                    $data13 = [
+                        'bukti_transaksi' => $id->id_service,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'tanggal_transaksi' => $end->periode_satu,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'kode_soa' => 237,
+                        'debit' => 0,
+                        'credit' => $service,
+                        'so' => 1,
+                        'cash' => 0
+                    ];
+                    $data14 = [
+                        'bukti_transaksi' => $id->id_service,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'tanggal_transaksi' => $end->periode_satu,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'kode_soa' => 237,
+                        'debit' => $service / 3,
+                        'credit' => 0,
+                        'so' => 1,
+                        'cash' => 0
+                    ];
+                    $data15 = [
+                        'bukti_transaksi' => $id->id_service,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'tanggal_transaksi' => $end->periode_satu,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'kode_soa' => 275,
+                        'debit' => 0,
+                        'credit' => $service / 3,
+                        'so' => 1,
+                        'cash' => 0
+                    ];
+                    $data21 = [
+                        'bukti_transaksi' => $id->id_service,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'tanggal_transaksi' => $end->periode_dua,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'kode_soa' => 237,
+                        'debit' => $service / 3,
+                        'credit' => 0,
+                        'so' => 1,
+                        'cash' => 0
+                    ];
+                    $data22 = [
+                        'bukti_transaksi' => $id->id_service,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'tanggal_transaksi' => $end->periode_dua,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'kode_soa' => 275,
+                        'debit' => 0,
+                        'credit' => $service / 3,
+                        'so' => 1,
+                        'cash' => 0
+                    ];
+                    $data31 = [
+                        'bukti_transaksi' => $id->id_service,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'tanggal_transaksi' => $end->periode_tiga,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'kode_soa' => 237,
+                        'debit' => $service / 3,
+                        'credit' => 0,
+                        'so' => 1,
+                        'cash' => 0
+                    ];
+                    $data32 = [
+                        'bukti_transaksi' => $id->id_service,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $post['kodeOwner'],
+                        'tanggal_transaksi' => $end->periode_tiga,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $post['kodeOwner'] . '',
+                        'kode_soa' => 275,
+                        'debit' => 0,
+                        'credit' => $service / 3,
+                        'so' => 1,
+                        'cash' => 0
+                    ];
+
+                    $this->M_gl->insert2($data10);
+                    $this->M_gl->insert2($data11);
+                    $this->M_gl->insert2($data12);
+                    $this->M_gl->insert2($data13);
+                    $this->M_gl->insert2($data14);
+                    $this->M_gl->insert2($data15);
+                    $this->M_gl->insert2($data21);
+                    $this->M_gl->insert2($data22);
+                    $this->M_gl->insert2($data31);
+                    $this->M_gl->insert2($data32);
+
+                    $data = [
+                        'kode_tagihan_service' => $id->id_service,
+                        'kode_ower' => $post['kodeOwner'],
+                        'id_tarif' => $rate->id,
+                        'id_periode' => $post['period'],
+                        'end_periode' => $end->end_periode,
+                        'sinking_fund' => $sinking,
+                        'service_charge' => $service,
+                        'stamp' => $stampValue,
+                        'paid' => 0,
+                        'total' => $service + $sinking + $stampValue
+                    ];
+
+                    $result = $this->M_service->insert($data);
+
+                    if ($result > 0) {
+                        helper_log("add", "Menambah Data (Service Charge)", $data['kode_tagihan_service']);
+                        $out['status'] = '';
+                        $out['msg'] = show_succ_msg('Service Bill Data Successfully Added', '20px');
+                    } else {
+                        $out['status'] = '';
+                        $out['msg'] = show_err_msg('Service Bill Data Failed To Add', '20px');
+                    }
                 }
             }
         } else {
@@ -127,7 +295,6 @@ class Service extends AUTH_Controller
 
             $data['dataService'] = [$sc];
             $data['signature'] = $signature;
-
 
             $html = $this->load->view('service/print', $data, true);
             $filename = 'report_' . time();
@@ -193,7 +360,6 @@ class Service extends AUTH_Controller
 
             foreach ($available as $a) {
                 $rate = $this->M_rates->select_by_id($post['tarif']);
-                $period = $this->M_period->select_by_id($post['period']);
                 $end = $this->M_period->get_end_periode($post['period']);
                 $owner = $this->M_owner->select_by_id($a->kode_owner);
 
@@ -211,22 +377,175 @@ class Service extends AUTH_Controller
                     $stampValue = floatval($stamp->param2);
                 }
 
-                $data = [
-                    'kode_tagihan_service' => $id->id_service,
-                    'kode_owner' => $a->kode_owner,
-                    'id_tarif' => $rate->id,
-                    'id_periode' => $post['period'],
-                    'end_periode' => $end->end_periode,
-                    'sinking_fund' => $sinking,
-                    'service_charge' => $service,
-                    'stamp' => $stampValue,
-                    'total' => $service + $sinking + $stampValue,
-                    'paid' => 0
-                ];
+                if ($this->M_ar->check_bill($owner->customer, $post['period'], 22) > 0) {
+                    $out['status'] = '';
+                    $out['msg'] = show_err_msg('Kartu Piutang For This Period Already Inserted', '20px');
+                } else {
+                    $dataAR = [
+                        'id_periode' => $a->id_periode,
+                        'id_customer' => $owner->customer,
+                        'id_owner' => $a->kode_owner,
+                        'kode_soa' => 22,
+                        'bukti_transaksi' => $id->id_service,
+                        'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+                        'total' => $sinking + $service + $stampValue,
+                        'sisa' => $sinking + $service + $stampValue,
+                        'status' => 0,
+                        'so' => 1
+                    ];
+                    $this->M_ar->insert($dataAR);
 
+                    $data10 = [
+						'bukti_transaksi' => $id->id_service,
+						'id_customer' => $owner->customer,
+						'id_owner' => $a->kode_owner,
+						'tanggal_transaksi' => $end->periode_satu,
+						'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+						'kode_soa' => 22,
+						'debit' => $sinking + $service + $stampValue,
+						'credit' => 0,
+						'so' => 1,
+						'cash' => 0
+					];
+					$data11 = [
+						'bukti_transaksi' => $id->id_service,
+						'id_customer' => $owner->customer,
+						'id_owner' => $a->kode_owner,
+						'tanggal_transaksi' => $end->periode_satu,
+						'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+						'kode_soa' => 302,
+						'debit' => 0,
+						'credit' => $stampValue,
+						'so' => 1,
+						'cash' => 0
+					];
+					$data12 = [
+						'bukti_transaksi' => $id->id_service,
+						'id_customer' => $owner->customer,
+						'id_owner' => $a->kode_owner,
+						'tanggal_transaksi' => $end->periode_satu,
+						'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+						'kode_soa' => 189,
+						'debit' => 0,
+						'credit' => $sinking,
+						'so' => 1,
+						'cash' => 0
+					];
+					$data13 = [
+						'bukti_transaksi' => $id->id_service,
+						'id_customer' => $owner->customer,
+						'id_owner' => $a->kode_owner,
+						'tanggal_transaksi' => $end->periode_satu,
+						'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+						'kode_soa' => 237,
+						'debit' => 0,
+						'credit' => $service,
+						'so' => 1,
+						'cash' => 0
+					];
+					$data14 = [
+						'bukti_transaksi' => $id->id_service,
+						'id_customer' => $owner->customer,
+						'id_owner' => $a->kode_owner,
+						'tanggal_transaksi' => $end->periode_satu,
+						'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+						'kode_soa' => 237,
+						'debit' => $service / 3,
+						'credit' => 0,
+						'so' => 1,
+						'cash' => 0
+					];
+					$data15 = [
+						'bukti_transaksi' => $id->id_service,
+						'id_customer' => $owner->customer,
+						'id_owner' => $a->kode_owner,
+						'tanggal_transaksi' => $end->periode_satu,
+						'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+						'kode_soa' => 275,
+						'debit' => 0,
+						'credit' => $service / 3,
+						'so' => 1,
+						'cash' => 0
+					];
+					$data21 = [
+						'bukti_transaksi' => $id->id_service,
+						'id_customer' => $owner->customer,
+						'id_owner' => $a->kode_owner,
+						'tanggal_transaksi' => $end->periode_dua,
+						'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+						'kode_soa' => 237,
+						'debit' => $service / 3,
+						'credit' => 0,
+						'so' => 1,
+						'cash' => 0
+					];
+					$data22 = [
+						'bukti_transaksi' => $id->id_service,
+						'id_customer' => $owner->customer,
+						'id_owner' => $a->kode_owner,
+						'tanggal_transaksi' => $end->periode_dua,
+						'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+						'kode_soa' => 275,
+						'debit' => 0,
+						'credit' => $service / 3,
+						'so' => 1,
+						'cash' => 0
+					];
+					$data31 = [
+						'bukti_transaksi' => $id->id_service,
+						'id_customer' => $owner->customer,
+						'id_owner' => $a->kode_owner,
+						'tanggal_transaksi' => $end->periode_tiga,
+						'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+						'kode_soa' => 237,
+						'debit' => $service / 3,
+						'credit' => 0,
+						'so' => 1,
+						'cash' => 0
+					];
+					$data32 = [
+						'bukti_transaksi' => $id->id_service,
+						'id_customer' => $owner->customer,
+						'id_owner' => $a->kode_owner,
+						'tanggal_transaksi' => $end->periode_tiga,
+						'keterangan' => '' . date('d/m/Y', strtotime($end->periode_satu)) . '-' . date('d/m/Y', strtotime($end->end_periode)) . ' ' . $a->kode_owner . '',
+						'kode_soa' => 275,
+						'debit' => 0,
+						'credit' => $service / 3,
+						'so' => 1,
+						'cash' => 0
+					];
 
-                $result = $this->M_service->insert($data);
-                $row = $result;
+					$this->M_gl->insert2($data10);
+					$this->M_gl->insert2($data11);
+					$this->M_gl->insert2($data12);
+					$this->M_gl->insert2($data13);
+					$this->M_gl->insert2($data14);
+					$this->M_gl->insert2($data15);
+					$this->M_gl->insert2($data21);
+					$this->M_gl->insert2($data22);
+					$this->M_gl->insert2($data31);
+					$this->M_gl->insert2($data32);
+
+                    $data = [
+                        'kode_tagihan_service' => $id->id_service,
+                        'kode_owner' => $a->kode_owner,
+                        'id_tarif' => $rate->id,
+                        'id_periode' => $post['period'],
+                        'end_periode' => $end->end_periode,
+                        'sinking_fund' => $sinking,
+                        'service_charge' => $service,
+                        'stamp' => $stampValue,
+                        'total' => $service + $sinking + $stampValue,
+                        'paid' => 0
+                    ];
+    
+    
+                    $result = $this->M_service->insert($data);
+                    $row = $result;
+                }
+
+                
             }
             if ($row > 0) {
                 helper_log("add", "Menambah Data By Period (Service Charge)");

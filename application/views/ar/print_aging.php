@@ -105,7 +105,15 @@
         <p> UNTUK PIUTANG YANG SUDAH JATUH TEMPO - Berdasarkan Tanggal Jatuh TEMPO</p>
         <br>
         <br>
-    <?php } ?>
+    <?php } else if ($dataCoA == 24) { ?>
+        <p style="font-size: 13pt; text-align: center; text-decoration: underline;"><strong>DAFTAR UMUR PIUTANG IPK</strong></p>
+        <p class="text-align-right;"><?= 'Tgl : ' . date("d-m-Y"); ?></p>
+        <p> <strong>UNTUK TANGGAL &nbsp;&nbsp; : &nbsp;&nbsp; <span class="year-pembukuan"><?= '' . date('d/F/Y', strtotime($dataDate)); ?></span></strong></p>
+        <p> <strong>DARI TANGGAL FAKTUR &nbsp;&nbsp; : &nbsp;&nbsp; // &nbsp;&nbsp;&nbsp;&nbsp; S/D TANGGAL FAKTUR &nbsp;&nbsp; : &nbsp;&nbsp;<span class="year-pembukuan"><?= '31/' . date('F/Y', strtotime($dataDate)); ?></span></strong></p>
+        <p> UNTUK PIUTANG YANG SUDAH JATUH TEMPO - Berdasarkan Tanggal Jatuh TEMPO</p>
+        <br>
+        <br>
+    <?php } ?>?>
 
     PERINCIAN PER TOTAL
     <br>
@@ -349,14 +357,14 @@
                     $tambah = 0;
                     foreach ($dataBayar as $bayar) {
                         if ($bayar->tanggal_bayar < $bayar->datekeluar) {
-                            if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
+                            if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
                                 } else if ($bayar->total >= $bayar->credit) {
                                     $tambah += ($bayar->total - $bayar->credit);
                                 } else {
                                 }
-                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
+                            } else if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
                                 } else if ($bayar->total >= $bayar->credit) {
@@ -365,28 +373,28 @@
                                 }
                             }
                         } else if ($bayar->tanggal_bayar >= $bayar->datekeluar) {
-                            if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
+                            if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
                                 } else if ($bayar->total >= $bayar->credit) {
                                     $tambah += $bayar->credit;
                                 } else {
                                 }
-                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
+                            } else if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 1) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
                                 } else if ($bayar->total >= $bayar->credit) {
                                     $tambah += $bayar->credit;
                                 } else {
                                 }
-                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
+                            } else if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar <= 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
                                 } else if ($bayar->total >= $bayar->credit) {
                                     $tambah += $bayar->credit;
                                 } else {
                                 }
-                            } else if ($bayar->id_customer == $ar->id_customer && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
+                            } else if ($bayar->id_owner == $ar->id_owner && $bayar->monthbayar > 0 && $bayar->id_ar == $arCus->id_ar && $bayar->status == 2) {
                                 if ($bayar->total < $bayar->credit) {
                                     $tambah += $bayar->total;
                                 } else if ($bayar->total >= $bayar->credit) {
@@ -396,7 +404,7 @@
                             }
                         }
                     }
-                    if ($arCus->id_customer == $ar->id_customer) {
+                    if ($arCus->id_owner == $ar->id_owner) {
                         if ($arCus->selisih == 0 && $arCus->status == 0) {
                             $totalC += $arCus->sisa;
                         } else if ($arCus->selisih == 0 && $arCus->status == 1) {
@@ -432,8 +440,8 @@
                 $total += $total2;
             ?>
                 <tr>
-                    <td><?= $ar->id_customer ?></td>
-                    <td><?= $ar->nama_customer ?></td>
+                <td><?= $ar->id_owner ?></td>
+                    <td><?= $ar->nama_owner ?></td>
                     <td><?php echo 'IDR'; ?></td>
                     <td class="text-align-right"><?= saldo_money($totalC) ?></td>
                     <td class="text-align-right"><?= saldo_money($totalO) ?></td>
