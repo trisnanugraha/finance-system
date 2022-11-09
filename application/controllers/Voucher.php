@@ -149,8 +149,8 @@ class Voucher extends AUTH_Controller
 			$this->M_gl->insert_voucher($post);
 			$this->M_billing->pembayaran($post);
 			$this->M_service->pembayaran($post);
-			$this->M_iuran->pembayaran($post);
-			$this->M_asuransi->pembayaran($post);
+// 			$this->M_iuran->pembayaran($post);
+// 			$this->M_asuransi->pembayaran($post);
 
 			helper_log("add", "Pembayaran (Piutang)", $post['bukti_transaksi']);
 			$out['status'] = '';
@@ -178,8 +178,9 @@ class Voucher extends AUTH_Controller
 
 			$this->M_billing->pembayaran($post);
 			$this->M_service->pembayaran($post);
-			$this->M_iuran->pembayaran($post);
-			$this->M_asuransi->pembayaran($post);
+// 			$this->M_iuran->pembayaran($post);
+// 			$this->M_asuransi->pembayaran($post);
+			
 			helper_log("add", "Pembayaran Titipan (Piutang)", $_POST['vouId']);
 			$out['status'] = '';
 			$out['msg'] = show_succ_msg('Pembayaran Piutang Successfully', '20px');
