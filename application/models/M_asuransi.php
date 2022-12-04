@@ -65,7 +65,7 @@ class M_asuransi extends CI_Model
                 FROM asuransi i
                     JOIN owner o ON o.kode_owner = i.kode_owner
                     JOIN periode p ON p.id_periode = i.id_periode
-				WHERE s.kode_owner = '{$owner}' AND p.start_periode BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
+				WHERE a.kode_owner = '{$owner}' AND p.start_periode BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
 				ORDER BY p.start_periode DESC, i.id_asuransi";
 
             $query = $this->db->query($sql);
@@ -203,8 +203,8 @@ class M_asuransi extends CI_Model
     {
         $sql =
             "SELECT
-				s.id_asuransi,
-				s.kode_owner,
+				a.id_asuransi,
+				a.kode_owner,
 				o.nama_owner,
 				o.unit_owner,
 				o.kode_virtual,
@@ -212,24 +212,27 @@ class M_asuransi extends CI_Model
 				o.id_deskripsi,
 				d.jenis_deskripsi,
 				d.sqm,
-				s.id_periode,
+				a.id_periode,
 				p.start_periode,
 				p.start_periode AS periodStart,
 				p.due_date AS dueDate,
 				p.end_periode,
 				p.end_periode AS periodEnd,
-                s.stamp,
-                s.total_asuransi,
-				s.created_at,
-				s.updated_at
-			FROM asuransi s
+                a.stamp,
+                a.total_asuransi,
+				a.created_at,
+				a.updated_at,
+                (SELECT (SUM(ar.total) - SUM(ar.sisa)) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = '{$id}' AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = '{$id}' AND ar.status != 1)) as last,
+				(SELECT SUM(ar.total) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = '{$id}' AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = '{$id}' AND ar.status != 1)) as total,
+                (SELECT SUM(ar.sisa) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = '{$id}' AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = '{$id}' AND ar.status != 1)) as previous
+			FROM asuransi a
 				JOIN owner o
-					ON(o.kode_owner = s.kode_owner)
+					ON(o.kode_owner = a.kode_owner)
 				JOIN periode p
-					ON(p.id_periode = s.id_periode)
+					ON(p.id_periode = a.id_periode)
 				JOIN deskripsi d
 					ON(d.id_deskripsi = o.id_deskripsi)
-			WHERE s.id_iuran = '{$id}'";
+			WHERE a.id_asuransi = '{$id}'";
 
         $data = $this->db->query($sql);
 
@@ -240,8 +243,8 @@ class M_asuransi extends CI_Model
     {
         $query =
             "SELECT
-                s.id_asuransi,
-                s.kode_owner,
+                a.id_asuransi,
+                a.kode_owner,
                 o.nama_owner,
                 o.unit_owner,
                 o.kode_virtual,
@@ -249,27 +252,60 @@ class M_asuransi extends CI_Model
                 o.id_deskripsi,
                 d.jenis_deskripsi,
                 d.sqm,
-                s.id_periode,
+                a.id_periode,
                 p.start_periode,
                 p.start_periode AS periodStart,
                 p.due_date AS dueDate,
                 p.end_periode,
                 p.end_periode AS periodEnd,
-                s.stamp,
-                s.total_asuransi,
-                s.created_at,
-                s.updated_at
-            FROM asuransi s
+                a.stamp,
+                a.total_asuransi,
+                a.created_at,
+                a.updated_at,
+                SELECT (SUM(ar.total) - SUM(ar.sisa)) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1)) as last,
+                (SELECT SUM(ar.total) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1)) as total,
+                (SELECT SUM(ar.sisa) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1)) as previous
+            FROM asuransi a
                 JOIN owner o
-                    ON(o.kode_owner = s.kode_owner)
+                    ON(o.kode_owner = a.kode_owner)
                 JOIN periode p
-                    ON(p.id_periode = s.id_periode)
+                    ON(p.id_periode = a.id_periode)
                 JOIN deskripsi d
                     ON(d.id_deskripsi = o.id_deskripsi)
-			WHERE s.id_periode = '{$id_periode}'";
+			WHERE a.id_periode = '{$id_periode}'";
 
         $data = $this->db->query($query);
 
         return $data->result();
     }
+
+
+    public function pembayaran($post)
+	{
+
+		$id = json_decode($_POST["id"]);
+		$kodeOwner = json_decode($_POST["kodeOwner"]);
+		$akun = json_decode($_POST["akun"]);
+
+		for ($i = 0; $i < count($id); $i++) {
+
+			$CoA = $this->M_coa->select_by_coa($akun[$i]);
+
+			if ($akun[$i] != NULL) {
+				if ($CoA->id_akun == 25) {
+					$data = array(
+						'paid' => 1,
+						'paid_date' => $post['date']
+					);
+					$where = array(
+						'kode_owner' => $kodeOwner[$i],
+						'id_periode' => $post['period']
+					);
+
+					$this->db->update($this->tableName, $data, $where);
+				} else {
+				}
+			}
+		}
+	}
 }

@@ -658,34 +658,43 @@ class M_voucher extends CI_Model
 			$this->db->update('vendor', $data, $where);
 		}
 
-		$voucher = $this->M_voucher->select_by_id($post['id']);
-		if ($voucher->tipe_giro == 1 || $voucher->tipe_giro == 2) {
-			$data1 = array(
-				'id_voucher' => $post['id'],
-				'keterangan' => $post['keterangan'],
-				'tanggal_transaksi' => $post['vouDate'],
-				'kode_soa' => $post['bank'],
-				'debit' => $post['vouTotal'],
-				'credit' => 0
-			);
+		return $this->db->affected_rows();
+	}
 
-			$where1 = array('id_vendor' => $post['idvendor']);
-			$this->db->update('vendor', $data1, $where1);
-		} else {
-			$data1 = array(
-				'id_voucher' => $post['id'],
-				'keterangan' => $post['keterangan'],
-				'tanggal_transaksi' => $post['vouDate'],
-				'kode_soa' => $post['bank'],
-				'debit' => 0,
-				'credit' => $post['vouTotal']
-			);
+	public function bayar_update($post)
+	{
+		for ($i = 0; $i < count($post['idv']); $i++) {
+			$CoA = $this->M_coa->select_by_id($post['coa'][$i]);
+			if ($post['giro'] == 1 || $post['giro'] == 2) {
+				if ($CoA->parent == 1 && $post['debit'][$i] > 0 || $CoA->parent == 3 && $post['debit'][$i] > 0 || $CoA->parent == 4 && $post['debit'][$i] > 0 || $CoA->parent == 5 && $post['debit'][$i] > 0  || $CoA->parent == 7 && $post['debit'][$i] > 0 || $CoA->parent == 187 && $post['debit'][$i] > 0) {
+					$data = array(
+						'bank' => $post['coa'][$i],
+						'tanggal_voucher' => $post['vouDate'],
+						'keterangan' => $post['ket'][$i],
+						'total' => $post['debit'][$i]
+					);
 
-			$where1 = array('id_vendor' => $post['idvendor']);
-			$this->db->update('vendor', $data1, $where1);
+					$where = array('id_voucher' => $post['id']);
+					$this->db->update($this->tableName, $data, $where);
+
+					return $this->db->affected_rows();
+				}
+			} else {
+				if ($CoA->parent == 1 && $post['credit'][$i] > 0 || $CoA->parent == 3 && $post['credit'][$i] > 0 || $CoA->parent == 4 && $post['credit'][$i] > 0 || $CoA->parent == 5 && $post['credit'][$i] > 0  || $CoA->parent == 7 && $post['credit'][$i] > 0 || $CoA->parent == 187 && $post['credit'][$i]) {
+					$data = array(
+						'bank' => $post['coa'][$i],
+						'tanggal_voucher' => $post['vouDate'],
+						'keterangan' => $post['ket'][$i],
+						'total' => $post['credit'][$i]
+					);
+
+					$where = array('id_voucher' => $post['id']);
+					$this->db->update($this->tableName, $data, $where);
+
+					return $this->db->affected_rows();
+				}
+			}
 		}
-
-
 		return $this->db->affected_rows();
 	}
 

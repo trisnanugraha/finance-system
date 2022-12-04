@@ -65,7 +65,7 @@ class M_iuran extends CI_Model
                 FROM iuran i
                     JOIN owner o ON o.kode_owner = i.kode_owner
                     JOIN periode p ON p.id_periode = i.id_periode
-				WHERE s.kode_owner = '{$owner}' AND p.start_periode BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
+				WHERE i.kode_owner = '{$owner}' AND p.start_periode BETWEEN CAST('{$startDate}' AS DATE) AND CAST('{$endDate}' AS DATE)
 				ORDER BY p.start_periode DESC, i.id_iuran";
 
             $query = $this->db->query($sql);
@@ -203,8 +203,8 @@ class M_iuran extends CI_Model
     {
         $sql =
             "SELECT
-				s.id_iuran,
-				s.kode_owner,
+				i.id_iuran,
+				i.kode_owner,
 				o.nama_owner,
 				o.unit_owner,
 				o.kode_virtual,
@@ -212,24 +212,27 @@ class M_iuran extends CI_Model
 				o.id_deskripsi,
 				d.jenis_deskripsi,
 				d.sqm,
-				s.id_periode,
+				i.id_periode,
 				p.start_periode,
 				DATE_ADD(DATE_ADD(LAST_DAY(p.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH) AS periodStart,
 				LAST_DAY(p.start_periode) AS dueDate,
 				p.end_periode,
 				LAST_DAY(p.start_periode) AS periodEnd,
-                s.stamp,
-                s.total_iuran,
-				s.created_at,
-				s.updated_at
-			FROM iuran s
+                i.stamp,
+                i.total_iuran,
+				i.created_at,
+				i.updated_at,
+                (SELECT (SUM(ar.total) - SUM(ar.sisa)) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, iuran JOIN periode ON iuran.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = '{$id}' AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = '{$id}' AND ar.status != 1)) as last,
+				(SELECT SUM(ar.total) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, iuran JOIN periode ON iuran.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = '{$id}' AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = '{$id}' AND ar.status != 1)) as total,
+                (SELECT SUM(ar.sisa) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, iuran JOIN periode ON iuran.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = '{$id}' AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = '{$id}' AND ar.status != 1)) as previous
+			FROM iuran i
 				JOIN owner o
-					ON(o.kode_owner = s.kode_owner)
+					ON(o.kode_owner = i.kode_owner)
 				JOIN periode p
-					ON(p.id_periode = s.id_periode)
+					ON(p.id_periode = i.id_periode)
 				JOIN deskripsi d
 					ON(d.id_deskripsi = o.id_deskripsi)
-			WHERE s.id_iuran = '{$id}'";
+			WHERE i.id_iuran = '{$id}'";
 
         $data = $this->db->query($sql);
 
@@ -240,8 +243,8 @@ class M_iuran extends CI_Model
     {
         $query =
             "SELECT
-                s.id_iuran,
-                s.kode_owner,
+                i.id_iuran,
+                i.kode_owner,
                 o.nama_owner,
                 o.unit_owner,
                 o.kode_virtual,
@@ -249,27 +252,58 @@ class M_iuran extends CI_Model
                 o.id_deskripsi,
                 d.jenis_deskripsi,
                 d.sqm,
-                s.id_periode,
+                i.id_periode,
                 p.start_periode,
                 DATE_ADD(DATE_ADD(LAST_DAY(p.start_periode), INTERVAL 1 DAY), INTERVAL - 1 MONTH) AS periodStart,
                 LAST_DAY(p.start_periode) AS dueDate,
                 p.end_periode,
                 LAST_DAY(p.start_periode) AS periodEnd,
-                s.stamp,
-                s.total_iuran,
-                s.created_at,
-                s.updated_at
-            FROM iuran s
+                i.stamp,
+                i.total_iuran,
+                i.created_at,
+                i.updated_at,
+                (SELECT (SUM(ar.total) - SUM(ar.sisa)) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, iuran JOIN periode ON iuran.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = i.id_iuran AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = i.id_iuran AND ar.status != 1)) as last,
+                (SELECT SUM(ar.total) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, iuran JOIN periode ON iuran.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = i.id_iuran AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = i.id_iuran AND ar.status != 1)) as total,
+                (SELECT SUM(ar.sisa) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, iuran JOIN periode ON iuran.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = i.id_iuran AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = iuran.kode_owner AND ar.kode_soa = '22' AND iuran.id_iuran = i.id_iuran AND ar.status != 1)) as previous
+            FROM iuran i
                 JOIN owner o
-                    ON(o.kode_owner = s.kode_owner)
+                    ON(o.kode_owner = i.kode_owner)
                 JOIN periode p
-                    ON(p.id_periode = s.id_periode)
+                    ON(p.id_periode = i.id_periode)
                 JOIN deskripsi d
                     ON(d.id_deskripsi = o.id_deskripsi)
-			WHERE s.id_periode = '{$id_periode}'";
+			WHERE i.id_periode = '{$id_periode}'";
 
         $data = $this->db->query($query);
 
         return $data->result();
+    }
+
+    public function pembayaran($post)
+    {
+        $id = json_decode($_POST["id"]);
+        $kodeOwner = json_decode($_POST["kodeOwner"]);
+        $akun = json_decode($_POST["akun"]);
+
+        for ($i = 0; $i < count($id); $i++) {
+
+            $CoA = $this->M_coa->select_by_coa($akun[$i]);
+
+            if ($akun[$i] != NULL) {
+                if ($CoA->id_akun == 24) {
+                    $data = array(
+                        'paid' => 1,
+                        'paid_date' => $post['date']
+                    );
+                    $where = array(
+                        'kode_owner' => $kodeOwner[$i],
+                        'id_periode' => $post['period']
+                    );
+
+                    $this->db->update($this->tableName, $data, $where);
+                } else {
+                }
+            }
+        }
     }
 }

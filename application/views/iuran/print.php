@@ -138,8 +138,8 @@
                             <td colspan="5">&nbsp;</td>
                         </tr>
                         <tr style="text-align: center;">
-                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="previous-balance-Rp">0</span></td>
-                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="payment-Rp">0</span></td>
+                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="previous-balance-Rp"><?= money($billing->total); ?></span></td>
+                            <td style="padding:4px;" class="border-top border-bottom border-left"><span id="payment-Rp"><?= money($billing->last); ?></span></td>
                             <td style="padding:4px;" class="border-top border-bottom border-left"><span id="current-month-transaction"><?= money($sc->total_iuran + $sc->stamp); ?></span></td>
                             <td style="padding:4px;" class="border-top border-bottom border-left"><span id="amount-to-be-paid"><?= money($sc->total_iuran + $sc->stamp); ?></span></td>
                             <td style="padding:4px;" class="border-top border-bottom border-left border-right"><span id="payment-due-date"><?= toLongDate($sc->dueDate); ?></span></td>
@@ -161,15 +161,15 @@
                         </tr>
                         <tr>
                             <td class="border-left" style="padding-top:5px;"><b>Previous Balance</b></td>
-                            <td class="border-left border-right text-align-right" style="padding-top:5px;"><span id="previous-balance">0</span></td>
+                            <td class="border-left border-right text-align-right" style="padding-top:5px;"><span id="previous-balance"><?= money($sc->total); ?></span></td>
                         </tr>
                         <tr>
                             <td class="border-left border-bottom padding-top"><b>Last Payment</b></td>
-                            <td class="border-left border-bottom border-right text-align-right padding-top"><span id="last-payment">0</span></td>
+                            <td class="border-left border-bottom border-right text-align-right padding-top"><span id="last-payment"><?= money($sc->last); ?></span></td>
                         </tr>
                         <tr>
                             <td class="border-left" style="padding-top:5px;"><b>Total Previous Balance</b></td>
-                            <td class="border-left border-right text-align-right" style="padding-top:5px;"><span id="total-previous-balance">0</span></td>
+                            <td class="border-left border-right text-align-right" style="padding-top:5px;"><span id="total-previous-balance"><?= money($sc->previous); ?></span></td>
                         </tr>
                         <tr>
                             <td class="border-left border-bottom padding-top"><b>Current Balance Period</b> <span id="period" style="margin-left: 25px"><?= date('d-M-Y', strtotime($sc->periodStart)) . ' to ' .  date('d-M-Y', strtotime($sc->periodEnd)); ?></span></td>
@@ -215,12 +215,20 @@
                             <td class="border-left padding-top"><b>Stamp Duty</b></td>
                             <td class="border-left border-right padding-top text-align-right"><span id="stamp"><?= money($sc->stamp); ?></span></td>
                         </tr>
-                        <tr class="text-align-right">
-                            <td class="border-left border-bottom padding-right" style="padding-top: 5px; padding-bottom:5px;"><b>TOTAL AMOUNT DUE</b></td>
-                            <td class="border-left border-bottom border-right text-align-right" style="padding-top: 5px; padding-bottom:5px;"><span id="total-amount-due"><?= money(round($sc->total_iuran + $sc->stamp)); ?></span></td>
+                        <tr>
+                            <td class="border-left padding-top"><b>Total Current Balanced</b></td>
+                            <td class="border-left border-right padding-top text-align-right"><span id="total-current"><?= money($sc->total_iuran + $sc->stamp); ?></span></td>
                         </tr>
                         <tr>
-                            <td class="padding-top padding-left text-valign-top padding-bottom">In Word &nbsp;&nbsp;&nbsp;&nbsp;: <span id="in-word"><?= ucwords(number_to_words_rupiah(($sc->total_iuran + $sc->stamp))) ?></span></td>
+                            <td class="border-left border-bottom padding-top"><b>Pinalty From The Previous Month</b></td>
+                            <td class="border-left border-bottom border-right padding-top text-align-right"><span id="pinalty"><?= money(round($sc->previous * 3 / 100)); ?></span></td>
+                        </tr>
+                        <tr class="text-align-right">
+                            <td class="border-left border-bottom padding-right" style="padding-top: 5px; padding-bottom:5px;"><b>TOTAL AMOUNT DUE</b></td>
+                            <td class="border-left border-bottom border-right text-align-right" style="padding-top: 5px; padding-bottom:5px;"><span id="total-amount-due"><?= money(round($sc->total_iuran + $sc->stamp + $sc->previous * 3 / 100 + $sc->previous)); ?></span></td>
+                        </tr>
+                        <tr>
+                            <td class="padding-top padding-left text-valign-top padding-bottom">In Word &nbsp;&nbsp;&nbsp;&nbsp;: <span id="in-word"><?= ucwords(number_to_words_rupiah(($sc->total_iuran + $sc->stamp + $sc->previous * 3 / 100 + $sc->previous))) ?></span></td>
                             <td class="padding-top padding-right text-align-center padding-bottom" style="padding-left: 3%; padding-right: 3%;">
                                 Authorized Signature
                                 <br>

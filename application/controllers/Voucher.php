@@ -149,8 +149,8 @@ class Voucher extends AUTH_Controller
 			$this->M_gl->insert_voucher($post);
 			$this->M_billing->pembayaran($post);
 			$this->M_service->pembayaran($post);
-// 			$this->M_iuran->pembayaran($post);
-// 			$this->M_asuransi->pembayaran($post);
+			$this->M_iuran->pembayaran($post);
+			$this->M_asuransi->pembayaran($post);
 
 			helper_log("add", "Pembayaran (Piutang)", $post['bukti_transaksi']);
 			$out['status'] = '';
@@ -178,9 +178,9 @@ class Voucher extends AUTH_Controller
 
 			$this->M_billing->pembayaran($post);
 			$this->M_service->pembayaran($post);
-// 			$this->M_iuran->pembayaran($post);
-// 			$this->M_asuransi->pembayaran($post);
-			
+			$this->M_iuran->pembayaran($post);
+			$this->M_asuransi->pembayaran($post);
+
 			helper_log("add", "Pembayaran Titipan (Piutang)", $_POST['vouId']);
 			$out['status'] = '';
 			$out['msg'] = show_succ_msg('Pembayaran Piutang Successfully', '20px');
@@ -343,8 +343,7 @@ class Voucher extends AUTH_Controller
 			if ($voucher->so == 3) {
 				$this->M_gl->vendor_update($post);
 				$this->M_voucher->vendor_update($post);
-				$this->M_gl->update($post);
-				$result = $this->M_voucher->update($post);
+				$result = $this->M_voucher->bayar_update($post);
 
 				if ($result > 0) {
 					helper_log("edit", "Mengubah Data (Voucher)", $post['id']);
@@ -357,8 +356,7 @@ class Voucher extends AUTH_Controller
 			} else {
 				$this->M_gl->bayar_update($post);
 				$this->M_bayar->bayar_update($post);
-				$this->M_gl->update($post);
-				$result = $this->M_voucher->update($post);
+				$result = $this->M_voucher->bayar_update($post);
 
 				if ($result > 0) {
 					helper_log("edit", "Mengubah Data (Voucher)", $post['id']);

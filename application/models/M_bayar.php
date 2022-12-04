@@ -288,7 +288,6 @@ class M_bayar extends CI_Model
 
 	public function bayar_update($post)
 	{
-
 		for ($i = 0; $i < count($post['idv']); $i++) {
 			$data = array(
 				'id_voucher' => $post['id'],
@@ -301,33 +300,6 @@ class M_bayar extends CI_Model
 
 			$where = array('id_bayar' => $post['idv'][$i]);
 			$this->db->update($this->tableName, $data, $where);
-		}
-
-		$voucher = $this->M_voucher->select_by_id($post['id']);
-		if ($voucher->tipe_giro == 1 || $voucher->tipe_giro == 2) {
-			$data1 = array(
-				'id_voucher' => $post['id'],
-				'keterangan' => $post['keterangan'],
-				'tanggal_bayar' => $post['vouDate'],
-				'kode_soa' => $post['bank'],
-				'debit' => $post['vouTotal'],
-				'credit' => 0
-			);
-
-			$where1 = array('id_bayar' => $post['idbayar']);
-			$this->db->update($this->tableName, $data1, $where1);
-		} else {
-			$data1 = array(
-				'id_voucher' => $post['id'],
-				'keterangan' => $post['keterangan'],
-				'tanggal_bayar' => $post['vouDate'],
-				'kode_soa' => $post['bank'],
-				'debit' => 0,
-				'credit' => $post['vouTotal']
-			);
-
-			$where1 = array('id_bayar' => $post['idbayar']);
-			$this->db->update($this->tableName, $data1, $where1);
 		}
 
 		return $this->db->affected_rows();
