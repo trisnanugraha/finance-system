@@ -92,8 +92,8 @@
         })
 
         $('#form-tambah-service-period').submit(function(e) {
-            var period = $("#periodbill").find(':selected').val()
-            var tarif = <?= $dataRates == null ? '' : $dataRates->id ?>
+            var period = $("#periodbill").find(':selected').val();
+            var tarif = <?= $dataRates == null ? '' : $dataRates->id ?>;
             $.ajax({
                     method: 'POST',
                     url: '<?php echo base_url('Service/prosesTambahByPeriod') ?>',
