@@ -512,24 +512,15 @@ class M_billing extends CI_Model
 	public function select_paid($date, $owner)
 	{
 		$query =
-			"SELECT
-				billing.id_billing,
-				billing.paid,
-				billing.paid_date, 
-				billing.id_customer, 
-				bayar.tanggal_bayar, 
-				bayar.id_ar,
-				ar.kode_soa, 
-				ar.id_customer 
-			FROM 
-				billing, 
-				bayar 
-			JOIN ar 
-				ON bayar.id_ar = ar.id_ar 
-			WHERE 
-				billing.paid_date = CAST('{$date}' AS DATE) 
-				AND ar.kode_soa = 21 
-				AND billing.id_customer = '{$owner}'";
+			"SELECT billing.id_billing
+            FROM billing
+            WHERE billing.id_billing IN
+                (SELECT ar.bukti_transaksi
+                FROM ar
+                WHERE ar.kode_soa = 21
+                    AND ar.id_customer = '{$owner}'
+                	AND ar.status != 0)
+                AND billing.paid_date = CAST('{$date}' AS DATE)";
 
 		$data = $this->db->query($query);
 
@@ -538,7 +529,7 @@ class M_billing extends CI_Model
 
 	public function update_bayar($id)
 	{
-		$dataBayar = $this->M_bayar->select_by_id($id);
+		$dataBayar = $this->M_bayar->select_by_voucher_id($id);
 
 		foreach ($dataBayar as $bayar) {
 			if ($bayar->kode_soa == 21) {

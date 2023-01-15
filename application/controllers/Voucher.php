@@ -10,6 +10,8 @@ class Voucher extends AUTH_Controller
 		$this->load->model('M_customer');
 		$this->load->model('M_giro_type');
 		$this->load->model('M_bayar');
+		$this->load->model('M_vendor');
+		$this->load->model('M_titipan');
 		$this->load->model('M_ar');
 		$this->load->model('M_gl');
 		$this->load->model('M_owner');
@@ -24,19 +26,12 @@ class Voucher extends AUTH_Controller
 		$this->load->library('pdf');
 		$this->load->library('pdf_setengah');
 		$this->load->library('pdf_setengah2');
-
-		// $this->output->enable_profiler(TRUE);
 	}
 
 	public function index()
 	{
 		$data['userdata'] = $this->userdata;
-		// $data['dataVoucher'] = $this->M_voucher->select_all();
-		// $data['dataCustomer'] = $this->M_customer->select_all();
-		// $data['dataOwner'] = $this->M_owner->select_all();
 		$data['dataGiroType'] = $this->M_giro_type->select_all();
-		// $data['dataBayar'] = $this->M_bayar->select_all();
-		// $data['dataAR'] = $this->M_ar->select_all();
 		$data['dataCoA'] = $this->M_coa->select_all();
 		$data['dataBank'] = $this->M_coa->select_bank();
 		$data['dataPemType'] = $this->M_type_pembayaran->select_all();
@@ -55,14 +50,10 @@ class Voucher extends AUTH_Controller
 	public function indexBayar()
 	{
 		$data['userdata'] = $this->userdata;
-		// $data['dataVoucher'] = $this->M_voucher->select_all();
-		// $data['dataCustomer'] = $this->M_customer->select_all();
 		$data['dataOwner'] = $this->M_owner->select_all();
 		$data['dataGiroType'] = $this->M_giro_type->select_all();
-		// $data['dataBayar'] = $this->M_bayar->select_all();
 		$data['dataAR'] = $this->M_ar->select_all();
 		$data['dataCoA'] = $this->M_coa->select_all();
-		// $data['dataBank'] = $this->M_coa->select_bank();
 		$data['dataPemType'] = $this->M_type_pembayaran->select_all();
 
 		$data['page'] = "Pembayaran Piutang";
@@ -76,15 +67,10 @@ class Voucher extends AUTH_Controller
 	public function indexBayarDeposit()
 	{
 		$data['userdata'] = $this->userdata;
-		// $data['dataVoucher'] = $this->M_voucher->select_all();
-		$data['dataTitipan'] = $this->M_voucher->select_all_titipan();
-		// $data['dataCustomer'] = $this->M_customer->select_all();
-		// $data['dataOwner'] = $this->M_owner->select_all();
+		$data['dataTitipan'] = $this->M_titipan->select_all();
 		$data['dataGiroType'] = $this->M_giro_type->select_all();
-		// $data['dataBayar'] = $this->M_bayar->select_all();
 		$data['dataAR'] = $this->M_ar->select_all();
 		$data['dataCoA'] = $this->M_coa->select_all();
-		// $data['dataBank'] = $this->M_coa->select_bank();
 		$data['dataPemType'] = $this->M_type_pembayaran->select_all();
 
 		$data['page'] = "Pembayaran Piutang";
@@ -100,6 +86,8 @@ class Voucher extends AUTH_Controller
 		$startDate = $this->input->get("startDate");
 		$endDate = $this->input->get("endDate");
 		$data['dataVoucher'] = $this->M_voucher->select_filter($startDate, $endDate);
+		$data['dataVendor'] = $this->M_vendor->select_filter($startDate, $endDate);
+		$data['dataBayar'] = $this->M_bayar->select_filter($startDate, $endDate);
 		$this->load->view('voucher/list_data', $data);
 	}
 
@@ -144,7 +132,7 @@ class Voucher extends AUTH_Controller
 		if ($result > 0) {
 
 			$this->M_bayar->insert_out($post);
-			$this->M_voucher->insert_titipan($post);
+			$this->M_titipan->insert($post);
 			$this->M_ar->update_ar_out($post);
 			$this->M_gl->insert_voucher($post);
 			$this->M_billing->pembayaran($post);
@@ -172,7 +160,7 @@ class Voucher extends AUTH_Controller
 		if ($result > 0) {
 
 			$this->M_bayar->insert_out($post);
-			$this->M_voucher->titipan_out($post);
+			$this->M_titipan->update_out($post);
 			$this->M_ar->update_ar_out($post);
 			$this->M_gl->insert_titipan($post);
 
@@ -196,44 +184,47 @@ class Voucher extends AUTH_Controller
 	{
 		$id = $_POST['idVou'];
 
-		$this->M_gl->update_voucher($id);
-		$this->M_ar->update_bayar($id);
-		$this->M_gl->update_bayar($id);
-		// $this->M_gl->update_vendor($id);
-		$this->M_billing->update_bayar($id);
-		$this->M_service->update_bayar($id);
-		$this->M_voucher->update_vendor($id);
-		$this->M_voucher->delete_titipan($id);
-		$this->M_bayar->delete($id);
-		$result = $this->M_voucher->delete($id);
+		$wait = $this->M_titipan->update_in($id);
 
-		if ($result) {
-			helper_log("delete", "Menghapus Data (Voucher)", $id);
-			echo show_succ_msg('Voucher Data Successfully Deleted', '20px');
-		} else {
-			echo show_err_msg('Voucher Data Failed To Delete', '20px');
+		if($wait > 0){
+			$this->M_gl->update_voucher($id);
+			$this->M_ar->update_bayar($id);
+			$this->M_billing->update_bayar($id);
+			$this->M_service->update_bayar($id);
+			$this->M_iuran->update_bayar($id);
+			$this->M_asuransi->update_bayar($id);
+			$this->M_vendor->delete($id);
+			$this->M_bayar->delete($id);
+			$result = $this->M_voucher->delete($id);
+
+			if ($result) {
+				helper_log("delete", "Menghapus Data (Voucher)", $id);
+				echo show_succ_msg('Voucher Data Successfully Deleted', '20px');
+			} else {
+				echo show_err_msg('Voucher Data Failed To Delete', '20px');
+			}
 		}
 	}
 
-	public function deleteBayar()
-	{
-		$id = $_POST['idBayar'];
+	// public function deleteBayar()
+	// {
+	// 	$id = $_POST['idBayar'];
 
-		$this->M_voucher->update_bayar($id);
-		$this->M_ar->update_bayar($id);
-		$this->M_gl->update_bayar($id);
-		$this->M_billing->update_bayar($id);
-		$this->M_service->update_bayar($id);
+	// 	$this->M_voucher->update_bayar($id);
+	// 	$this->M_ar->update_bayar($id);
+	// 	$this->M_gl->update_bayar($id);
+	// 	$this->M_billing->update_bayar($id);
+	// 	$this->M_service->update_bayar($id);
 
-		$result = $this->M_bayar->delete($id);
+	// 	$result = $this->M_bayar->delete($id);
 
-		if ($result) {
-			helper_log("delete", "Menghapus Data Bayar (Voucher)", $id);
-			echo show_succ_msg('Voucher Data Successfully Deleted', '20px');
-		} else {
-			echo show_err_msg('Voucher Data Failed To Delete', '20px');
-		}
-	}
+	// 	if ($result) {
+	// 		helper_log("delete", "Menghapus Data Bayar (Voucher)", $id);
+	// 		echo show_succ_msg('Voucher Data Successfully Deleted', '20px');
+	// 	} else {
+	// 		echo show_err_msg('Voucher Data Failed To Delete', '20px');
+	// 	}
+	// }
 
 	public function print_received($id)
 	{
@@ -296,30 +287,34 @@ class Voucher extends AUTH_Controller
 
 		$data['userdata'] = $this->userdata;
 		$data['dataVoucher'] = $voucher;
-		// $data['dataTitipan'] = $this->M_voucher->select_all_titipan();
-		// $data['dataCustomer'] = $this->M_customer->select_all();
-		// $data['dataOwner'] = $this->M_owner->select_all();
 		$data['dataGiroType'] = $this->M_giro_type->select_all();
-		// $data['dataAR'] = $this->M_ar->select_all();
 		$data['dataCoA'] = $this->M_coa->select_all();
 		$data['dataBank'] = $this->M_coa->select_bank();
-		// $data['dataKas'] = $this->M_coa->select_kas();
-		// $data['dataPemType'] = $this->M_type_pembayaran->select_all();
 
 		if ($voucher->so == 3) {
-			$data['dataVendor'] = $this->M_voucher->select_by_voucher_id($id);
+			// $data['page'] = "Update Voucher";
+			// $data['judul'] = "Update Voucher";
+			// $data['deskripsi'] = "Manage Update Voucher Data";
+
+			$data['dataVendor'] = $this->M_vendor->select_by_voucher_id($id);
+
+			// $js = $this->load->view('voucher/voucher-js', null, true);
+			// $this->template->views('modals/modal_update_vendor', $data, $js);
+
 			echo show_my_modal('modals/modal_update_vendor', 'update-voucher', $data);
 		} else {
+
+			// $data['page'] = "Update Voucher";
+			// $data['judul'] = "Update Voucher";
+			// $data['deskripsi'] = "Manage Update Voucher Data";
+
 			$data['dataBayar'] = $this->M_bayar->select_by_voucher_id($id);
+
+			// $js = $this->load->view('voucher/voucher-js', null, true);
+			// $this->template->views('modals/modal_update_vendor', $data, $js);
+
 			echo show_my_modal('modals/modal_update_bayar', 'update-voucher', $data);
 		}
-
-		// $data['page'] = "Update Voucher";
-		// $data['judul'] = "Update Voucher";
-		// $data['deskripsi'] = "Manage Update Voucher Data";
-
-		// $js = $this->load->view('voucher/voucher-js', null, true);
-		// $this->template->views('modals/modal_update_voucher', $data, $js);
 	}
 
 	public function prosesUpdate()
@@ -342,7 +337,7 @@ class Voucher extends AUTH_Controller
 
 			if ($voucher->so == 3) {
 				$this->M_gl->vendor_update($post);
-				$this->M_voucher->vendor_update($post);
+				$this->M_vendor->update($post);
 				$result = $this->M_voucher->bayar_update($post);
 
 				if ($result > 0) {

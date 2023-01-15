@@ -308,4 +308,42 @@ class M_asuransi extends CI_Model
 			}
 		}
 	}
+
+    public function select_paid($date, $owner)
+	{
+		$query =
+			"SELECT asuransi.id_asuransi
+            FROM asuransi
+            WHERE asuransi.id_asuransi IN
+                (SELECT ar.bukti_transaksi
+                FROM ar
+                WHERE ar.kode_soa = 25
+                    AND ar.id_owner = '{$owner}'
+                    AND ar.status != 0)
+                AND asuransi.paid_date = CAST('{$date}' AS DATE)";
+
+		$data = $this->db->query($query);
+
+		return $data->result();
+	}
+
+	public function update_bayar($id)
+	{
+		$dataBayar = $this->M_bayar->select_by_voucher_id($id);
+
+		foreach ($dataBayar as $bayar) {
+			if ($bayar->kode_soa == 25) {
+				$dataAsuransi = $this->M_asuransi->select_paid($bayar->tanggal_bayar, $bayar->owner);
+
+				foreach ($dataAsuransi as $a) {
+					$data = array(
+						'paid' => 0,
+						'paid_date' => NULL
+					);
+					$where = array('id_asuransi' => $a->id_asuransi);
+					$this->db->update($this->tableName, $data, $where);
+				}
+			}
+		}
+	}
 }

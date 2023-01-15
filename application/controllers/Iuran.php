@@ -85,7 +85,7 @@ class Iuran extends AUTH_Controller
                     'kode_owner' => $a->kode_owner,
                     'id_periode' => $post['period'],
                     'stamp' => $stampValue,
-                    'total_iuran' => $total + $stampValue,
+                    'total_iuran' => ROUND($total + $stampValue),
                     'created_by' => $this->userdata->id,
                     'd_c_note_date' => $dtNextMonth->format('Y/m/d')
                 ];
@@ -97,7 +97,7 @@ class Iuran extends AUTH_Controller
                     'tanggal_transaksi' => $periode->first_day,
                     'keterangan' => '' . date('d/m/Y', strtotime($periode->first_day)) . '-' . date('d/m/Y', strtotime($periode->last_day)) . ' ' . $owner->id . ' ' . $owner->nama,
                     'kode_soa' => 24,
-                    'debit' => $total + $stampValue,
+                    'debit' => ROUND($total + $stampValue),
                     'credit' => 0,
                     'so' => 1,
                     'cash' => 0
@@ -111,7 +111,7 @@ class Iuran extends AUTH_Controller
                     'keterangan' => '' . date('d/m/Y', strtotime($periode->first_day)) . '-' . date('d/m/Y', strtotime($periode->last_day)) . ' ' . $owner->id . ' ' . $owner->nama,
                     'kode_soa' => 223,
                     'debit' => 0,
-                    'credit' => $total,
+                    'credit' => ROUND($total),
                     'so' => 1,
                     'cash' => 0
                 ];
@@ -124,7 +124,7 @@ class Iuran extends AUTH_Controller
                     'keterangan' => '' . date('d/m/Y', strtotime($periode->first_day)) . '-' . date('d/m/Y', strtotime($periode->last_day)) . ' ' . $owner->id . ' ' . $owner->nama,
                     'kode_soa' => 302,
                     'debit' => 0,
-                    'credit' => $stampValue,
+                    'credit' => ROUND($stampValue),
                     'so' => 1,
                     'cash' => 0
                 ];
@@ -135,11 +135,11 @@ class Iuran extends AUTH_Controller
                     'id_owner' => $a->kode_owner,
                     'kode_soa' => 24,
                     'bukti_transaksi' => $id,
-                    'total' => $total + $stampValue,
-                    'sisa' => $total + $stampValue,
+                    'total' => ROUND($total + $stampValue),
+                    'sisa' => ROUND($total + $stampValue),
                     'status' => 0,
-                    'so' => 0,
-                    'keterangan' => '' . date('d/m/Y', strtotime($periode->periodStart)) . '-' . date('d/m/Y', strtotime($periode->periodEnd)) . ' ' . $customer->kodeCus . ' ' . $customer->nama
+                    'so' => 1,
+                    'keterangan' => '' . date('d/m/Y', strtotime($periode->periodStart)) . '-' . date('d/m/Y', strtotime($periode->periodEnd)) . ' ' . $owner->id . ' ' . $owner->nama
                 ];
 
                 $this->M_ar->insert($dataAR);

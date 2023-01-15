@@ -364,19 +364,19 @@ class M_gl extends CI_Model
 	{
 
 		$query =
-			"SELECT 
-				gl.id_gl AS id, 
-				gl.bukti_transaksi, 
-				gl.tanggal_transaksi, 
-				bayar.id_ar, 
-				bayar.tanggal_bayar, 
-				ar.bukti_transaksi 
-			FROM gl, 
-				 bayar 
-			JOIN ar 
-			ON bayar.id_ar = ar.id_ar 
-			WHERE 
-				gl.bukti_transaksi = '{$bukti}' AND 
+			"SELECT
+				gl.id_gl AS id,
+				gl.bukti_transaksi,
+				gl.tanggal_transaksi,
+				bayar.id_ar,
+				bayar.tanggal_bayar,
+				ar.bukti_transaksi
+			FROM gl,
+				bayar
+			JOIN ar
+			ON bayar.id_ar = ar.id_ar
+			WHERE
+				gl.bukti_transaksi = '{$bukti}' AND
 				(CAST(gl.tanggal_transaksi AS DATE) = CAST('{$date}' AS DATE))";
 
 		$data = $this->db->query($query);
@@ -388,16 +388,16 @@ class M_gl extends CI_Model
 	{
 
 		$query =
-			"SELECT 
-				gl.id_gl AS id, 
-				gl.bukti_transaksi, 
+			"SELECT
+				gl.id_gl AS id,
+				gl.bukti_transaksi,
 				gl.tanggal_transaksi,
 				vendor.id_voucher,
 				vendor.tanggal_transaksi
-			FROM gl, 
-				 vendor 
-			WHERE 
-				gl.bukti_transaksi = '{$bukti}' AND 
+			FROM gl,
+				vendor
+			WHERE
+				gl.bukti_transaksi = '{$bukti}' AND
 				(CAST(gl.tanggal_transaksi AS DATE) = CAST('{$date}' AS DATE))";
 
 		$data = $this->db->query($query);
@@ -409,22 +409,22 @@ class M_gl extends CI_Model
 	{
 
 		$query =
-			"SELECT 
-				gl.id_gl AS id, 
-				gl.bukti_transaksi, 
+			"SELECT
+				gl.id_gl AS id,
+				gl.bukti_transaksi,
 				gl.tanggal_transaksi,
-				gl.keterangan, 
-				bayar.id_ar, 
-				bayar.tanggal_bayar, 
+				gl.keterangan,
+				bayar.id_ar,
+				bayar.tanggal_bayar,
 				voucher.id_voucher,
 				voucher.keterangan
-			FROM gl, 
-				 bayar 
-			JOIN voucher 
-			ON bayar.id_voucher = voucher.id_voucher 
-			WHERE 
-				gl.bukti_transaksi = '{$bukti}' 
-				AND (CAST(gl.tanggal_transaksi AS DATE) = CAST('{$date}' AS DATE)) 
+			FROM gl,
+				bayar
+			JOIN voucher
+			ON bayar.id_voucher = voucher.id_voucher
+			WHERE
+				gl.bukti_transaksi = '{$bukti}'
+				AND (CAST(gl.tanggal_transaksi AS DATE) = CAST('{$date}' AS DATE))
 				AND gl.keterangan != voucher.keterangan
 			GROUP BY
 				gl.id_gl";
@@ -438,20 +438,20 @@ class M_gl extends CI_Model
 	{
 
 		$query =
-			"SELECT 
-				gl.id_gl AS id, 
-				gl.bukti_transaksi, 
+			"SELECT
+				gl.id_gl AS id,
+				gl.bukti_transaksi,
 				gl.tanggal_transaksi,
-				gl.keterangan, 
+				gl.keterangan,
 				voucher.id_voucher,
 				voucher.bukti_transaksi,
 				voucher.tanggal_voucher,
 				voucher.keterangan
-			FROM gl, 
-				 voucher
-			WHERE 
-				gl.bukti_transaksi = '{$bukti}' 
-				AND (CAST(gl.tanggal_transaksi AS DATE) = CAST('{$date}' AS DATE)) 
+			FROM gl,
+				voucher
+			WHERE
+				gl.bukti_transaksi = '{$bukti}'
+				AND (CAST(gl.tanggal_transaksi AS DATE) = CAST('{$date}' AS DATE))
 				AND gl.keterangan = '{$ket}'";
 
 		$data = $this->db->query($query);

@@ -306,4 +306,42 @@ class M_iuran extends CI_Model
             }
         }
     }
+
+    public function select_paid($date, $owner)
+	{
+		$query =
+			"SELECT iuran.id_iuran
+            FROM iuran
+            WHERE iuran.id_iuran IN
+                (SELECT ar.bukti_transaksi
+                FROM ar
+                WHERE ar.kode_soa = 24
+                    AND ar.id_owner = '{$owner}'
+                    AND ar.status != 0)
+                AND iuran.paid_date = CAST('{$date}' AS DATE)";
+
+		$data = $this->db->query($query);
+
+		return $data->result();
+	}
+
+	public function update_bayar($id)
+	{
+		$dataBayar = $this->M_bayar->select_by_voucher_id($id);
+
+		foreach ($dataBayar as $bayar) {
+			if ($bayar->kode_soa == 24) {
+				$dataiuran = $this->M_iuran->select_paid($bayar->tanggal_bayar, $bayar->owner);
+
+				foreach ($dataiuran as $iuran) {
+					$data = array(
+						'paid' => 0,
+						'paid_date' => NULL
+					);
+					$where = array('id_iuran' => $iuran->id_iuran);
+					$this->db->update($this->tableName, $data, $where);
+				}
+			}
+		}
+	}
 }

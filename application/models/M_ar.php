@@ -442,7 +442,7 @@ class M_ar extends CI_Model
 
 	public function update_bayar($id)
 	{
-		$dataBayar = $this->M_bayar->select_by_id($id);
+		$dataBayar = $this->M_bayar->select_by_voucher_id($id);
 
 		foreach ($dataBayar as $bayar) {
 			$ar = $this->M_ar->select_by_id($bayar->id_ar);
@@ -454,6 +454,20 @@ class M_ar extends CI_Model
 				$where = array('id_ar' => $bayar->id_ar);
 				$this->db->update($this->tableName, $data, $where);
 			} else if ($bayar->kode_soa == 21) {
+				$data = array(
+					'sisa' => $ar->sisa + $bayar->credit,
+					'status' => 0
+				);
+				$where = array('id_ar' => $bayar->id_ar);
+				$this->db->update($this->tableName, $data, $where);
+			} else if ($bayar->kode_soa == 24) {
+				$data = array(
+					'sisa' => $ar->sisa + $bayar->credit,
+					'status' => 0
+				);
+				$where = array('id_ar' => $bayar->id_ar);
+				$this->db->update($this->tableName, $data, $where);
+			} else if ($bayar->kode_soa == 25) {
 				$data = array(
 					'sisa' => $ar->sisa + $bayar->credit,
 					'status' => 0

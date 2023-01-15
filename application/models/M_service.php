@@ -305,16 +305,16 @@ class M_service extends CI_Model
 				end_periode,
 				kode_owner
 			FROM view_invoice_service
-			WHERE 
+			WHERE
 				!EXISTS
-					(SELECT 
+					(SELECT
 						`invoice_service`.`id_periode`,
-						`invoice_service`.`kode_owner` 
-					FROM `invoice_service` 
-					WHERE `invoice_service`.`id_periode` = `view_invoice_service`.`id_periode` 
+						`invoice_service`.`kode_owner`
+					FROM `invoice_service`
+					WHERE `invoice_service`.`id_periode` = `view_invoice_service`.`id_periode`
 					AND `invoice_service`.`kode_owner` = `view_invoice_service`.`kode_owner`
 					LIMIT 1)
-				AND view_invoice_service.kode_owner != 'B1' 
+				AND view_invoice_service.kode_owner != 'B1'
 				AND view_invoice_service.kode_owner != 'B2'
 				AND view_invoice_service.kode_owner != 'B3'
 				AND view_invoice_service.kode_owner != '2-SPA'";
@@ -336,11 +336,11 @@ class M_service extends CI_Model
 				p.due_date AS dueDate,
 				p.amount_days + 59 AS amount
 			FROM periode p
-			WHERE p.id_periode IN 
-				(SELECT 
-						vp.id_periode 
-					FROM view_available_periode_service vp 
-					GROUP BY vp.id_periode) 
+			WHERE p.id_periode IN
+				(SELECT
+						vp.id_periode
+					FROM view_available_periode_service vp
+					GROUP BY vp.id_periode)
 			ORDER BY p.start_periode ASC";
 
 		$data = $this->db->query($query);
@@ -497,24 +497,15 @@ class M_service extends CI_Model
 	public function select_paid($date, $owner)
 	{
 		$query =
-			"SELECT
-				service.kode_tagihan_service,
-				service.paid,
-				service.paid_date, 
-				service.kode_owner, 
-				bayar.tanggal_bayar, 
-				bayar.id_ar,
-				ar.kode_soa, 
-				ar.id_owner 
-			FROM 
-				service, 
-				bayar 
-			JOIN ar 
-				ON bayar.id_ar = ar.id_ar 
-			WHERE 
-				service.paid_date = CAST('{$date}' AS DATE) 
-				AND ar.kode_soa = 22 
-				AND service.kode_owner = '{$owner}'";
+			"SELECT service.kode_tagihan_service
+            FROM service
+            WHERE service.kode_tagihan_service IN
+                (SELECT ar.bukti_transaksi
+                FROM ar
+                WHERE ar.kode_soa = 22
+                    AND ar.id_owner = '{$owner}'
+                	AND ar.status != 0)
+                AND service.paid_date = CAST('{$date}' AS DATE)";
 
 		$data = $this->db->query($query);
 
@@ -523,7 +514,7 @@ class M_service extends CI_Model
 
 	public function update_bayar($id)
 	{
-		$dataBayar = $this->M_bayar->select_by_id($id);
+		$dataBayar = $this->M_bayar->select_by_voucher_id($id);
 
 		foreach ($dataBayar as $bayar) {
 			if ($bayar->kode_soa == 22) {
