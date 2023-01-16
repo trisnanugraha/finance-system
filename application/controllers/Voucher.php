@@ -246,7 +246,7 @@ class Voucher extends AUTH_Controller
 	{
 		$voucher = $this->M_voucher->print($id);
 		$bayar = $this->M_bayar->select_by_voucher_id($id);
-		$vendor = $this->M_voucher->select_by_voucher_id($id);
+		$vendor = $this->M_vendor->select_by_voucher_id($id);
 
 		if ($voucher != null) {
 
