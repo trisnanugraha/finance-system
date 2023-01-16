@@ -75,8 +75,6 @@ class M_vendor extends CI_Model
 			FROM vendor
 				JOIN coa
 					ON coa.id_akun = vendor.kode_soa
-				LEFT JOIN gl
-					ON gl.bukti_transaksi = vendor.id_voucher
 			WHERE vendor.id_voucher = '{$id}'";
 
 		$data = $this->db->query($query);
