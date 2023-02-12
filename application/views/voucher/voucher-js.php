@@ -382,6 +382,38 @@
 
         $(document).on('submit', '#form-update-voucher', function(e) {
             var data = $(this).serialize();
+            var lastRowId = $('#tableBody tr:last').attr("id");
+            var id = $('#id').val();
+            var vouDate = $('#vouDate').val();
+            var keterangan = new Array();
+            var akun = new Array();
+            var debit = new Array();
+            var kredit = new Array();
+
+            for (var i = 1; i <= lastRowId; i++) {
+                keterangan.push($('#' + i + " .keterangan" + i).html());
+                akun.push($('#' + i + " .akun" + i).html());
+                debit.push($('#' + i + " .debit2").html());
+                kredit.push($('#' + i + " .kredit").html());
+            }
+
+            var sendKet = JSON.stringify(keterangan);
+            var sendAkun = JSON.stringify(akun);
+            var sendDebit = JSON.stringify(debit);
+            var sendKredit = JSON.stringify(kredit);
+
+            $.ajax({
+                method: 'POST',
+                url: '<?php echo base_url('Voucher/prosesTambahDetail'); ?>',
+                data: {
+                    id: id,
+                    vouDate: vouDate,
+                    keterangan: sendKet,
+                    akun: sendAkun,
+                    debit: sendDebit,
+                    credit: sendKredit
+                }
+            });
 
             $.ajax({
                     method: 'POST',

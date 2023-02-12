@@ -333,14 +333,14 @@ class M_asuransi extends CI_Model
 
 		foreach ($dataBayar as $bayar) {
 			if ($bayar->kode_soa == 25) {
-				$dataAsuransi = $this->M_asuransi->select_paid($bayar->tanggal_bayar, $bayar->owner);
+				$dataAsuransi = $this->M_ar->get_bukti_transaksi($bayar->id_ar);
 
 				foreach ($dataAsuransi as $a) {
 					$data = array(
 						'paid' => 0,
 						'paid_date' => NULL
 					);
-					$where = array('id_asuransi' => $a->id_asuransi);
+					$where = array('id_asuransi' => $a->bukti_transaksi);
 					$this->db->update($this->tableName, $data, $where);
 				}
 			}

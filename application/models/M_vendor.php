@@ -113,4 +113,130 @@ class M_vendor extends CI_Model
 			return true;
 		}
 	}
+
+	public function get_by_voucher_id($id)
+	{
+		$query =
+			"SELECT
+				vendor.id_vendor,
+				vendor.id_voucher,
+				vendor.tanggal_transaksi,
+				vendor.kode_soa,
+				coa.coa_id,
+				coa.coa_name,
+				vendor.keterangan AS keterangan,
+				vendor.debit,
+				vendor.credit,
+				vendor.so,
+				gl.id_gl
+			FROM vendor
+				JOIN coa
+					ON coa.id_akun = vendor.kode_soa
+				LEFT JOIN gl
+					ON gl.voucher_id = vendor.id_vendor
+			WHERE vendor.id_voucher = '{$id}'";
+
+		$data = $this->db->query($query);
+
+		return $data->result();
+	}
+
+	public function insert($post, $admin)
+	{
+		$code = json_decode($_POST["code"]);
+		$akun = json_decode($_POST["akun"]);
+		$keterangan = json_decode($_POST["keterangan"]);
+		$relasi = json_decode($_POST["relasi"]);
+		$debit = json_decode($_POST["debit"]);
+		$kredit = json_decode($_POST["kredit"]);
+
+		for ($i = 0; $i < count($code); $i++) {
+
+			$CoA = $this->M_coa->select_by_coa($akun[$i]);
+			
+			if ($akun[$i] != NULL) {
+				$data = array(
+					'id_voucher' => $code[$i],
+					'kode_soa' =>  $CoA->id_akun,
+					'tanggal_transaksi' => $post['date'],
+					'keterangan' => $keterangan[$i],
+					'debit' => $debit[$i],
+					'credit' => $kredit[$i],
+					'so' => 3
+				);
+				
+				$this->db->insert($this->tableName, $data);
+				$last_id = $this->db->insert_id();
+
+				if($last_id != NULL){
+					$glData = array(
+						'bukti_transaksi' => $code[$i],
+						'id_customer' => 'T-10A',
+						'id_owner' => '10A',
+						'tanggal_transaksi' => $post['date'],
+						'keterangan' => $keterangan[$i],
+						'kode_soa' => $CoA->id_akun,
+						'debit' => $debit[$i],
+						'credit' => $kredit[$i],
+						'so' => 1,
+						'cash' => 1,
+						'created_by' => $admin,
+						'voucher_id' => $last_id
+					);
+	
+					$this->M_gl->insert_voucher_from_detail($glData);
+				}
+			}
+		}
+		return $this->db->affected_rows();
+	}
+
+	public function insert_detail($post, $admin)
+	{
+		$id = json_decode($_POST["id"]);
+		$keterangan = json_decode($_POST["keterangan"]);
+		$akun = json_decode($_POST["akun"]);
+		$debit = json_decode($_POST["debit"]);
+		$kredit = json_decode($_POST["credit"]);
+
+		for ($i = 0; $i < count($keterangan); $i++) {
+
+			$CoA = $this->M_coa->select_by_coa($akun[$i]);
+			
+			if ($akun[$i] != NULL) {
+				$data = array(
+					'id_voucher' => $id,
+					'kode_soa' =>  $CoA->id_akun,
+					'tanggal_transaksi' => $post['vouDate'],
+					'keterangan' => $keterangan[$i],
+					'debit' => $debit[$i],
+					'credit' => $kredit[$i],
+					'so' => 3
+				);
+				
+				$this->db->insert($this->tableName, $data);
+				$last_id = $this->db->insert_id();
+
+				if($last_id != NULL){
+					$glData = array(
+						'bukti_transaksi' => $id,
+						'id_customer' => 'T-10A',
+						'id_owner' => '10A',
+						'tanggal_transaksi' => $post['vouDate'],
+						'keterangan' => $keterangan[$i],
+						'kode_soa' => $CoA->id_akun,
+						'debit' => $debit[$i],
+						'credit' => $kredit[$i],
+						'so' => 1,
+						'cash' => 1,
+						'created_by' => $admin,
+						'voucher_id' => $last_id
+					);
+	
+					$this->M_gl->insert_voucher_from_detail($glData);
+				}
+			}
+		}
+		return $this->db->affected_rows();
+	}
 }

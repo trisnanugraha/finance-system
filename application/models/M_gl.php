@@ -2137,4 +2137,10 @@ class M_gl extends CI_Model
 
 		return $data->result();
 	}
+
+	public function insert_voucher_from_detail($post)
+	{
+		$this->db->insert($this->tableName, $post);
+		return $this->db->affected_rows();
+	}
 }

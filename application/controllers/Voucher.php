@@ -40,7 +40,6 @@ class Voucher extends AUTH_Controller
 		$data['judul'] = "Voucher";
 		$data['deskripsi'] = "Manage Voucher Data";
 
-		$data['modal_tambah_voucher'] = show_my_modal('modals/modal_tambah_voucher', 'tambah-voucher', $data);
 		$data['modal_pengurangan_bank'] = show_my_modal('modals/modal_pengurangan_bank', 'pengurangan-bank', $data);
 
 		$js = $this->load->view('voucher/voucher-js', null, true);
@@ -98,7 +97,7 @@ class Voucher extends AUTH_Controller
 		$result = $this->M_voucher->insert($post);
 
 		if ($result > 0) {
-			$this->M_gl->insert_vou($post);
+			$this->M_vendor->insert($post, $this->userdata->id);
 			helper_log("add", "Menambah Data (Voucher)", $post['code']);
 			$out['status'] = '';
 			$out['msg'] = show_succ_msg('Voucher Data Successfully Added', '20px');
@@ -108,6 +107,18 @@ class Voucher extends AUTH_Controller
 		}
 
 		echo json_encode($out);
+	}
+
+	public function prosesTambahDetail()
+	{
+		$post = $this->input->post(null, TRUE);
+		$voucher = $this->M_voucher->select_by_id($post['id']);
+
+		if($voucher->so == 3){
+			$this->M_vendor->insert_detail($post, $this->userdata->id);
+		}else{
+			// $this->M_bayar->insert_detail($post, $this->userdata->id);
+		}
 	}
 
 	public function cekId()
@@ -131,10 +142,10 @@ class Voucher extends AUTH_Controller
 
 		if ($result > 0) {
 
-			$this->M_bayar->insert_out($post);
+			$this->M_bayar->insert_out($post, $this->userdata->id);
 			$this->M_titipan->insert($post);
 			$this->M_ar->update_ar_out($post);
-			$this->M_gl->insert_voucher($post);
+			
 			$this->M_billing->pembayaran($post);
 			$this->M_service->pembayaran($post);
 			$this->M_iuran->pembayaran($post);
@@ -159,10 +170,9 @@ class Voucher extends AUTH_Controller
 
 		if ($result > 0) {
 
-			$this->M_bayar->insert_out($post);
+			$this->M_bayar->insert_out($post, $this->userdata->id);
 			$this->M_titipan->update_out($post);
 			$this->M_ar->update_ar_out($post);
-			$this->M_gl->insert_titipan($post);
 
 			$this->M_billing->pembayaran($post);
 			$this->M_service->pembayaran($post);
@@ -184,17 +194,17 @@ class Voucher extends AUTH_Controller
 	{
 		$id = $_POST['idVou'];
 
-		$wait = $this->M_titipan->update_in($id);
+		$wait = $this->M_gl->update_voucher($id);
+		$this->M_ar->update_bayar($id);
+		$this->M_billing->update_bayar($id);
+		$this->M_service->update_bayar($id);
+		$this->M_iuran->update_bayar($id);
+		$this->M_asuransi->update_bayar($id);
+		$this->M_vendor->delete($id);
+		$this->M_bayar->delete($id);
+		$this->M_titipan->update_in($id);
 
 		if($wait > 0){
-			$this->M_gl->update_voucher($id);
-			$this->M_ar->update_bayar($id);
-			$this->M_billing->update_bayar($id);
-			$this->M_service->update_bayar($id);
-			$this->M_iuran->update_bayar($id);
-			$this->M_asuransi->update_bayar($id);
-			$this->M_vendor->delete($id);
-			$this->M_bayar->delete($id);
 			$result = $this->M_voucher->delete($id);
 
 			if ($result) {
@@ -206,25 +216,38 @@ class Voucher extends AUTH_Controller
 		}
 	}
 
-	// public function deleteBayar()
-	// {
-	// 	$id = $_POST['idBayar'];
+	public function deleteBayar($id, $idGl)
+	{
+		$this->M_ar->delete_bayar($id);
+		$this->M_gl->delete_bayar($idGl);
+		$this->M_billing->delete_bayar($id);
+		$this->M_service->delete_bayar($id);
+		$this->M_iuran->delete_bayar($id);
+		$this->M_asuransi->delete_bayar($id);
 
-	// 	$this->M_voucher->update_bayar($id);
-	// 	$this->M_ar->update_bayar($id);
-	// 	$this->M_gl->update_bayar($id);
-	// 	$this->M_billing->update_bayar($id);
-	// 	$this->M_service->update_bayar($id);
 
-	// 	$result = $this->M_bayar->delete($id);
+		$result = $this->M_bayar->delete_bayar($id);
 
-	// 	if ($result) {
-	// 		helper_log("delete", "Menghapus Data Bayar (Voucher)", $id);
-	// 		echo show_succ_msg('Voucher Data Successfully Deleted', '20px');
-	// 	} else {
-	// 		echo show_err_msg('Voucher Data Failed To Delete', '20px');
-	// 	}
-	// }
+		if ($result) {
+			helper_log("delete", "Menghapus Data Voucher", $id);
+			echo show_succ_msg('Voucher Data Successfully Deleted', '20px');
+		} else {
+			echo show_err_msg('Voucher Data Failed To Delete', '20px');
+		}
+	}
+
+	public function deleteVendor($id, $idGl){
+		$this->M_gl->delete_vendor($idGl);
+
+		$result = $this->M_vendor->delete_vendor($id);
+
+		if ($result) {
+			helper_log("delete", "Menghapus Data Voucher", $id);
+			echo show_succ_msg('Voucher Data Successfully Deleted', '20px');
+		} else {
+			echo show_err_msg('Voucher Data Failed To Delete', '20px');
+		}
+	}
 
 	public function print_received($id)
 	{
@@ -279,10 +302,8 @@ class Voucher extends AUTH_Controller
 		}
 	}
 
-	public function update()
+	public function update($id)
 	{
-		$id = trim($_POST['id']);
-
 		$voucher = $this->M_voucher->select_by_id($id);
 
 		$data['userdata'] = $this->userdata;
@@ -292,28 +313,23 @@ class Voucher extends AUTH_Controller
 		$data['dataBank'] = $this->M_coa->select_bank();
 
 		if ($voucher->so == 3) {
-			// $data['page'] = "Update Voucher";
-			// $data['judul'] = "Update Voucher";
-			// $data['deskripsi'] = "Manage Update Voucher Data";
+			$data['page'] = "Update Voucher";
+			$data['judul'] = "Update Voucher";
+			$data['deskripsi'] = "Manage Update Voucher Data";
 
-			$data['dataVendor'] = $this->M_vendor->select_by_voucher_id($id);
+			$data['dataVendor'] = $this->M_vendor->get_by_voucher_id($id);
 
-			// $js = $this->load->view('voucher/voucher-js', null, true);
-			// $this->template->views('modals/modal_update_vendor', $data, $js);
-
-			echo show_my_modal('modals/modal_update_vendor', 'update-voucher', $data);
+			$js = $this->load->view('voucher/voucher-js', null, true);
+			$this->template->views('modals/modal_update_vendor', $data, $js);
 		} else {
+			$data['page'] = "Update Voucher";
+			$data['judul'] = "Update Voucher";
+			$data['deskripsi'] = "Manage Update Voucher Data";
 
-			// $data['page'] = "Update Voucher";
-			// $data['judul'] = "Update Voucher";
-			// $data['deskripsi'] = "Manage Update Voucher Data";
+			$data['dataBayar'] = $this->M_bayar->get_by_voucher_id($id);
 
-			$data['dataBayar'] = $this->M_bayar->select_by_voucher_id($id);
-
-			// $js = $this->load->view('voucher/voucher-js', null, true);
-			// $this->template->views('modals/modal_update_vendor', $data, $js);
-
-			echo show_my_modal('modals/modal_update_bayar', 'update-voucher', $data);
+			$js = $this->load->view('voucher/voucher-js', null, true);
+			$this->template->views('modals/modal_update_bayar', $data, $js);
 		}
 	}
 
@@ -322,25 +338,23 @@ class Voucher extends AUTH_Controller
 		$this->form_validation->set_rules('relasi', 'Nama Relasi', 'trim|required');
 		$this->form_validation->set_rules('vouDate', 'Voucher Date', 'trim|required');
 		$this->form_validation->set_rules('giro', 'Transaction Type', 'trim|required');
-		$this->form_validation->set_rules('keterangan', 'Keterangan Voucher', 'trim|required');
-		$this->form_validation->set_rules('bank', 'CoA Bank Voucher', 'trim|required');
-		$this->form_validation->set_rules('vouTotal', 'Total Voucher', 'trim|required');
+		$this->form_validation->set_rules('ket[]', 'Keterangan Voucher', 'trim|required');
 		$this->form_validation->set_rules('coa[]', 'Total Voucher', 'trim|required');
 		$this->form_validation->set_rules('debit[]', 'Total Voucher', 'trim|required');
 		$this->form_validation->set_rules('credit[]', 'Total Voucher', 'trim|required');
 
 		$post = $this->input->post();
-
 		if ($this->form_validation->run() == TRUE) {
 			$voucher = $this->M_voucher->select_by_id($post['id']);
 			$coa = $this->M_coa->select_by_coa($voucher->coa_id);
 
 			if ($voucher->so == 3) {
-				$this->M_gl->vendor_update($post);
-				$this->M_vendor->update($post);
-				$result = $this->M_voucher->bayar_update($post);
-
+				$result = $this->M_voucher->bayar_update($post, $this->userdata->id);
+				
 				if ($result > 0) {
+					$this->M_gl->vendor_update($post);
+					$this->M_vendor->update($post);
+					
 					helper_log("edit", "Mengubah Data (Voucher)", $post['id']);
 					$out['status'] = '';
 					$out['msg'] = show_succ_msg('Voucher Data Successfully Changed', '20px');
@@ -349,11 +363,12 @@ class Voucher extends AUTH_Controller
 					$out['msg'] = show_err_msg('Voucher Data Failed To Change', '20px');
 				}
 			} else {
-				$this->M_gl->bayar_update($post);
-				$this->M_bayar->bayar_update($post);
-				$result = $this->M_voucher->bayar_update($post);
+				$result = $this->M_voucher->bayar_update($post, $this->userdata->id);
 
 				if ($result > 0) {
+					$this->M_gl->bayar_update($post);
+					$this->M_bayar->bayar_update($post);
+					
 					helper_log("edit", "Mengubah Data (Voucher)", $post['id']);
 					$out['status'] = '';
 					$out['msg'] = show_succ_msg('Voucher Data Successfully Changed', '20px');

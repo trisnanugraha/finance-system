@@ -1598,4 +1598,19 @@ class M_ar extends CI_Model
 
 		return $data->result();
 	}
+
+	public function get_bukti_transaksi($id){
+
+		$sql =
+			"SELECT
+				pa.id_ar,
+				pa.kode_soa,
+				pa.bukti_transaksi
+			FROM ar pa
+			WHERE pa.id_ar = '{$id}'";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
 }

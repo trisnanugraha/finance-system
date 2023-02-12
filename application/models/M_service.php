@@ -518,14 +518,14 @@ class M_service extends CI_Model
 
 		foreach ($dataBayar as $bayar) {
 			if ($bayar->kode_soa == 22) {
-				$dataSC = $this->M_service->select_paid($bayar->tanggal_bayar, $bayar->owner);
+				$dataSC = $this->M_ar->get_bukti_transaksi($bayar->id_ar);
 
 				foreach ($dataSC as $sc) {
 					$data = array(
 						'paid' => 0,
 						'paid_date' => NULL
 					);
-					$where = array('kode_tagihan_service' => $sc->kode_tagihan_service);
+					$where = array('kode_tagihan_service' => $sc->bukti_transaksi);
 					$this->db->update($this->tableName, $data, $where);
 				}
 			}

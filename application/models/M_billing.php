@@ -533,14 +533,14 @@ class M_billing extends CI_Model
 
 		foreach ($dataBayar as $bayar) {
 			if ($bayar->kode_soa == 21) {
-				$dataBill = $this->M_billing->select_paid($bayar->tanggal_bayar, $bayar->arCus);
+				$dataBill = $this->M_ar->get_bukti_transaksi($bayar->id_ar);
 
 				foreach ($dataBill as $bil) {
 					$data = array(
 						'paid' => 0,
 						'paid_date' => NULL
 					);
-					$where = array('id_billing' => $bil->id_billing);
+					$where = array('id_billing' => $bil->bukti_transaksi);
 					$this->db->update($this->tableName, $data, $where);
 				}
 			}

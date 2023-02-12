@@ -331,14 +331,14 @@ class M_iuran extends CI_Model
 
 		foreach ($dataBayar as $bayar) {
 			if ($bayar->kode_soa == 24) {
-				$dataiuran = $this->M_iuran->select_paid($bayar->tanggal_bayar, $bayar->owner);
+				$dataiuran = $this->M_ar->get_bukti_transaksi($bayar->id_ar);
 
 				foreach ($dataiuran as $iuran) {
 					$data = array(
 						'paid' => 0,
 						'paid_date' => NULL
 					);
-					$where = array('id_iuran' => $iuran->id_iuran);
+					$where = array('id_iuran' => $iuran->bukti_transaksi);
 					$this->db->update($this->tableName, $data, $where);
 				}
 			}

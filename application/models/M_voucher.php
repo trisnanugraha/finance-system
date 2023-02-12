@@ -196,29 +196,7 @@ class M_voucher extends CI_Model
 								'titipan' => 1
 							);
 							$this->db->insert($this->tableName, $data);
-
-							$data1 = array(
-								'id_voucher' => $code[$i],
-								'kode_soa' =>  $CoA->id_akun,
-								'tanggal_transaksi' => $post['date'],
-								'keterangan' => $keterangan[$i],
-								'debit' => $debit[$i],
-								'credit' => $kredit[$i],
-								'so' => 3
-							);
-							$this->db->insert('vendor', $data1);
-						} else {
-							$data = array(
-								'id_voucher' => $code[$i],
-								'kode_soa' =>  $CoA->id_akun,
-								'tanggal_transaksi' => $post['date'],
-								'keterangan' => $keterangan[$i],
-								'debit' => $debit[$i],
-								'credit' => $kredit[$i],
-								'so' => 3
-							);
-							$this->db->insert('vendor', $data);
-						}
+						} 
 					} else {
 						if ($CoA->parent == 1 && $kredit[$i] > 0 || $CoA->parent == 3 && $kredit[$i] > 0 || $CoA->parent == 4 && $kredit[$i] > 0 || $CoA->parent == 5 && $kredit[$i] > 0  || $CoA->parent == 7 && $kredit[$i] > 0) {
 							$data = array(
@@ -236,28 +214,6 @@ class M_voucher extends CI_Model
 								'titipan' => 1
 							);
 							$this->db->insert($this->tableName, $data);
-
-							$data1 = array(
-								'id_voucher' => $code[$i],
-								'kode_soa' =>  $CoA->id_akun,
-								'tanggal_transaksi' => $post['date'],
-								'keterangan' => $keterangan[$i],
-								'debit' => $debit[$i],
-								'credit' => $kredit[$i],
-								'so' => 3
-							);
-							$this->db->insert('vendor', $data1);
-						} else {
-							$data = array(
-								'id_voucher' => $code[$i],
-								'kode_soa' =>  $CoA->id_akun,
-								'tanggal_transaksi' => $post['date'],
-								'keterangan' => $keterangan[$i],
-								'debit' => $debit[$i],
-								'credit' => $kredit[$i],
-								'so' => 3
-							);
-							$this->db->insert('vendor', $data);
 						}
 					}
 				}
@@ -291,7 +247,7 @@ class M_voucher extends CI_Model
 		return $this->db->affected_rows();
 	}
 
-	public function bayar_update($post)
+	public function bayar_update($post, $admin)
 	{
 		for ($i = 0; $i < count($post['idv']); $i++) {
 			$CoA = $this->M_coa->select_by_id($post['coa'][$i]);
@@ -301,7 +257,8 @@ class M_voucher extends CI_Model
 						'bank' => $post['coa'][$i],
 						'tanggal_voucher' => $post['vouDate'],
 						'keterangan' => $post['ket'][$i],
-						'total' => $post['debit'][$i]
+						'total' => $post['debit'][$i],
+						'updated_by' => $admin
 					);
 
 					$where = array('id_voucher' => $post['id']);
@@ -315,7 +272,8 @@ class M_voucher extends CI_Model
 						'bank' => $post['coa'][$i],
 						'tanggal_voucher' => $post['vouDate'],
 						'keterangan' => $post['ket'][$i],
-						'total' => $post['credit'][$i]
+						'total' => $post['credit'][$i],
+						'updated_by' => $admin
 					);
 
 					$where = array('id_voucher' => $post['id']);
@@ -348,77 +306,7 @@ class M_voucher extends CI_Model
 
 				if ($akun[$i] != NULL) {
 					if ($post['relasi'] == 1) {
-						if ($ar->id_ar == 1) {
-							if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0) {
-								$data = array(
-									'id_voucher' => $code[$i],
-									'bukti_transaksi' => $code[$i],
-									'id_customer' => $owner->customer,
-									'id_owner' => $kodeOwner[$i],
-									'tipe_giro' => $post['giro'],
-									'bank' =>  $CoA->id_akun,
-									'tanggal_voucher' => $post['date'],
-									'keterangan' => $keterangan[$i],
-									'total' => $debit[$i],
-									'so' => 1,
-									'relasi' => $owner->customer,
-									'titipan' => 1
-								);
-								$this->db->insert($this->tableName, $data);
-							} else if ($CoA->parent == 187 && $debit[$i] > 0) {
-								$data = array(
-									'id_voucher' => $code[$i],
-									'bukti_transaksi' => $code[$i],
-									'id_customer' => $owner->customer,
-									'id_owner' => $kodeOwner[$i],
-									'tipe_giro' => $post['giro'],
-									'bank' =>  $CoA->id_akun,
-									'tanggal_voucher' => $post['date'],
-									'keterangan' => $keterangan[$i],
-									'total' => $debit[$i],
-									'so' => 1,
-									'relasi' => $owner->customer,
-									'titipan' => 1
-								);
-								$this->db->insert($this->tableName, $data);
-							}
-						} else {
-							if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0) {
-								$data = array(
-									'id_voucher' => $code[$i],
-									'bukti_transaksi' => $code[$i],
-									'id_customer' => $ar->id_customer,
-									'id_owner' => $kodeOwner[$i],
-									'tipe_giro' => $post['giro'],
-									'bank' =>  $CoA->id_akun,
-									'tanggal_voucher' => $post['date'],
-									'keterangan' => $keterangan[$i],
-									'total' => $debit[$i],
-									'so' => 1,
-									'relasi' => $ar->id_customer,
-									'titipan' => 1
-								);
-								$this->db->insert($this->tableName, $data);
-							} else if ($CoA->parent == 187 && $debit[$i] > 0) {
-								$data = array(
-									'id_voucher' => $code[$i],
-									'bukti_transaksi' => $code[$i],
-									'id_customer' => $ar->id_customer,
-									'id_owner' => $kodeOwner[$i],
-									'tipe_giro' => $post['giro'],
-									'bank' =>  $CoA->id_akun,
-									'tanggal_voucher' => $post['date'],
-									'keterangan' => $keterangan[$i],
-									'total' => $debit[$i],
-									'so' => 1,
-									'relasi' => $ar->id_customer,
-									'titipan' => 1
-								);
-								$this->db->insert($this->tableName, $data);
-							}
-						}
-					} else if ($post['relasi'] == 2) {
-						if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0) {
+						if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0 || $CoA->parent == 187 && $debit[$i] > 0) {
 							$data = array(
 								'id_voucher' => $code[$i],
 								'bukti_transaksi' => $code[$i],
@@ -429,12 +317,14 @@ class M_voucher extends CI_Model
 								'tanggal_voucher' => $post['date'],
 								'keterangan' => $keterangan[$i],
 								'total' => $debit[$i],
-								'so' => 0,
-								'relasi' => $kodeOwner[$i],
+								'so' => 1,
+								'relasi' => $ar->id_customer,
 								'titipan' => 1
 							);
 							$this->db->insert($this->tableName, $data);
-						} else if ($CoA->parent == 187 && $debit[$i] > 0) {
+						}
+					} else if ($post['relasi'] == 2) {
+						if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0 || $CoA->parent == 187 && $debit[$i] > 0) {
 							$data = array(
 								'id_voucher' => $code[$i],
 								'bukti_transaksi' => $code[$i],
@@ -452,23 +342,7 @@ class M_voucher extends CI_Model
 							$this->db->insert($this->tableName, $data);
 						}
 					} else {
-						if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0) {
-							$data = array(
-								'id_voucher' => $code[$i],
-								'bukti_transaksi' => $code[$i],
-								'id_customer' => $ar->id_customer,
-								'id_owner' => $kodeOwner[$i],
-								'tipe_giro' => $post['giro'],
-								'bank' =>  $CoA->id_akun,
-								'tanggal_voucher' => $post['date'],
-								'keterangan' => $keterangan[$i],
-								'total' => $debit[$i],
-								'so' => 2,
-								'relasi' => 'UMUM',
-								'titipan' => 1
-							);
-							$this->db->insert($this->tableName, $data);
-						} else if ($CoA->parent == 187 && $debit[$i] > 0) {
+						if ($CoA->parent == 1 && $debit[$i] > 0 || $CoA->parent == 3 && $debit[$i] > 0 || $CoA->parent == 4 && $debit[$i] > 0 || $CoA->parent == 5 && $debit[$i] > 0  || $CoA->parent == 7 && $debit[$i] > 0 || $CoA->parent == 187 && $debit[$i] > 0) {
 							$data = array(
 								'id_voucher' => $code[$i],
 								'bukti_transaksi' => $code[$i],

@@ -22,7 +22,7 @@
         <td class="text-center" style="width: 150px;">
             <button class="btn btn-warning btn-xs print-dataVoucher" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-print"></i></button>
             <button class="btn btn-success btn-xs print-dataBayar" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-print"></i></button>
-            <button class="btn btn-warning btn-xs update-dataVoucher" data-id="<?php echo $vou->id_voucher; ?>"><i class="glyphicon glyphicon-edit"></i></button>
+            <a href="<?= base_url('Voucher/update/'). $vou->id_voucher ?>" class="btn btn-warning btn-xs update-dataVoucher"><i class="glyphicon glyphicon-edit"></i></a>
             <button class="btn btn-danger btn-xs konfirmasiHapus-voucher" data-id="<?php echo $vou->id_voucher; ?>" data-toggle="modal" data-target="#konfirmasiHapus"><i class="glyphicon glyphicon-trash"></i></button>
         </td>
     </tr>
