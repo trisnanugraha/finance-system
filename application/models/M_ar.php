@@ -1425,7 +1425,7 @@ class M_ar extends CI_Model
 				bayar.tanggal_bayar,
 				bayar.credit, 
 				bayar.debit,
-				ar.id_customer,
+				ar.id_owner,
 				bayar.kode_soa,
 				ar.status,
                 p.due_date,

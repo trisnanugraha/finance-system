@@ -113,7 +113,7 @@
         <p> UNTUK PIUTANG YANG SUDAH JATUH TEMPO - Berdasarkan Tanggal Jatuh TEMPO</p>
         <br>
         <br>
-    <?php } ?>?>
+    <?php } ?>
 
     PERINCIAN PER TOTAL
     <br>
