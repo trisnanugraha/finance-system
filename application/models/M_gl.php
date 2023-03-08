@@ -1544,16 +1544,9 @@ class M_gl extends CI_Model
 				ON coa.id_akun = gl.kode_soa
 				JOIN coa_type jt
 				ON coa.jurnal_tipe = jt.coa_type_id
-			WHERE gl.kode_soa 
-				IN (SELECT 
-						g.kode_soa 
-					FROM gl g 
-						JOIN coa co 
-						ON g.kode_soa = co.id_akun 
-					WHERE YEAR(g.tanggal_transaksi) = YEAR('{$date}')
-						OR g.kode_soa = 272
-						OR g.kode_soa = 271 
-					GROUP BY g.kode_soa)
+			WHERE YEAR(gl.tanggal_transaksi) = YEAR('{$date}')
+					OR gl.kode_soa = 272
+					OR gl.kode_soa = 271 
 			GROUP BY coa.parent
 			ORDER BY coa.coa_id ASC";
 
@@ -1580,14 +1573,7 @@ class M_gl extends CI_Model
 				ON coa.id_akun = gl.kode_soa
 				JOIN coa_type jt
 				ON coa.jurnal_tipe = jt.coa_type_id
-			WHERE gl.kode_soa 
-				IN (SELECT 
-						g.kode_soa 
-					FROM gl g 
-						JOIN coa co 
-						ON g.kode_soa = co.id_akun 
-					WHERE YEAR(g.tanggal_transaksi) <= YEAR('{$date}')
-					GROUP BY g.kode_soa)
+			WHERE YEAR(g.tanggal_transaksi) <= YEAR('{$date}')
 			GROUP BY coa.parent
 			ORDER BY coa.coa_id ASC";
 
@@ -1616,14 +1602,7 @@ class M_gl extends CI_Model
 				ON coa.id_akun = gl.kode_soa
 				JOIN coa_type jt
 				ON coa.jurnal_tipe = jt.coa_type_id
-			WHERE gl.kode_soa 
-				IN (SELECT 
-						g.kode_soa 
-					FROM gl g 
-						JOIN coa co 
-						ON g.kode_soa = co.id_akun 
-					WHERE YEAR(g.tanggal_transaksi) <= YEAR('{$date}')  
-					GROUP BY g.kode_soa)
+			WHERE YEAR(g.tanggal_transaksi) <= YEAR('{$date}') 
 			GROUP BY coa.parent_two
 			ORDER BY coa.coa_id ASC";
 
