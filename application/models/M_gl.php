@@ -1573,7 +1573,7 @@ class M_gl extends CI_Model
 				ON coa.id_akun = gl.kode_soa
 				JOIN coa_type jt
 				ON coa.jurnal_tipe = jt.coa_type_id
-			WHERE YEAR(g.tanggal_transaksi) <= YEAR('{$date}')
+			WHERE YEAR(gl.tanggal_transaksi) <= YEAR('{$date}')
 			GROUP BY coa.parent
 			ORDER BY coa.coa_id ASC";
 
@@ -1602,7 +1602,7 @@ class M_gl extends CI_Model
 				ON coa.id_akun = gl.kode_soa
 				JOIN coa_type jt
 				ON coa.jurnal_tipe = jt.coa_type_id
-			WHERE YEAR(g.tanggal_transaksi) <= YEAR('{$date}') 
+			WHERE YEAR(gl.tanggal_transaksi) <= YEAR('{$date}') 
 			GROUP BY coa.parent_two
 			ORDER BY coa.coa_id ASC";
 
