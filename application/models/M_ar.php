@@ -666,9 +666,9 @@ class M_ar extends CI_Model
 				periode.start_periode,
 				ar.kode_soa,
 				ar.bukti_transaksi,
-				ar.total,
+				SUM(ar.total) as total,
                 		ar.status,
-				ar.sisa as saldo,
+				SUM(ar.sisa) as saldo,
 		                periode.due_date,
 		                bayar.tanggal_bayar
 			FROM ar
@@ -680,9 +680,10 @@ class M_ar extends CI_Model
 				ON owner.kode_owner = ar.id_owner
 				JOIN customer
 				ON customer.kode_customer = ar.id_customer
-            WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}') AND
-            	((ar.status != 1 AND (periode.due_date) <= ('{$dateA}') AND ar.kode_soa = 21) OR 
-  		(ar.status = 1 AND (bayar.tanggal_bayar) > ('{$dateA}') AND (periode.due_date) <= ('{$dateA}') AND ar.id_ar = bayar.id_ar AND ar.kode_soa = 21 AND bayar.kode_soa = ar.kode_soa))";
+            		WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}') AND
+            			((ar.status != 1 AND (periode.due_date) <= ('{$dateA}') AND ar.kode_soa = 21) OR 
+  				(ar.status = 1 AND (bayar.tanggal_bayar) > ('{$dateA}') AND (periode.due_date) <= ('{$dateA}') AND ar.id_ar = bayar.id_ar AND ar.kode_soa = 21 AND bayar.kode_soa = ar.kode_soa))
+    	 		GROUP BY ar.id_customer";
 
 		$data = $this->db->query($sql);
 
