@@ -359,7 +359,7 @@ class AR extends AUTH_Controller
             $data['dataARCus'] = $arCus;
             $data['dataBayarCus'] = $bayarCus;
             $data['dataSaldo'] = $saldo;
-            $data['$saldoBayar'] = $saldoBayar;
+            $data['dataSaldoBayar'] = $saldoBayar;
             $data['dataCusA'] = $CusA;
             $data['dataCusB'] = $CusB;
             $data['dataDateA'] = $dateA;
