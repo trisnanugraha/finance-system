@@ -245,16 +245,24 @@
                 <?php $saldoA = 0; ?>
                 <?php foreach ($dataSaldo as $saldo) : ?>
                     <?php if ($saldo->id_customer == $ar->id_customer) { ?>
-                        <tr>
-                            <td></td>
-                            <td></td>
-                            <td>SALDO AWAL</td>
-                            <td class="text-align-right">-</td>
-                            <td class="text-align-right">-</td>
-                            <td class="text-align-right"><?= saldo_money($saldo->saldo); ?>
-                                <?php $saldoA += $saldo->saldo; ?>
-                            </td>
-                        </tr>
+                        <?php $saldoBayar = 0; ?>
+                        <?php foreach ($dataSaldoBayar as $saldoBayar) : ?>
+                            <?php if ($saldoBayar->id_customer == $saldo->id_customer) { ?>
+                                <?php if ($saldoBayar->statj == 1) { ?>
+                                    <?php $saldoBayar += $saldoBayar->total; ?>
+                                        <tr>
+                                            <td></td>
+                                            <td></td>
+                                            <td>SALDO AWAL</td>
+                                            <td class="text-align-right">-</td>
+                                            <td class="text-align-right">-</td>
+                                            <td class="text-align-right"><?= saldo_money($saldo->saldo + $saldoBayar); ?>
+                                                <?php $saldoA += ($saldo->saldo + $saldoBayar); ?>
+                                            </td>
+                                        </tr>
+                                <?php } ?>
+                            <?php } ?>
+                        <?php endforeach ?>
                     <?php } ?>
                 <?php endforeach ?>
                 <?php $debit = 0;
