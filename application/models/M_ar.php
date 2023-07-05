@@ -655,6 +655,40 @@ class M_ar extends CI_Model
 		return $data->result();
 	}
 
+	public function saldo_bayar_LA($kodeCusA, $KodeCusB, $dateA, $dateB)
+	{
+		$sql = 
+			"SELECT
+				ar.id_ar,
+				ar.id_customer,
+				customer.nama_customer,
+				ar.id_periode,
+				periode.start_periode,
+				ar.kode_soa,
+				ar.bukti_transaksi,
+				ar.total,
+                		ar.status,
+				ar.sisa as saldo,
+		                periode.due_date,
+		                bayar.tanggal_bayar
+			FROM ar
+				JOIN bayar
+				ON ar.id_ar = bayar.id_ar
+				JOIN periode
+				ON periode.id_periode = ar.id_periode
+				JOIN owner
+				ON owner.kode_owner = ar.id_owner
+				JOIN customer
+				ON customer.kode_customer = ar.id_customer
+            WHERE (ar.id_customer BETWEEN '{$kodeCusA}' AND '{$kodeCusB}') AND
+            	((ar.status != 1 AND (periode.due_date) <= ('{$dateA}') AND ar.kode_soa = 21) OR 
+  		(ar.status = 1 AND (bayar.tanggal_bayar) > ('{$dateA}') AND (periode.due_date) <= ('{$dateA}') AND ar.id_ar = bayar.id_ar AND ar.kode_soa = 21 AND bayar.kode_soa = ar.kode_soa))";
+
+		$data = $this->db->query($sql);
+
+		return $data->result();
+	}
+
 	public function saldo_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB)
 	{
 
