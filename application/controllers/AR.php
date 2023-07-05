@@ -330,6 +330,7 @@ class AR extends AUTH_Controller
             $arCus = $this->M_ar->print_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
             $bayarCus = $this->M_ar->print_bayar_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
             $saldo = $this->M_ar->saldo_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
+            $saldoBayar = $this->M_ar->saldo_bayar_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
         } else if ($CoA == 22) {
             $ar = $this->M_ar->print($kodeCusA, $kodeCusB, $dateA, $dateB, $CoA);
             $arCus = $this->M_ar->print_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
@@ -358,6 +359,7 @@ class AR extends AUTH_Controller
             $data['dataARCus'] = $arCus;
             $data['dataBayarCus'] = $bayarCus;
             $data['dataSaldo'] = $saldo;
+            $data['$saldoBayar'] = $saldoBayar;
             $data['dataCusA'] = $CusA;
             $data['dataCusB'] = $CusB;
             $data['dataDateA'] = $dateA;
