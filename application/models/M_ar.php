@@ -655,7 +655,7 @@ class M_ar extends CI_Model
 		return $data->result();
 	}
 
-	public function saldo_bayar_LA($kodeCusA, $KodeCusB, $dateA, $dateB)
+	public function saldo_bayar_LA($kodeCusA, $kodeCusB, $dateA, $dateB)
 	{
 		$sql = 
 			"SELECT

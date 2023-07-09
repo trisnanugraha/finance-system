@@ -331,6 +331,22 @@ class AR extends AUTH_Controller
             $bayarCus = $this->M_ar->print_bayar_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
             $saldo = $this->M_ar->saldo_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
             $saldoBayar = $this->M_ar->saldo_bayar_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
+
+            $data = array();
+            foreach($saldo as $s){
+                $tempSaldo = 0;
+                foreach($saldoBayar as $sb){
+                    if($sb->id_customer == $s->id_customer){
+                        $tempSaldo += $sb->total;
+                        $data[] = (object) [
+                            'id_customer' => $sb->id_customer,
+                            'saldo' => $s->saldo + $tempSaldo
+                        ];
+                    }
+                }
+                array_push($data);
+            }
+
         } else if ($CoA == 22) {
             $ar = $this->M_ar->print($kodeCusA, $kodeCusB, $dateA, $dateB, $CoA);
             $arCus = $this->M_ar->print_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
@@ -353,12 +369,11 @@ class AR extends AUTH_Controller
             $CusA = $this->M_customer->select_by_id($kodeCusA);
             $CusB = $this->M_customer->select_by_id($kodeCusB);
 
-
             $data['dataCoA'] = $CoA;
             $data['dataAR'] = $ar;
             $data['dataARCus'] = $arCus;
             $data['dataBayarCus'] = $bayarCus;
-            $data['dataSaldo'] = $saldo;
+            $data['dataSaldo'] = $data;
             $data['dataSaldoBayar'] = $saldoBayar;
             $data['dataCusA'] = $CusA;
             $data['dataCusB'] = $CusB;
