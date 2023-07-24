@@ -262,9 +262,9 @@ class M_asuransi extends CI_Model
                 a.total_asuransi,
                 a.created_at,
                 a.updated_at,
-                SELECT (SUM(ar.total) - SUM(ar.sisa)) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1)) as last,
-                (SELECT SUM(ar.total) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1)) as total,
-                (SELECT SUM(ar.sisa) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = i.id_asuransi AND ar.status != 1)) as previous
+                (SELECT (SUM(ar.total) - SUM(ar.sisa)) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = a.id_asuransi AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = a.id_asuransi AND ar.status != 1)) as last,
+                (SELECT SUM(ar.total) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = a.id_asuransi AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = a.id_asuransi AND ar.status != 1)) as total,
+                (SELECT SUM(ar.sisa) FROM ar JOIN periode p ON p.id_periode = ar.id_periode, asuransi JOIN periode ON asuransi.id_periode = periode.id_periode WHERE (MONTH(p.start_periode) < MONTH(periode.start_periode) AND YEAR(p.start_periode) = YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = a.id_asuransi AND ar.status != 1) OR (YEAR(p.start_periode) < YEAR(periode.start_periode) AND ar.id_owner = asuransi.kode_owner AND ar.kode_soa = '22' AND asuransi.id_asuransi = a.id_asuransi AND ar.status != 1)) as previous
             FROM asuransi a
                 JOIN owner o
                     ON(o.kode_owner = a.kode_owner)
@@ -281,38 +281,38 @@ class M_asuransi extends CI_Model
 
 
     public function pembayaran($post)
-	{
+    {
 
-		$id = json_decode($_POST["id"]);
-		$kodeOwner = json_decode($_POST["kodeOwner"]);
-		$akun = json_decode($_POST["akun"]);
+        $id = json_decode($_POST["id"]);
+        $kodeOwner = json_decode($_POST["kodeOwner"]);
+        $akun = json_decode($_POST["akun"]);
 
-		for ($i = 0; $i < count($id); $i++) {
+        for ($i = 0; $i < count($id); $i++) {
 
-			$CoA = $this->M_coa->select_by_coa($akun[$i]);
+            $CoA = $this->M_coa->select_by_coa($akun[$i]);
 
-			if ($akun[$i] != NULL) {
-				if ($CoA->id_akun == 25) {
-					$data = array(
-						'paid' => 1,
-						'paid_date' => $post['date']
-					);
-					$where = array(
-						'kode_owner' => $kodeOwner[$i],
-						'id_periode' => $post['period']
-					);
+            if ($akun[$i] != NULL) {
+                if ($CoA->id_akun == 25) {
+                    $data = array(
+                        'paid' => 1,
+                        'paid_date' => $post['date']
+                    );
+                    $where = array(
+                        'kode_owner' => $kodeOwner[$i],
+                        'id_periode' => $post['period']
+                    );
 
-					$this->db->update($this->tableName, $data, $where);
-				} else {
-				}
-			}
-		}
-	}
+                    $this->db->update($this->tableName, $data, $where);
+                } else {
+                }
+            }
+        }
+    }
 
     public function select_paid($date, $owner)
-	{
-		$query =
-			"SELECT asuransi.id_asuransi
+    {
+        $query =
+            "SELECT asuransi.id_asuransi
             FROM asuransi
             WHERE asuransi.id_asuransi IN
                 (SELECT ar.bukti_transaksi
@@ -322,28 +322,28 @@ class M_asuransi extends CI_Model
                     AND ar.status != 0)
                 AND asuransi.paid_date = CAST('{$date}' AS DATE)";
 
-		$data = $this->db->query($query);
+        $data = $this->db->query($query);
 
-		return $data->result();
-	}
+        return $data->result();
+    }
 
-	public function update_bayar($id)
-	{
-		$dataBayar = $this->M_bayar->select_by_voucher_id($id);
+    public function update_bayar($id)
+    {
+        $dataBayar = $this->M_bayar->select_by_voucher_id($id);
 
-		foreach ($dataBayar as $bayar) {
-			if ($bayar->kode_soa == 25) {
-				$dataAsuransi = $this->M_ar->get_bukti_transaksi($bayar->id_ar);
+        foreach ($dataBayar as $bayar) {
+            if ($bayar->kode_soa == 25) {
+                $dataAsuransi = $this->M_ar->get_bukti_transaksi($bayar->id_ar);
 
-				foreach ($dataAsuransi as $a) {
-					$data = array(
-						'paid' => 0,
-						'paid_date' => NULL
-					);
-					$where = array('id_asuransi' => $a->bukti_transaksi);
-					$this->db->update($this->tableName, $data, $where);
-				}
-			}
-		}
-	}
+                foreach ($dataAsuransi as $a) {
+                    $data = array(
+                        'paid' => 0,
+                        'paid_date' => NULL
+                    );
+                    $where = array('id_asuransi' => $a->bukti_transaksi);
+                    $this->db->update($this->tableName, $data, $where);
+                }
+            }
+        }
+    }
 }
