@@ -263,12 +263,13 @@
                         </tr>
                         <tr>
                             <td class="border padding-left padding-right" colspan="2" style="padding-top: 5px; padding-bottom:5px;">
-                                Please pay to yout BCA Virtual Account with Beneficiary Name : <span id="virtual-account-name"><?= strtoupper($sc->nama_owner); ?></span>
+                                <p style="font-size: 15px;">Transfer to Account : PERHIMPUNAN PENGHUNI SCBD SUITES at ARTHA GRAHA A/C: 008-1-28286-2</p>
+<!--                                 Please pay to yout BCA Virtual Account with Beneficiary Name : <span id="virtual-account-name"><?= strtoupper($sc->nama_owner); ?></span>
                                 <ol type="1">
-<!--                                     <li>Through Automatic Teller Machine (ATM) of Bank Central Asia (BCA) by Choosing transfer menu to your BCA Virtual Account for <span id="virtual-account-number"><?= $sc->kode_virtual; ?></span></li>
-                                    <li>Through transfer by cashform Bank Central Asia (BCA) to your BCA Virtual Account for <span id="virtual-account-number"><?= $sc->kode_virtual; ?></span></li> -->
+                                    <li>Through Automatic Teller Machine (ATM) of Bank Central Asia (BCA) by Choosing transfer menu to your BCA Virtual Account for <span id="virtual-account-number"><?= $sc->kode_virtual; ?></span></li>
+                                    <li>Through transfer by cashform Bank Central Asia (BCA) to your BCA Virtual Account for <span id="virtual-account-number"><?= $sc->kode_virtual; ?></span></li>
                                     <li>Transfer to Account : PERHIMPUNAN PENGHUNI SCBD SUITES at ARTHA GRAHA A/C: 008-1-28286-2</li>
-                                </ol>
+                                </ol> -->
                                 <b>You will be charged <u>3%</u> from The Previous Bill if your payment exceeds the due date.</b>
                             </td>
                         </tr>
