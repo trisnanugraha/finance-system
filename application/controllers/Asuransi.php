@@ -85,7 +85,7 @@ class Asuransi extends AUTH_Controller
                     'kode_owner' => $a->kode_owner,
                     'id_periode' => $post['period'],
                     'stamp' => $stampValue,
-                    'total_asuransi' => ROUND($total + $stampValue),
+                    'total_asuransi' => ROUND($total),
                     'created_by' => $this->userdata->id,
                     'd_c_note_date' => $dtNextMonth->format('Y/m/d')
                 ];
