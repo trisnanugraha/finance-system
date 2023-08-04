@@ -329,14 +329,14 @@ class AR extends AUTH_Controller
             $ar = $this->M_ar->print($kodeCusA, $kodeCusB, $dateA, $dateB, $CoA);
             $arCus = $this->M_ar->print_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
             $bayarCus = $this->M_ar->print_bayar_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
-            $saldo = $this->M_ar->saldo_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
+            $temp_saldo = $this->M_ar->saldo_cus_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
             $saldoBayar = $this->M_ar->saldo_bayar_LA($kodeCusA, $kodeCusB, $dateA, $dateB);
 
-            $data = array();
-            foreach($saldo as $s){
+            $saldo = array();
+            foreach ($temp_saldo as $s) {
                 $tempSaldo = 0;
-                foreach($saldoBayar as $sb){
-                    if($sb->id_customer == $s->id_customer){
+                foreach ($saldoBayar as $sb) {
+                    if ($sb->id_customer == $s->id_customer) {
                         $tempSaldo += $sb->total;
                         $data[] = (object) [
                             'id_customer' => $sb->id_customer,
@@ -344,20 +344,19 @@ class AR extends AUTH_Controller
                         ];
                     }
                 }
-                array_push($data);
+                array_push($saldo);
             }
-
         } else if ($CoA == 22) {
             $ar = $this->M_ar->print($kodeCusA, $kodeCusB, $dateA, $dateB, $CoA);
             $arCus = $this->M_ar->print_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
             $bayarCus = $this->M_ar->print_bayar_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
             $saldo = $this->M_ar->saldo_cus_SCSF($kodeCusA, $kodeCusB, $dateA, $dateB);
-        } else if($CoA == 24){
+        } else if ($CoA == 24) {
             $ar = $this->M_ar->print($kodeCusA, $kodeCusB, $dateA, $dateB, $CoA);
             $arCus = $this->M_ar->print_cus_iuran($kodeCusA, $kodeCusB, $dateA, $dateB);
             $bayarCus = $this->M_ar->print_bayar_cus_iuran($kodeCusA, $kodeCusB, $dateA, $dateB);
             $saldo = $this->M_ar->saldo_cus_iuran($kodeCusA, $kodeCusB, $dateA, $dateB);
-        }else if ($CoA == 25){
+        } else if ($CoA == 25) {
             $ar = $this->M_ar->print($kodeCusA, $kodeCusB, $dateA, $dateB, $CoA);
             $arCus = $this->M_ar->print_cus_asuransi($kodeCusA, $kodeCusB, $dateA, $dateB);
             $bayarCus = $this->M_ar->print_bayar_cus_asuransi($kodeCusA, $kodeCusB, $dateA, $dateB);
@@ -373,7 +372,8 @@ class AR extends AUTH_Controller
             $data['dataAR'] = $ar;
             $data['dataARCus'] = $arCus;
             $data['dataBayarCus'] = $bayarCus;
-            $data['dataSaldo'] = $data;
+            $data['dataSaldo'] = $saldo;
+            // $data['dataSaldo'] = $data;
             $data['dataSaldoBayar'] = $saldoBayar;
             $data['dataCusA'] = $CusA;
             $data['dataCusB'] = $CusB;
