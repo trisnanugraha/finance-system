@@ -439,7 +439,7 @@
                                     <td class="text-align-right"><?= saldo_money($gl->saldo); ?></td>
                                     <?php $total += $gl->saldo; ?>
                                 <?php } else if ($gl->saldo >= 0 && $coa->jurnal_tipe == 3 && $gl->saldo != NULL) { ?>
-                                    <?php echo '(' . saldo_money($gl->saldo) . ')'; ?></td>
+                                    <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldo) . ')'; ?></td>
                                     <?php $total += $gl->saldo; ?>
                                 <?php } else { ?>
                                     <td class="text-align-right"><?php echo '0,00'; ?></td>
