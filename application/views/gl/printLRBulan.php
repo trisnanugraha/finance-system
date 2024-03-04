@@ -213,198 +213,237 @@
                                 <td colspan="20" style="font-size: 8pt"><?= $gl->coa_id . ' - ' . $gl->coa_name ?></td>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoJanuari < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoJanuari != NULL && $gl->saldoJanuari < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoJanuari) . ')'; ?></td>
                                     <?php $totalJan += $gl->saldoJanuari; ?>
-                                <?php } else if ($gl->saldoJanuari >= 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php } else if ($gl->saldoJanuari != NULL && $gl->saldoJanuari >= 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoJanuari); ?></td>
                                     <?php $totalJan += $gl->saldoJanuari; ?>
-                                <?php } else if ($gl->saldoJanuari < 0 && $coa->jurnal_tipe == 3) { ?>
+                                <?php } else if ($gl->saldoJanuari != NULL && $gl->saldoJanuari < 0 && $coa->jurnal_tipe == 3) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoJanuari); ?></td>
                                     <?php $totalJan += $gl->saldoJanuari; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoJanuari != NULL && $gl->saldoJanuari >= 0 && $coa->jurnal_tipe == 3) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoJanuari) . ')'; ?></td>
                                     <?php $totalJan += $gl->saldoJanuari; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalJan += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoFebruari < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoFebruari != NULL && $gl->saldoFebruari < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoFebruari) . ')'; ?></td>
                                     <?php $totalFeb += $gl->saldoFebruari; ?>
-                                <?php } else if ($gl->saldoFebruari >= 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php } else if ($gl->saldoFebruari >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoFebruari != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoFebruari); ?></td>
                                     <?php $totalFeb += $gl->saldoFebruari; ?>
-                                <?php } else if ($gl->saldoFebruari < 0 && $coa->jurnal_tipe == 3) { ?>
+                                <?php } else if ($gl->saldoFebruari < 0 && $coa->jurnal_tipe == 3 && $gl->saldoFebruari != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoFebruari); ?></td>
                                     <?php $totalFeb += $gl->saldoFebruari; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoFebruari >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoFebruari != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoFebruari) . ')'; ?></td>
                                     <?php $totalFeb += $gl->saldoFebruari; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalFeb += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoMaret < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoMaret != NULL && $gl->saldoMaret < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"> <?= '(' . saldo_money($gl->saldoMaret) . ')'; ?></td>
                                     <?php $totalMar += $gl->saldoMaret; ?>
-                                <?php } else if ($gl->saldoMaret >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldoMaret >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoMaret != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoMaret); ?></td>
                                     <?php $totalMar += $gl->saldoMaret; ?>
-                                <?php } else if ($gl->saldoMaret < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldoMaret < 0 && $coa->jurnal_tipe == 3 && $gl->saldoMaret != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoMaret); ?></td>
                                     <?php $totalMar += $gl->saldoMaret; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoMaret >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoMaret != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoMaret) . ')'; ?></td>
                                     <?php $totalMar += $gl->saldoMaret; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalMar += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoApril < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoApril != NULL && $gl->saldoApril < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"> <?= '(' . saldo_money($gl->saldoApril) . ')'; ?></td>
                                     <?php $totalApr += $gl->saldoApril; ?>
-                                <?php } else if ($gl->saldoApril >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldoApril >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoApril != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoApril); ?></td>
                                     <?php $totalApr += $gl->saldoApril; ?>
-                                <?php } else if ($gl->saldoApril < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldoApril < 0 && $coa->jurnal_tipe == 3 && $gl->saldoApril != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoApril); ?></td>
                                     <?php $totalApr += $gl->saldoApril; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoApril >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoApril != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoApril) . ')'; ?></td>
                                     <?php $totalApr += $gl->saldoApril; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalApr += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoMei < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoMei != NULL && $gl->saldoMei < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoMei) . ')'; ?></td>
                                     <?php $totalMei += $gl->saldoMei; ?>
-                                <?php } else if ($gl->saldoMei >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldoMei >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoMei != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoMei); ?></td>
                                     <?php $totalMei += $gl->saldoMei; ?>
-                                <?php } else if ($gl->saldoMei < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldoMei < 0 && $coa->jurnal_tipe == 3 && $gl->saldoMei != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoMei); ?></td>
                                     <?php $totalMei += $gl->saldoMei; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoMei >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoMei != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoMei) . ')'; ?></td>
                                     <?php $totalMei += $gl->saldoMei; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalMei += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoJuni < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoJuni != NULL && $gl->saldoJuni < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoJuni) . ')'; ?></td>
                                     <?php $totalJun += $gl->saldoJuni; ?>
-                                <?php } else if ($gl->saldoJuni >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldoJuni >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoJuni != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoJuni); ?></td>
                                     <?php $totalJun += $gl->saldoJuni; ?>
-                                <?php } else if ($gl->saldoJuni < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldoJuni < 0 && $coa->jurnal_tipe == 3 && $gl->saldoJuni != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoJuni); ?></td>
                                     <?php $totalJun += $gl->saldoJuni; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoJuni >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoJuni != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoJuni) . ')'; ?></td>
                                     <?php $totalJun += $gl->saldoJuni; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalJun += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoJuli < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoJuli != NULL && $gl->saldoJuli < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoJuli) . ')'; ?></td>
                                     <?php $totalJul += $gl->saldoJuli; ?>
-                                <?php } else if ($gl->saldoJuli >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldoJuli >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoJuli != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoJuli); ?></td>
                                     <?php $totalJul += $gl->saldoJuli; ?>
-                                <?php } else if ($gl->saldoJuli < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldoJuli < 0 && $coa->jurnal_tipe == 3 && $gl->saldoJuli != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoJuli); ?></td>
                                     <?php $totalJul += $gl->saldoJuli; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoJuli >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoJuli != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoJuli) . ')'; ?></td>
                                     <?php $totalJul += $gl->saldoJuli; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalJul += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoAgustus < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoAgustus != NULL && $gl->saldoAgustus < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoAgustus) . ')'; ?></td>
                                     <?php $totalAug += $gl->saldoAgustus; ?>
-                                <?php } else if ($gl->saldoAgustus >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldoAgustus >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoAgustus != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoAgustus); ?></td>
                                     <?php $totalAug += $gl->saldoAgustus; ?>
-                                <?php } else if ($gl->saldoAgustus < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldoAgustus < 0 && $coa->jurnal_tipe == 3 && $gl->saldoAgustus != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoAgustus); ?></td>
                                     <?php $totalAug += $gl->saldoAgustus; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoAgustus >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoAgustus != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoAgustus) . ')'; ?></td>
                                     <?php $totalAug += $gl->saldoAgustus; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalAug += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoSeptember < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoSeptember != NULL && $gl->saldoSeptember < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoSeptember) . ')'; ?></td>
                                     <?php $totalSep += $gl->saldoSeptember; ?>
-                                <?php } else if ($gl->saldoSeptember >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldoSeptember >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoSeptember != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoSeptember); ?></td>
                                     <?php $totalSep += $gl->saldoSeptember; ?>
-                                <?php } else if ($gl->saldoSeptember < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldoSeptember < 0 && $coa->jurnal_tipe == 3 && $gl->saldoSeptember != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoSeptember); ?></td>
                                     <?php $totalSep += $gl->saldoSeptember; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoSeptember >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoSeptember != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoSeptember) . ')'; ?></td>
                                     <?php $totalSep += $gl->saldoSeptember; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalSep += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoOktober < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoOktober != NULL && $gl->saldoOktober < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoOktober) . ')'; ?></td>
                                     <?php $totalOct += $gl->saldoOktober; ?>
-                                <?php } else if ($gl->saldoOktober >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldoOktober >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoOktober != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoOktober); ?></td>
                                     <?php $totalOct += $gl->saldoOktober; ?>
-                                <?php } else if ($gl->saldoOktober < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldoOktober < 0 && $coa->jurnal_tipe == 3 && $gl->saldoOktober != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoOktober); ?></td>
                                     <?php $totalOct += $gl->saldoOktober; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoOktober >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoOktober != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoOktober) . ')'; ?></td>
                                     <?php $totalOct += $gl->saldoOktober; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalOct += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoNovember < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoNovember != NULL && $gl->saldoNovember < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoNovember) . ')'; ?></td>
                                     <?php $totalNov += $gl->saldoNovember; ?>
-                                <?php } else if ($gl->saldoNovember >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldoNovember >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoNovember != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoNovember); ?></td>
                                     <?php $totalNov += $gl->saldoNovember; ?>
-                                <?php } else if ($gl->saldoNovember < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldoNovember < 0 && $coa->jurnal_tipe == 3 && $gl->saldoNovember != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoNovember); ?></td>
                                     <?php $totalNov += $gl->saldoNovember; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoNovember >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoNovember != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoNovember) . ')'; ?></td>
                                     <?php $totalNov += $gl->saldoNovember; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalNov += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldoDesember < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldoDesember != NULL && $gl->saldoDesember < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldoDesember) . ')'; ?></td>
                                     <?php $totalDes += $gl->saldoDesember; ?>
-                                <?php } else if ($gl->saldoDesember >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldoDesember >= 0 && $coa->jurnal_tipe == 2 && $gl->saldoDesember != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldoDesember); ?></td>
                                     <?php $totalDes += $gl->saldoDesember; ?>
-                                <?php } else if ($gl->saldoDesember < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldoDesember < 0 && $coa->jurnal_tipe == 3 && $gl->saldoDesember != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldoDesember); ?></td>
                                     <?php $totalDes += $gl->saldoDesember; ?>
-                                <?php } else { ?>
+                                <?php } else if ($gl->saldoDesember >= 0 && $coa->jurnal_tipe == 3 && $gl->saldoDesember != NULL) { ?>
                                     <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldoDesember) . ')'; ?></td>
                                     <?php $totalDes += $gl->saldoDesember; ?>
+                                <?php } else { ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $totalDes += 0; ?>
                                 <?php } ?>
 
                                 <td class="text-align-right">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
-                                <?php if ($gl->saldo < 0 && $coa->jurnal_tipe == 2) { ?>
+                                <?php if ($gl->saldo != NULL && $gl->saldo < 0 && $coa->jurnal_tipe == 2) { ?>
                                     <td class="text-align-right"><?= '(' . saldo_money($gl->saldo) . ')'; ?></td>
                                     <?php $total += $gl->saldo; ?></td>
-                                <?php } else if ($gl->saldo >= 0 && $coa->jurnal_tipe == 2 && ) { ?>
+                                <?php } else if ($gl->saldo >= 0 && $coa->jurnal_tipe == 2 && $gl->saldo != NULL) { ?>
                                     <td class="text-align-right"><?php echo saldo_money($gl->saldo); ?></td>
                                     <?php $total += $gl->saldo; ?>
-                                <?php } else if ($gl->saldo < 0 && $coa->jurnal_tipe == 3 && ) { ?>
+                                <?php } else if ($gl->saldo < 0 && $coa->jurnal_tipe == 3 && $gl->saldo != NULL) { ?>
                                     <td class="text-align-right"><?= saldo_money($gl->saldo); ?></td>
                                     <?php $total += $gl->saldo; ?>
+                                <?php } else if ($gl->saldo >= 0 && $coa->jurnal_tipe == 3 && $gl->saldo != NULL) { ?>
+                                    <?php echo '(' . saldo_money($gl->saldo) . ')'; ?></td>
+                                    <?php $total += $gl->saldo; ?>
                                 <?php } else { ?>
-                                    <td class="text-align-right"><?php echo '(' . saldo_money($gl->saldo) . ')'; ?></td>
-                                     <?php $total += $gl->saldo; ?>
+                                    <td class="text-align-right"><?php echo '0,00'; ?></td>
+                                    <?php $total += 0; ?>
                                 <?php } ?>
                             </tr>
             <?php
