@@ -266,7 +266,7 @@
                                 <p>Transfer to Account : PERHIMPUNAN PENGHUNI SCBD SUITES at ARTHA GRAHA A/C: 008-1-28286-2</p>
                                  Please pay to yout BCA Virtual Account with Beneficiary Name : <span id="virtual-account-name"><?= strtoupper($sc->nama_owner); ?></span>
                                 <ol type="1">
-                                    <li>Through Automatic Teller Machine (ATM) of Bank Central Asia (BCA) by Choosing transfer menu to your <span style="font-size: 15px;">BCA Virtual Account for <span id="virtual-account-number"><?= $sc->kode_virtual; ?></span></span></li>
+                                    <li>Through Automatic Teller Machine (ATM) of Bank Central Asia (BCA) by Choosing transfer menu to your <span style="font-size: 13px;">BCA Virtual Account for <span id="virtual-account-number"><?= $sc->kode_virtual; ?></span></span></li>
                                     <li>Through transfer by cashform Bank Central Asia (BCA) to your BCA Virtual Account for <span id="virtual-account-number"><?= $sc->kode_virtual; ?></span></li>
                                     <li>Transfer to Account : PERHIMPUNAN PENGHUNI SCBD SUITES at ARTHA GRAHA A/C: 008-1-28286-2</li>
                                 </ol>
