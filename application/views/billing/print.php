@@ -243,7 +243,6 @@
                                 <br>
                                 <br>
                                 <br>
-                                <br>
                                 <span id="authorized-sign"><?= strtoupper($signature->param1); ?></span>
                                 <hr>
                                 <span id="authorized-role"><?= ucwords($signature->param2); ?></span>
