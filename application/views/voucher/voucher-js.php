@@ -259,7 +259,7 @@
                         if (result.value) {
                             $('#data_table').remove();
                             // window.location.href = "http://scbd-2022.test/Voucher/";
-                            window.location.href = "https://dev.finance.scbdsuites.com/Voucher/";
+                            window.location.href = '<?php echo base_url('Voucher') ?>';
                         }
                     });
                 }
@@ -345,7 +345,7 @@
                         if (result.value) {
                             $('#data_table').remove();
                             // window.location.href = "http://scbd-2022.test/Voucher/";
-                            window.location.href = "https://dev.finance.scbdsuites.com/Voucher/";
+                            window.location.href = '<?php echo base_url('Voucher') ?>';
                         }
                     });
                 }
