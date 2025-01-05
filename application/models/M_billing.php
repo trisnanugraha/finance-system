@@ -347,7 +347,9 @@ class M_billing extends CI_Model
 					ON b.kode_tagihan_listrik = l.id_listrik
 					JOIN air a
 					ON b.kode_tagihan_air = a.kode_tagihan_air
-				-- WHERE p.start_periode <= CURDATE() AND MONTH(p.start_periode) = MONTH(CURDATE())
+				WHERE 
+    				p.start_periode BETWEEN DATE_FORMAT(DATE_SUB(CURDATE(), INTERVAL 2 MONTH), '%Y-%m-01')
+    				AND LAST_DAY(DATE_SUB(CURDATE(), INTERVAL 1 MONTH))
 				ORDER BY p.start_periode DESC, b.id_billing";
 
 			$query = $this->db->query($sql);
