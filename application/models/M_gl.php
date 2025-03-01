@@ -1611,42 +1611,84 @@ class M_gl extends CI_Model
 		return $data->result();
 	}
 
+	// public function neracaBulan($date)
+	// {
+
+	// 	$query =
+	// 		"SELECT 
+	// 			gl.tanggal_transaksi,
+    //             SUM(gl.debit) AS debit, 
+    //             SUM(gl.credit) AS credit, 
+    //             SUM(gl.debit) - SUM(gl.credit) AS saldo,
+    //             gl.kode_soa, 
+    //             gl.so,
+    //             coa.coa_id,
+    //             coa.parent,
+    //             coa.coa_name,
+	// 			coa.jurnal_tipe, 
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 1 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoJanuari,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 2 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoFebruari,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 3 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoMaret,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 4 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoApril,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 5 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoMei,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 6 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoJuni,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 7 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoJuli,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 8 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoAgustus,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 9 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoSeptember,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 10 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoOktober,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 11 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoNovember,
+    //             (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 12 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoDesember
+    //         FROM gl 
+    //             JOIN coa 
+    //             on gl.kode_soa = coa.id_akun 
+    //         WHERE (gl.tanggal_transaksi) <= ('{$date}')
+    //             AND (coa.jurnal_tipe = 1 OR coa.jurnal_tipe = 4)
+    //             AND gl.so = 1
+    //         GROUP BY gl.kode_soa
+    //         ORDER BY coa.coa_id ASC";
+
+
+	// 	$data = $this->db->query($query);
+
+	// 	return $data->result();
+	// }
+
 	public function neracaBulan($date)
 	{
 
 		$query =
-			"SELECT 
-				gl.tanggal_transaksi,
-                SUM(gl.debit) AS debit, 
-                SUM(gl.credit) AS credit, 
-                SUM(gl.debit) - SUM(gl.credit) AS saldo,
-                gl.kode_soa, 
-                gl.so,
-                coa.coa_id,
-                coa.parent,
-                coa.coa_name,
-				coa.jurnal_tipe, 
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 1 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoJanuari,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 2 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoFebruari,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 3 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoMaret,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 4 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoApril,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 5 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoMei,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 6 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoJuni,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 7 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoJuli,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 8 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoAgustus,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 9 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoSeptember,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 10 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoOktober,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 11 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoNovember,
-                (SELECT SUM(g.debit) - SUM(g.credit) FROM gl g WHERE MONTH(g.tanggal_transaksi) = 12 AND MONTH(g.tanggal_transaksi) <= MONTH('{$date}') AND YEAR(g.tanggal_transaksi) = YEAR('{$date}') AND gl.kode_soa = g.kode_soa AND g.so = 1) saldoDesember
-            FROM gl 
-                JOIN coa 
-                on gl.kode_soa = coa.id_akun 
-            WHERE (gl.tanggal_transaksi) <= ('{$date}')
-                AND (coa.jurnal_tipe = 1 OR coa.jurnal_tipe = 4)
-                AND gl.so = 1
-            GROUP BY gl.kode_soa
-            ORDER BY coa.coa_id ASC";
-
+			"SELECT
+                gl.tanggal_transaksi,
+				SUM(gl.debit) AS debit,
+				SUM(gl.credit) AS credit,
+				SUM(gl.debit) - SUM(gl.credit) AS saldo,
+				gl.kode_soa,
+				gl.so,
+				coa.coa_id,
+				coa.parent,
+				coa.coa_name,
+				coa.jurnal_tipe,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 1 THEN gl.debit - gl.credit ELSE 0 END) saldoJanuari,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 2 THEN gl.debit - gl.credit ELSE 0 END) saldoFebruari,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 3 THEN gl.debit - gl.credit ELSE 0 END) saldoMaret,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 4 THEN gl.debit - gl.credit ELSE 0 END) saldoApril,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 5 THEN gl.debit - gl.credit ELSE 0 END) saldoMei,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 6 THEN gl.debit - gl.credit ELSE 0 END) saldoJuni,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 7 THEN gl.debit - gl.credit ELSE 0 END) saldoJuli,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 8 THEN gl.debit - gl.credit ELSE 0 END) saldoAgustus,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 9 THEN gl.debit - gl.credit ELSE 0 END) saldoSeptember,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 10 THEN gl.debit - gl.credit ELSE 0 END) saldoOktober,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 11 THEN gl.debit - gl.credit ELSE 0 END) saldoNovember,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 12 THEN gl.debit - gl.credit ELSE 0 END) saldoDesember
+			FROM gl
+				JOIN coa
+				on gl.kode_soa = coa.id_akun
+			WHERE MONTH(gl.tanggal_transaksi) <= MONTH('{$date}')
+				AND YEAR(gl.tanggal_transaksi) =  YEAR('{$date}')
+				AND (coa.jurnal_tipe = 1 OR coa.jurnal_tipe = 4)
+				AND gl.so = 1
+			GROUP BY gl.kode_soa
+			ORDER BY coa.coa_id ASC";
 
 		$data = $this->db->query($query);
 
@@ -1659,36 +1701,36 @@ class M_gl extends CI_Model
 		$query =
 			"SELECT
                 gl.tanggal_transaksi,
-                 SUM(gl.debit) AS debit,
-                 SUM(gl.credit) AS credit,
-                 SUM(gl.debit) - SUM(gl.credit) AS saldo,
-                 gl.kode_soa,
-                 gl.so,
-                 coa.coa_id,
-                 coa.parent,
-                 coa.coa_name,
-                coa.jurnal_tipe,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 1 THEN gl.debit - gl.credit ELSE 0 END) saldoJanuari,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 2 THEN gl.debit - gl.credit ELSE 0 END) saldoFebruari,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 3 THEN gl.debit - gl.credit ELSE 0 END) saldoMaret,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 4 THEN gl.debit - gl.credit ELSE 0 END) saldoApril,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 5 THEN gl.debit - gl.credit ELSE 0 END) saldoMei,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 6 THEN gl.debit - gl.credit ELSE 0 END) saldoJuni,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 7 THEN gl.debit - gl.credit ELSE 0 END) saldoJuli,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 8 THEN gl.debit - gl.credit ELSE 0 END) saldoAgustus,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 9 THEN gl.debit - gl.credit ELSE 0 END) saldoSeptember,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 10 THEN gl.debit - gl.credit ELSE 0 END) saldoOktober,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 11 THEN gl.debit - gl.credit ELSE 0 END) saldoNovember,
-                 SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 12 THEN gl.debit - gl.credit ELSE 0 END) saldoDesember
-             FROM gl
-                 JOIN coa
-                 on gl.kode_soa = coa.id_akun
-             WHERE MONTH(gl.tanggal_transaksi) <= MONTH('{$date}')
-                 AND YEAR(gl.tanggal_transaksi) =  YEAR('{$date}')
-                 AND (coa.jurnal_tipe = 2 OR coa.jurnal_tipe = 3)
-                 AND gl.so = 1
-             GROUP BY gl.kode_soa
-             ORDER BY coa.coa_id ASC";
+				SUM(gl.debit) AS debit,
+				SUM(gl.credit) AS credit,
+				SUM(gl.debit) - SUM(gl.credit) AS saldo,
+				gl.kode_soa,
+				gl.so,
+				coa.coa_id,
+				coa.parent,
+				coa.coa_name,
+				coa.jurnal_tipe,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 1 THEN gl.debit - gl.credit ELSE 0 END) saldoJanuari,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 2 THEN gl.debit - gl.credit ELSE 0 END) saldoFebruari,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 3 THEN gl.debit - gl.credit ELSE 0 END) saldoMaret,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 4 THEN gl.debit - gl.credit ELSE 0 END) saldoApril,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 5 THEN gl.debit - gl.credit ELSE 0 END) saldoMei,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 6 THEN gl.debit - gl.credit ELSE 0 END) saldoJuni,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 7 THEN gl.debit - gl.credit ELSE 0 END) saldoJuli,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 8 THEN gl.debit - gl.credit ELSE 0 END) saldoAgustus,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 9 THEN gl.debit - gl.credit ELSE 0 END) saldoSeptember,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 10 THEN gl.debit - gl.credit ELSE 0 END) saldoOktober,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 11 THEN gl.debit - gl.credit ELSE 0 END) saldoNovember,
+				SUM(CASE WHEN MONTH(gl.tanggal_transaksi) = 12 THEN gl.debit - gl.credit ELSE 0 END) saldoDesember
+			FROM gl
+				JOIN coa
+				on gl.kode_soa = coa.id_akun
+			WHERE MONTH(gl.tanggal_transaksi) <= MONTH('{$date}')
+				AND YEAR(gl.tanggal_transaksi) =  YEAR('{$date}')
+				AND (coa.jurnal_tipe = 2 OR coa.jurnal_tipe = 3)
+				AND gl.so = 1
+			GROUP BY gl.kode_soa
+			ORDER BY coa.coa_id ASC";
 
 		$data = $this->db->query($query);
 
